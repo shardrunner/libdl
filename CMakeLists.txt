@@ -38,7 +38,7 @@ endif()
 #    set_target_properties(foo PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 #endif()
 
-add_executable(${TEST_TARGET} ../main.cpp include/CppPrakt/NN.h)
+add_executable(${TEST_TARGET} ../main.cpp)
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
