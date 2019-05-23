@@ -2,7 +2,6 @@ image: elsa/ubu18-clang6:latest
 
 stages:
   - compile
-  - test
 
 build-linux-gcc:
   stage: compile
@@ -11,6 +10,7 @@ build-linux-gcc:
     - cd build
     - cmake ..
     - make
+    - ./test
   tags:
     - linux
   cache:
@@ -28,14 +28,6 @@ build-linux-clang:
     - make
   tags:
     - linux
-  cache:
-    key: "$CI_JOB_NAME"
-    paths:
-      - build/
-cpp:
-  stage: test
-  script:
-    - ls
   cache:
     key: "$CI_JOB_NAME"
     paths:
