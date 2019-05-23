@@ -67,6 +67,7 @@ void NN::backprop(const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &x_
 void NN::train_net(int iterations, Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &x_input,
                    const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &y_output, float learning_rate) {
 
+    srand((unsigned int) time(0));
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> h_layer(dim_h, dim_x);
     h_layer.setRandom();
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> o_layer(dim_y, dim_h);
