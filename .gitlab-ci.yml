@@ -36,3 +36,7 @@ cpp:
   stage: test
   script:
     - ./build/test
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - build/
