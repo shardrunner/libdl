@@ -35,4 +35,4 @@ build-linux-clang:
 cpp:
   stage: test
   script:
-    - build/test
+    - test
