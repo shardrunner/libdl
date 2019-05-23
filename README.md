@@ -4,7 +4,8 @@
 `#include "NN.h"`
 
 Initialize NN with the network dimensions. `NN(2,4,1)` did work for me and makes the most sense for XOR.
-You can change the middle value, the dimension of the hidden layer, but it didn't converge for me for <4.
+You can change the middle value, the dimension of the hidden layer, but it didn't reliably converge for me for <4.
+If you use less than 4 neurons for the hidden layer, sometimes it doesn't converge or very slowly. It depends on the seed.
 
 Train and test the network with the train_net() function. It takes four arguments.
 1. The number of iterations in int (I used 1000)
