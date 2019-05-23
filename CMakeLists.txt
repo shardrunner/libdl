@@ -6,9 +6,7 @@ project(MBLib VERSION 0.1
 set(TEST_TARGET testmain)
 include_directories(include)
 
-find_package(Doxygen
-        REQUIRED dot
-        OPTIONAL_COMPONENTS mscgen dia)
+find_package(Doxygen)
 
 
 
