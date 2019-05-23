@@ -8,7 +8,7 @@ include_directories(include)
 
 find_package(Doxygen)
 
-
+set(DOXYGEN_GENERATE_HTML YES)
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
 add_subdirectory(extern/Catch2)
@@ -62,3 +62,9 @@ target_link_libraries(testmain NN_lib)
 
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
+
+doxygen_add_docs(
+        doxygen
+        ${HDRS}
+        COMMENT "Generate html pages"
+)
