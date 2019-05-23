@@ -1,7 +1,24 @@
 #include <iostream>
 
+#include "NN.h"
+#include <Eigen/Core>
+
+
 int main()
 {
-    std::cout << "Hello world!\n";
+    NN NeN=NN(2,4,1);
+
+    Eigen::MatrixXf inp;
+    inp.resize(2,4);
+    Eigen::MatrixXf out;
+    out.resize(1,4);
+    out << 0.0,1.0,1.0,0.0;
+    //inp << 1,2,3,4;
+    inp << 0.0,0.0,1.0,1.0,0.0,1.0,0.0,1.0;
+
+    NeN.train_net(1000,inp, out, 0.3);
+
+
+
 }
 

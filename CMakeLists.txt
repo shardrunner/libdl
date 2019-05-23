@@ -4,6 +4,13 @@ project(MBLib VERSION 0.1
         LANGUAGES CXX)
 
 set(TEST_TARGET testmain)
+include_directories(include)
+
+find_package(Doxygen
+        REQUIRED dot
+        OPTIONAL_COMPONENTS mscgen dia)
+
+
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
 add_subdirectory(extern/Catch2)
@@ -38,7 +45,22 @@ endif()
 #    set_target_properties(foo PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 #endif()
 
+set(HDRS
+        include/NN.h
+        )
+set(SRCS
+        src/NN.cpp
+        )
+
+add_library(NN_lib ${SRCS} ${HDRS})
+
+add_executable(test ../tests/test.cpp)
+target_link_libraries(test NN_lib Catch2::Catch2)
+
 add_executable(${TEST_TARGET} ../main.cpp)
+
+target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
+target_link_libraries(testmain NN_lib)
+
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
-
