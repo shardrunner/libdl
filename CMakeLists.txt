@@ -63,8 +63,10 @@ target_link_libraries(testmain NN_lib)
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
-doxygen_add_docs(
+if (DOXYGEN_FOUND)
+    doxygen_add_docs(
         doxygen
         ${HDRS}
         COMMENT "Generate html pages"
-)
+    )
+endif (DOXYGEN_FOUND)
