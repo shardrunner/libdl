@@ -16,6 +16,9 @@ build-linux-gcc:
     key: "$CI_JOB_NAME"
     paths:
       - build/
+  test1:
+    stage: test
+    - build/test
 
 build-linux-clang:
   stage: compile
@@ -30,4 +33,7 @@ build-linux-clang:
     key: "$CI_JOB_NAME"
     paths:
       - build/
+    test1:
+      stage: test
+      - build/test
       
