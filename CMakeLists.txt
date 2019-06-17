@@ -12,7 +12,7 @@ set(DOXYGEN_GENERATE_HTML YES)
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
 add_subdirectory(extern/Catch2)
-add_subdirectory(extern/Eigen3)
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
 
@@ -53,11 +53,13 @@ set(SRCS
 add_library(NN_lib ${SRCS} ${HDRS})
 
 add_executable(test ../tests/test.cpp)
+
 target_link_libraries(test NN_lib Catch2::Catch2)
+
+target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
 
 add_executable(${TEST_TARGET} ../main.cpp)
 
-target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
 target_link_libraries(testmain NN_lib)
 
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
