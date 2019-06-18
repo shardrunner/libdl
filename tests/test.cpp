@@ -4,6 +4,8 @@
 
 #include <Eigen/Core>
 #include "NN.h"
+#include "ReluFunction.h"
+#include "SigmoidFunction.h"
 
 
 
@@ -50,7 +52,7 @@ SCENARIO("Test cost function") {
     }
 }
 
-SCENARIO("Test sigmoid function") {
+SCENARIO("Test old sigmoid function") {
     NN NeN=NN(2,3,1);
     GIVEN("A Matrix") {
         Eigen::Matrix<float, Eigen::Dynamic,Eigen::Dynamic> m;
@@ -63,4 +65,27 @@ SCENARIO("Test sigmoid function") {
             REQUIRE(m.isApprox(result));
         }
     }
+}
+
+SCENARIO("Test sigmoid implementation")  {
+  SigmoidFunction sigmoidFun=SigmoidFunction();
+  GIVEN("A Matrix the sigmoid function should be applied") {
+    Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> m;
+    m.resize(2, 3);
+    m << 5.0, 9.0, 0.1, 49.0, -3.0, 0.0;
+    THEN("The sigmoid is correctly calculated") {
+      Eigen::Matrix<float, 2, 3> result;
+      result << 0.99330715, 0.99987661, 0.52497919, 1, 0.04742587, 0.5;
+      sigmoidFun.apply_function(m);
+      REQUIRE(m.isApprox(result));
+    }
+  }
+  GIVEN("A Matrix the derivate of the sigmoid function should be applied") {
+    Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> m;
+    m.resize(2, 3);
+    m << 5.0, 9.0, 0.1, 49.0, -3.0, 0.0;
+    THEN("The derivate of the sigmoid function should be correctly applied") {
+      
+    }
+  }
 }

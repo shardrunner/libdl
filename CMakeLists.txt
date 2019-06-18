@@ -45,10 +45,12 @@ endif()
 
 set(HDRS
         include/NN.h
-        )
+        include/ActivationFunction.h
+        include/SigmoidFunction.h
+        include/ReluFunction.h)
 set(SRCS
         src/NN.cpp
-        )
+        src/SigmoidFunction.cpp src/ReluFunction.cpp)
 
 add_library(NN_lib ${SRCS} ${HDRS})
 
