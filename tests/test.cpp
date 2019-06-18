@@ -85,7 +85,7 @@ SCENARIO("Test sigmoid implementation")  {
     m.resize(2, 3);
     m << 5.0, 9.0, 0.1, 49.0, -3.0, 0.0;
     THEN("The derivate of the sigmoid function should be correctly applied") {
-      
+
     }
   }
 }
