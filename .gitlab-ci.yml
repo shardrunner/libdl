@@ -1,5 +1,7 @@
 image: elsa/ubu18-clang6:latest
 
+variables:
+  GIT_SUBMODULE_STRATEGY: "normal"
 
 stages:
   - compile
