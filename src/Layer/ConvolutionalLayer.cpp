@@ -109,7 +109,16 @@ void ConvolutionalLayer::initialize_parameter() {
   m_b=0.0;
   m_random_initialization->initialize(m_w);
 }
-void ConvolutionalLayer::update_parameter() {}
+void ConvolutionalLayer::update_parameter() {
+  Eigen::VectorXf temp=Eigen::VectorXf(m_dC_dw[0].rows(),m_dC_dw[0].cols());
+  temp.setZero();
+  for (auto dw: m_dC_dw) {
+    temp=temp+dw;
+  }
+  temp=(temp.array()/m_dC_dw.size()).matrix();
+  m_w = m_w - 0.3 * temp;
+  //m_b = m_b - 0.3 * m_dC_db;
+}
 ConvolutionalLayer::ConvolutionalLayer(
     int number_input_channel, int number_output_channel, int filter_width,
     int filter_heigth, std::unique_ptr<ActivationFunction> activation_function,

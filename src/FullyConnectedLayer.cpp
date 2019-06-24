@@ -60,7 +60,7 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev, const E
 
   //calcualate derivative for prev layer (next step in backprop)
   m_dC_da_prev=m_w*dC_dz;
-  std::cout<<"dC_dw: " << m_dC_dw << "\ndC_db: " << m_dC_db << "\n\n+++++++\n" <<std::endl;//dC_dw2: "<<diff_h_layer << "\ndC_db2: " <<diff_h_bias << "\n-----------------------------------------"<<std::endl;
+  //std::cout<<"dC_dw: " << m_dC_dw << "\ndC_db: " << m_dC_db << "\n\n+++++++\n" <<std::endl;//dC_dw2: "<<diff_h_layer << "\ndC_db2: " <<diff_h_bias << "\n-----------------------------------------"<<std::endl;
 }
 
 void FullyConnectedLayer::initialize_parameter() {

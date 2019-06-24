@@ -10,3 +10,6 @@
 [submodule "extern/spdlog"]
 	path = extern/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "extern/mnist"]
+	path = extern/mnist
+	url = https://github.com/wichtounet/mnist.git

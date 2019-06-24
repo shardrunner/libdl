@@ -2,10 +2,9 @@
 
 #include "LossFunction/LossFunction.h"
 
-class CrossEntropyLoss : public LossFunction {
+class MultiClassLoss : public LossFunction {
 public:
-  float calculate_loss() const override;//const Eigen::MatrixXf &a_prev,
-                     //  const Eigen::RowVectorXf &label) const override;
+  float calculate_loss() const override;
   void backpropagate(const Eigen::MatrixXf &a_prev,
                      const Eigen::MatrixXf &label) override;
   const Eigen::MatrixXf &get_backpropagate() const override;

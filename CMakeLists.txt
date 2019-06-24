@@ -7,6 +7,13 @@ project(MBLib VERSION 0.1
 set(TEST_TARGET testmain)
 include_directories(include)
 
+find_package(MNIST PATHS extern/mnist)
+if(NOT MNIST_FOUND)
+    message(FATAL_ERROR "MNIST loader could not be found. It is available under https://github.com/wichtounet/mnist")
+endif(NOT MNIST_FOUND)
+
+include_directories(${MNIST_INCLUDE_DIR})
+
 find_package(Doxygen)
 
 set(DOXYGEN_GENERATE_HTML YES)
@@ -48,10 +55,10 @@ set(HDRS
 #        include/NN.h
         include/ActivationFunction/ActivationFunction.h
         include/ActivationFunction/SigmoidFunction.h
-        include/ActivationFunction/ReluFunction.h include/Layer/BaseLayer.h include/Layer/FullyConnectedLayer.h include/NeuralNetwork.h include/MTensor.h include/RandomInitialization/RandomInitialization.h include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/LossFunction/CrossEntropyLoss.h include/ActivationFunction/IdentityFunction.h)
+        include/ActivationFunction/ReluFunction.h include/Layer/BaseLayer.h include/Layer/FullyConnectedLayer.h include/NeuralNetwork.h include/MTensor.h include/RandomInitialization/RandomInitialization.h include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/LossFunction/CrossEntropyLoss.h include/ActivationFunction/IdentityFunction.h include/LossFunction/MultiClassLoss.h)
 set(SRCS
 #        src/NN.cpp
-        src/SigmoidFunction.cpp src/ReluFunction.cpp src/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/LossFunction/CrossEntropyLoss.cpp src/ActivationFunction/IdentityFunction.cpp)
+        src/SigmoidFunction.cpp src/ReluFunction.cpp src/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/LossFunction/CrossEntropyLoss.cpp src/ActivationFunction/IdentityFunction.cpp src/LossFunction/MultiClassLoss.cpp)
 
 add_library(NN_lib ${SRCS} ${HDRS})
 
@@ -68,6 +75,8 @@ target_link_libraries(testmain NN_lib)
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
 target_compile_features(test PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
+
+target_compile_definitions(${TEST_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")
 
 set_target_properties(NN_lib PROPERTIES
         CXX_STANDARD 17
