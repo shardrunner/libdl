@@ -110,7 +110,7 @@ int main()
 
   //init->print(0);
 
-  auto mnet=NeuralNetwork(std::move(bin_loss),1000,50);
+  auto mnet=NeuralNetwork(std::move(bin_loss),10,1);
 
   auto hid_layer=std::make_unique<FullyConnectedLayer>(784,16,std::make_unique<ReluFunction>(), std::make_unique<SimpleRandomInitialization>());
   auto hid2_layer=std::make_unique<FullyConnectedLayer>(16,16,std::make_unique<ReluFunction>(), std::make_unique<SimpleRandomInitialization>());

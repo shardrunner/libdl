@@ -65,7 +65,7 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
     update();
     if (i % m_divisor == 0) {
       auto temp1=m_layer_list[number_layer-1]->get_forward_output();
-      //std::cout << temp1 << "\n" << label;
+      std::cout << "dim: " <<temp1.rows() << " & " << temp1.cols() << "Forward_output\n" << temp1 << "\n";
       spdlog::debug("tesp");
       auto temp2=m_loss_function->calculate_loss(); //(temp1, label);
       std::cout << "Loss at iteration number:" << i << " " << temp2  << std::endl;
