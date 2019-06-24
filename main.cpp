@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "NN.h"
+//#include "NN.h"
 #include "NeuralNetwork.h"
 #include "ActivationFunction/SigmoidFunction.h"
 #include "ActivationFunction/ReluFunction.h"
@@ -42,10 +42,10 @@ int main()
 
   mnet.train_network(inp,out);
 
-  NN NeN=NN(2,4,1);
+  //NN NeN=NN(2,4,1);
 
 
-  NeN.train_net(1,inp, out, 1.3);
+  //NeN.train_net(1,inp, out, 1.3);
 
 }
 
