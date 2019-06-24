@@ -56,7 +56,9 @@ void NN::backprop(const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &x_
     auto diff_h_layer = h_temp * x_input.transpose() / size;
     auto diff_h_bias = h_temp.rowwise().sum() / size;
 
-    // Update weights
+    std::cout<<"dC_dw1: " << diff_o_layer << "\ndC_db1: " << diff_o_bias << "\n\ndC_dw2: "<<diff_h_layer << "\ndC_db2: " <<diff_h_bias << "\n-----------------------------------------"<<std::endl;
+
+    // Update m_w
     h_layer = h_layer - learning_rate * diff_h_layer;
     h_bias = h_bias - learning_rate * diff_h_bias;
     o_layer = o_layer - learning_rate * diff_o_layer;
@@ -70,13 +72,18 @@ void NN::train_net(int iterations, Eigen::Matrix<float, Eigen::Dynamic, Eigen::D
     srand((unsigned int) time(0));
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> h_layer(dim_h, dim_x);
     h_layer.setRandom();
+
+    h_layer << 0.680375, -0.211234 ,  0.566198,0.59688 , 0.823295 , -0.604897, -0.329554,  0.536459;
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> o_layer(dim_y, dim_h);
     o_layer.setRandom();
+    o_layer << 0.680375, -0.211234, 0.566198, 0.59688;
 
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> h_bias(dim_h, 1);
     h_bias.setZero();
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> o_bias(dim_y, 1);
     o_bias.setZero();
+
+    //std::cout<< "OldNet:\nWeightsH: " <<h_layer.transpose() << "\nBiasH: " <<h_bias.transpose()<<"\n\nWeightsO: " << o_layer.transpose() <<"\nBiasO: "<<o_bias.transpose() <<std::endl;
 
 
     for (int i = 0; i < iterations; i++) {
@@ -91,12 +98,12 @@ void NN::train_net(int iterations, Eigen::Matrix<float, Eigen::Dynamic, Eigen::D
 
         backprop(x_input, y_output, h_res_temp, o_res_temp, h_layer, o_layer, h_bias, o_bias, learning_rate);
 
-        if (i % 50 == 0) {
+        if (i % 1 == 0) {
             std::cout << "Loss at iteration number:" << i << " " << cost << std::endl;
         }
     }
 
-
+/*
     Eigen::Matrix<float, 2, 4> test_x;
     Eigen::Matrix<float, 1,4> test_y;
 
@@ -111,5 +118,5 @@ void NN::train_net(int iterations, Eigen::Matrix<float, Eigen::Dynamic, Eigen::D
         auto o_res_temp = compute_layer(h_res_temp, o_layer, o_bias);
         sigmoid(o_res_temp);
         std::cout << "Result for: "<<test_x.block(0,i,2,1).transpose()<< " -> predicted: " << lambda(o_res_temp(0,0)) << std::endl;
-    }
+    }*/
 }

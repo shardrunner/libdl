@@ -3,6 +3,7 @@ project(MBLib VERSION 0.1
         DESCRIPTION "A deep learning library"
         LANGUAGES CXX)
 
+#set(PYBIND11_CPP_STANDARD -std=c++1z)
 set(TEST_TARGET testmain)
 include_directories(include)
 
@@ -13,7 +14,7 @@ set(DOXYGEN_GENERATE_HTML YES)
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
 add_subdirectory(extern/Catch2)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-add_subdirectory(extern/pybind11)
+#add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
@@ -44,17 +45,17 @@ endif()
 #endif()
 
 set(HDRS
-        include/NN.h
-        include/ActivationFunction.h
-        include/SigmoidFunction.h
-        include/ReluFunction.h)
+#        include/NN.h
+        include/ActivationFunction/ActivationFunction.h
+        include/ActivationFunction/SigmoidFunction.h
+        include/ActivationFunction/ReluFunction.h include/Layer/BaseLayer.h include/Layer/FullyConnectedLayer.h include/NeuralNetwork.h include/MTensor.h include/RandomInitialization/RandomInitialization.h include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/LossFunction/CrossEntropyLoss.h include/ActivationFunction/IdentityFunction.h)
 set(SRCS
-        src/NN.cpp
-        src/SigmoidFunction.cpp src/ReluFunction.cpp)
+#        src/NN.cpp
+        src/SigmoidFunction.cpp src/ReluFunction.cpp src/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/LossFunction/CrossEntropyLoss.cpp src/ActivationFunction/IdentityFunction.cpp)
 
 add_library(NN_lib ${SRCS} ${HDRS})
 
-add_executable(test ../tests/test.cpp)
+add_executable(test ../tests/test.cpp tests/test-main.cpp)
 
 target_link_libraries(test NN_lib Catch2::Catch2)
 
@@ -65,6 +66,7 @@ add_executable(${TEST_TARGET} ../main.cpp)
 target_link_libraries(testmain NN_lib)
 
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
+target_compile_features(test PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 set_target_properties(NN_lib PROPERTIES

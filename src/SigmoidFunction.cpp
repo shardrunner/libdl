@@ -1,10 +1,10 @@
-#include <SigmoidFunction.h>
+#include <ActivationFunction/SigmoidFunction.h>
 
-void SigmoidFunction::apply_function(Eigen::MatrixXf &input) {
-  input = (1 / (1 + Eigen::exp((-1) * input.array()))).matrix();
+Eigen::MatrixXf SigmoidFunction::apply_function(const Eigen::MatrixXf &input) const {
+  return (1 / (1 + Eigen::exp((-1) * input.array()))).matrix();
 }
 
-void SigmoidFunction::apply_derivate(Eigen::MatrixXf &input) {
-  SigmoidFunction::apply_function(input);
-  input=(input.array()*(1-input.array())).matrix();
+Eigen::MatrixXf SigmoidFunction::apply_derivate(const Eigen::MatrixXf &input) const {
+  Eigen::MatrixXf intermediate=SigmoidFunction::apply_function(input);
+  return (intermediate.array()*(1-intermediate.array())).matrix();
 }

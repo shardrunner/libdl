@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Eigen/Core>
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 
 /**
@@ -13,12 +15,12 @@ public:
    * Applies the activation function to the input matrix
    * @param input The input matrix
    */
-  virtual void apply_function(Eigen::MatrixXf &input) = 0;
+  virtual Eigen::MatrixXf apply_function(const Eigen::MatrixXf &input) const = 0;
 
   /**
    * Applies the derivate of the activation function to the input matrix
    * @param input The input matrix
    */
-  virtual void apply_derivate(Eigen::MatrixXf &input) = 0;
+  virtual Eigen::MatrixXf apply_derivate(const Eigen::MatrixXf &input) const = 0;
 
 };
