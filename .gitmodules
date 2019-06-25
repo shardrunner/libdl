@@ -16,8 +16,8 @@
 [submodule "extern/spdlog"]
 	path = extern/spdlog
 	url = https://github.com/gabime/spdlog.git
-	branch = master
-	update = merge
+	branch = v1.x
+	update = rebase
 [submodule "extern/mnist"]
 	path = extern/mnist
 	url = https://github.com/wichtounet/mnist.git
