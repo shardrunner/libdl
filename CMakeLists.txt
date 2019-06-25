@@ -24,6 +24,8 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 #add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
 
+find_package(spdlog)
+
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
