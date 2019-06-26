@@ -5,6 +5,10 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
+
+
+
+
 void NeuralNetwork::add_layer(std::unique_ptr<BaseLayer> layer) {
   m_layer_list.push_back(std::move(layer));
 }

@@ -24,5 +24,6 @@ Eigen::MatrixXf
 ReluFunction::apply_derivate(const Eigen::MatrixXf &m_a,
                              const Eigen::MatrixXf &dC_da) const {
   //-1 same as in apply_function
+  //std::cout << "Relu-Input: m_a \n" << m_a << "\ndC_da\n" << dC_da << "\nResult \n" << (m_a.unaryExpr([this](float x) -> float { if (x>0.0) {return 1.0;} else {return (-1)*leak_factor*x; }}).array()*dC_da.array()).matrix()<<std::endl;
   return (m_a.unaryExpr([this](float x) -> float { if (x>0.0) {return 1.0;} else {return (-1)*leak_factor*x; }}).array()*dC_da.array()).matrix();
 }

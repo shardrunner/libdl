@@ -18,6 +18,12 @@ FullyConnectedLayer::FullyConnectedLayer(const int input_size, const int output_
 
 void FullyConnectedLayer::feed_forward(const Eigen::MatrixXf &input) {
   //TODO bias correct per row/column added?
+  int a = m_w.rows();
+  int b = m_w.cols();
+  int c = input.rows();
+  int d = input.cols();
+  int e = m_b.size();
+
   m_z = (m_w.transpose() * input).colwise() + m_b;
 
   std::cout << "temp:\n" << m_w.transpose() * input << "\nbias\n" << m_b << std::endl;

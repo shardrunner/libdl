@@ -1,4 +1,4 @@
-//#include "BaseLayer.h"
+#include "BaseLayer.h"
 
 #include "ActivationFunction/ActivationFunction.h"
 #include "RandomInitialization/RandomInitialization.h"
@@ -6,28 +6,36 @@
 
 #include <memory>
 
-class ConvolutionalLayer {
+class ConvolutionalLayer : public BaseLayer {
 public:
-  ConvolutionalLayer(int number_input_channel, int number_output_channel, int filter_width, int filter_heigth, std::unique_ptr<ActivationFunction> activation_function, std::unique_ptr<RandomInitialization> random_initialization);
-  void feed_forward(const std::vector<Eigen::MatrixXf> &input);
-  void backpropagation(const std::vector<Eigen::MatrixXf> &a_prev,
-                       const std::vector<Eigen::MatrixXf> &dC_da);
-  const std::vector<Eigen::MatrixXf> &get_forward_output();
-  const std::vector<Eigen::MatrixXf> &get_backward_output();
-  void initialize_parameter();
-  void update_parameter();
+  ConvolutionalLayer(int input_width, int input_height, int number_input_channel, int number_output_channel, int filter_width, int filter_heigth, std::unique_ptr<ActivationFunction> activation_function, std::unique_ptr<RandomInitialization> random_initialization);
+  void feed_forward(const Eigen::MatrixXf &input) override;
+  void backpropagation(const Eigen::MatrixXf &a_prev,
+                       const Eigen::MatrixXf &dC_da) override;
+  const Eigen::MatrixXf &get_forward_output() override;
+  const Eigen::MatrixXf &get_backward_output() override;
+  void initialize_parameter() override;
+  void update_parameter() override;
 
 public:
   Eigen::MatrixXf m_w;
-  float m_b;
-  std::vector<Eigen::MatrixXf> m_a;
-  std::vector<Eigen::MatrixXf> m_z;
-  std::vector<Eigen::MatrixXf> m_dC_dw;
-  std::vector<Eigen::MatrixXf> m_dC_db;
-  std::vector<Eigen::MatrixXf> m_dC_da_prev;
+  Eigen::VectorXf m_b;
+  Eigen::MatrixXf m_a;
+  Eigen::MatrixXf m_z;
+  Eigen::MatrixXf m_dC_dw;
+  Eigen::VectorXf m_dC_db;
+  Eigen::MatrixXf m_dC_da_prev;
+
+  int output_values;
 
   int m_number_input_channel;
   int m_number_output_channel;
+  int m_input_width;
+  int m_input_height;
+  int m_filter_width;
+  int m_filter_height;
+  int output_img_width;
+  int output_img_height;
 
   std::unique_ptr<ActivationFunction> m_activation_function;
   std::unique_ptr<RandomInitialization> m_random_initialization;

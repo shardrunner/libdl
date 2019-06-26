@@ -26,9 +26,12 @@ set(DOXYGEN_GENERATE_HTML YES)
 add_subdirectory(extern/Catch2)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 #add_subdirectory(extern/pybind11)
-add_subdirectory(extern/spdlog)
+#add_subdirectory(extern/spdlog)
 
-#find_package(spdlog CONFIG REQUIRED)
+if(NOT TARGET spdlog)
+    # Stand-alone build
+    find_package(spdlog REQUIRED)
+endif()
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
 find_package(Git QUIET)
@@ -87,6 +90,9 @@ target_compile_features(test PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_compile_definitions(${TEST_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")
+
+# Create logs directory
+#file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
 set_target_properties(NN_lib PROPERTIES
         CXX_STANDARD 17
