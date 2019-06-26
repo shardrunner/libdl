@@ -8,14 +8,21 @@
 #include "ActivationFunction/TanFunction.h"
 #include "Layer/FullyConnectedLayer.h"
 #include "RandomInitialization/SimpleRandomInitialization.h"
+#include "RandomInitialization/XavierInitialization.h"
+#include "RandomInitialization/HetalInitialization.h"
+#include "RandomInitialization/DeterministicInitialization.h"
 #include <Eigen/Core>
 #include <memory>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "LossFunction/MultiClassLoss.h"
+#include "ActivationFunction/IdentityFunction.h"
+#include "ActivationFunction/SoftmaxFunction.h"
+
 
 #include "extern/mnist/include/mnist/mnist_reader.hpp"
 #include "extern/mnist/include/mnist/mnist_utils.hpp"
+#include "omp.h"
 
 
 Eigen::MatrixXf flatten_vec(std::vector<Eigen::MatrixXf> &vec) {
@@ -56,27 +63,27 @@ int main()
   mnist::binarize_dataset(dataset);
 
   std::vector<Eigen::MatrixXf> images;
-  Eigen::Matrix<float,10,100> labels;
+  Eigen::Vector<int, 10> labels;
   labels.setZero();
 
-  for (int i =0; i< 100; i++) {
-    Eigen::Matrix<float, 28,28> image;
+//  #pragma omp parallel for shared(dataset,images,labels)
+  for (int i = 0; i < 10; i++) {
+    Eigen::Matrix<float, 28, 28> image;
     image.setZero();
-    for (int j =0; j< 28; j++) {
-      for (int k =0; k< 28; k++) {
-        //std::cout << (float) unsigned(dataset.training_images[i][j*28+k]) << " ";
-        image(j,k) = (float) unsigned(dataset.training_images[i][j*28+k]);
+    for (int j = 0; j < 28; j++) {
+      for (int k = 0; k < 28; k++) {
+        // std::cout << (float) unsigned(dataset.training_images[i][j*28+k]) << " ";
+        image(j, k) = (float)unsigned(dataset.training_images[i][j * 28 + k]);
       }
-      //std::cout << "\n";
+      // std::cout << "\n";
     }
     images.push_back(image);
-    int num_rep=(int) unsigned(dataset.training_labels[i]);
-    //std::cout << "num: " << num_rep <<std::endl;
-    labels(num_rep,i)=1;
+    // std::cout << "num: " << num_rep <<std::endl;
+    labels(i) = (int)unsigned(dataset.training_labels[i]);
   }
   //labels=labels.transpose();
 
-  std::cout << "Rep:\n " << labels << std::endl;
+  //std::cout << "Rep:\n " << labels << std::endl;
 
   //std::cout << "labels\n" <<labels <<std::endl;
 
@@ -88,16 +95,15 @@ int main()
 
   //Eigen::MatrixXf f = d.cast <float> ();
 
-  Eigen::MatrixXf inp;
-  inp.resize(2,4);
-  Eigen::MatrixXf out;
-  out.resize(1,4);
-  out << 0.0,1.0,1.0,0.0;
-  inp << 0.0,0.0,1.0,1.0,0.0,1.0,0.0,1.0;
+  Eigen::MatrixXf inp2;
+  inp2.resize(2,4);
+  Eigen::Vector<int,4> labels2;
+  labels2 << 0,1,1,0;
+  inp2 << 0.0,0.0,1.0,1.0,0.0,1.0,0.0,1.0;
 
 
 
-  inp=flatten_vec(images);
+  Eigen::MatrixXf inp=flatten_vec(images);
   //std::cout << "dim inp: " << inp.rows() << " & " << inp.cols() << "\ndim label " << labels.rows() << " & " << labels.cols();
 
   //std::vector<Eigen::MatrixXf> test;
@@ -110,20 +116,21 @@ int main()
 
   //init->print(0);
 
-  auto mnet=NeuralNetwork(std::move(bin_loss),10,1);
+  auto mnet=NeuralNetwork(std::move(bin_loss),5,1);
 
-  auto hid_layer=std::make_unique<FullyConnectedLayer>(784,16,std::make_unique<ReluFunction>(), std::make_unique<SimpleRandomInitialization>());
-  auto hid2_layer=std::make_unique<FullyConnectedLayer>(16,16,std::make_unique<ReluFunction>(), std::make_unique<SimpleRandomInitialization>());
-  auto out_layer=std::make_unique<FullyConnectedLayer>(16,10,std::make_unique<SigmoidFunction>(), std::make_unique<SimpleRandomInitialization>());
+  auto hid_layer=std::make_unique<FullyConnectedLayer>(2,3,std::make_unique<ReluFunction>(), std::make_unique<DeterministicInitialization>());
+  //auto hid2_layer=std::make_unique<FullyConnectedLayer>(120,50,std::make_unique<ReluFunction>(), std::make_unique<HetalInitialization>());
+  auto out_layer=std::make_unique<FullyConnectedLayer>(3,2,std::make_unique<SoftmaxFunction>(), std::make_unique<DeterministicInitialization>());
   mnet.add_layer(std::move(hid_layer));
-  mnet.add_layer(std::move(hid2_layer));
+  //mnet.add_layer(std::move(hid2_layer));
   mnet.add_layer(std::move(out_layer));
 
   //spdlog::error("Here 1");
   //init->print(1);
   //spdlog::error("Here 2");
 
-  mnet.train_network(inp,labels);
+  //mnet.train_network(inp.block(0,0,2,5),labels.block(0,0,1,5));
+  mnet.train_network(inp2,labels2);
 
   //NN NeN=NN(2,4,1);
 
@@ -137,8 +144,8 @@ int main()
   test_y << 0,1,1,0;
 
   auto lambda = [](float val) { return val >0.5; };
-  auto res = mnet.test_network(flatten(images[1]));
-  std::cout << "rows " <<res.rows() << "cols "<< res.cols() << "\nres\n " << res;
+  //auto res = mnet.test_network(flatten(images[1]));
+  //std::cout << "rows " <<res.rows() << "cols "<< res.cols() << "\nres\n " << res;
 
   //for (int i=0; i<4; i++) {
     //std::cout << "Result for: "<<test_x.block(0,i,2,1).transpose()<< " -> predicted: " << lambda(o_res_temp(0,0)) << std::endl;

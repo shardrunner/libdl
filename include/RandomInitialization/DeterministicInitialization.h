@@ -5,7 +5,7 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
-class SimpleRandomInitialization : public RandomInitialization {
+class DeterministicInitialization : public RandomInitialization {
 public:
   void initialize(Eigen::Ref<Eigen::MatrixXf> input) const override;
 };

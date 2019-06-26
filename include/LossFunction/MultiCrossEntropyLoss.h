@@ -1,8 +1,8 @@
 #pragma once
 
-#include "LossFunction/LossFunction.h"
+#import "LossFunction/LossFunction.h"
 
-class MultiClassLoss : public LossFunction {
+class MultiCrossEntropyLoss : public LossFunction {
 public:
   float calculate_loss(const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const override;
   void backpropagate(const Eigen::MatrixXf &a_prev,

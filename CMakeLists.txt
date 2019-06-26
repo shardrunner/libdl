@@ -3,9 +3,15 @@ project(MBLib VERSION 0.1
         DESCRIPTION "A deep learning library"
         LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+
 #set(PYBIND11_CPP_STANDARD -std=c++1z)
 set(TEST_TARGET testmain)
 include_directories(include)
+
+find_package(OpenMP REQUIRED)
+find_package(Doxygen)
+
 
 find_package(MNIST PATHS extern/mnist)
 if(NOT MNIST_FOUND)
@@ -14,7 +20,7 @@ endif(NOT MNIST_FOUND)
 
 include_directories(${MNIST_INCLUDE_DIR})
 
-find_package(Doxygen)
+
 
 set(DOXYGEN_GENERATE_HTML YES)
 
@@ -24,7 +30,7 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 #add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
 
-find_package(spdlog CONFIG REQUIRED)
+#find_package(spdlog CONFIG REQUIRED)
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
 find_package(Git QUIET)
@@ -57,10 +63,10 @@ set(HDRS
 #        include/NN.h
         include/ActivationFunction/ActivationFunction.h
         include/ActivationFunction/SigmoidFunction.h
-        include/ActivationFunction/ReluFunction.h include/Layer/BaseLayer.h include/Layer/FullyConnectedLayer.h include/NeuralNetwork.h include/MTensor.h include/RandomInitialization/RandomInitialization.h include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/LossFunction/CrossEntropyLoss.h include/ActivationFunction/IdentityFunction.h include/LossFunction/MultiClassLoss.h)
+        include/ActivationFunction/ReluFunction.h include/Layer/BaseLayer.h include/Layer/FullyConnectedLayer.h include/NeuralNetwork.h include/MTensor.h include/RandomInitialization/RandomInitialization.h include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/LossFunction/CrossEntropyLoss.h include/ActivationFunction/IdentityFunction.h include/LossFunction/MultiClassLoss.h include/LossFunction/MultiCrossEntropyLoss.h include/RandomInitialization/XavierInitialization.h include/RandomInitialization/HetalInitialization.h include/RandomInitialization/DeterministicInitialization.h)
 set(SRCS
 #        src/NN.cpp
-        src/SigmoidFunction.cpp src/ReluFunction.cpp src/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/LossFunction/CrossEntropyLoss.cpp src/ActivationFunction/IdentityFunction.cpp src/LossFunction/MultiClassLoss.cpp)
+        src/SigmoidFunction.cpp src/ReluFunction.cpp src/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/LossFunction/CrossEntropyLoss.cpp src/ActivationFunction/IdentityFunction.cpp src/LossFunction/MultiClassLoss.cpp src/LossFunction/MultiCrossEntropyLoss.cpp src/RandomInitialization/XavierInitialization.cpp src/RandomInitialization/HetalInitialization.cpp src/RandomInitialization/DeterministicInitialization.cpp)
 
 add_library(NN_lib ${SRCS} ${HDRS})
 
@@ -72,7 +78,11 @@ target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
 
 add_executable(${TEST_TARGET} ../main.cpp)
 
-target_link_libraries(testmain NN_lib)
+target_link_libraries(testmain PUBLIC NN_lib OpenMP::OpenMP_CXX)
+
+#if(OpenMP_CXX_FOUND)
+#    target_link_libraries(testmain PUBLIC OpenMP::OpenMP_CXX)
+#endif()
 
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
 target_compile_features(test PUBLIC cxx_std_17)

@@ -5,7 +5,3 @@ void SimpleRandomInitialization::initialize(
   srand((unsigned int) time(0));
   input.setRandom();
 }
-
-void SimpleRandomInitialization::print(int i) {
-  //spdlog::error("Call {} successful",i);
-}

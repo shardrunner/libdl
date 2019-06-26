@@ -11,11 +11,11 @@ void ConvolutionalLayer::feed_forward(const std::vector<Eigen::MatrixXf> &input)
   m_z.clear();
   m_a.clear();
   for (int k =0; k< input.size(); k++) {
-    spdlog::error("before segfault");
+    spdlog::debug("before segfault");
     m_z.emplace_back(Eigen::MatrixXf(input[k].rows() - m_w.rows() + 1,input[k].cols() - m_w.cols() + 1));
-    spdlog::error("after segfault");
+    spdlog::debug("after segfault");
 
-    std::cout << "k: " << k << " size m_z: " <<m_z.size() << "\nelem0\n" <<m_z[0] <<std::endl;
+    //std::cout << "k: " << k << " size m_z: " <<m_z.size() << "\nelem0\n" <<m_z[0] <<std::endl;
 
     // std::cout << "Grenze: " <<input.cols()-m_w.cols() << std::endl;
     for (int i = 0; i < input[k].cols() - m_w.cols() + 1; i++) {

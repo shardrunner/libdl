@@ -20,7 +20,7 @@ void NeuralNetwork::feed_forward(const Eigen::MatrixXf &input) {
 }
 
 
-void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input, const Eigen::MatrixXf &label) {
+void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input, const Eigen::MatrixXi &label) {
   int number_layers=m_layer_list.size();
 
   spdlog::debug("rows output: {}, columns output: {}",m_layer_list[number_layers-1]->get_forward_output().rows(),m_layer_list[number_layers-1]->get_forward_output().cols());
@@ -56,7 +56,7 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function, int it
 
 }
 void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
-                                  const Eigen::MatrixXf &label) {
+                                  const Eigen::MatrixXi &label) {
   int number_layer=m_layer_list.size();
 
   for (int i=0; i < m_iterations; i++) {
@@ -65,9 +65,9 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
     update();
     if (i % m_divisor == 0) {
       auto temp1=m_layer_list[number_layer-1]->get_forward_output();
-      std::cout << "dim: " <<temp1.rows() << " & " << temp1.cols() << "Forward_output\n" << temp1 << "\n";
+      std::cout << /*"dim: " <<temp1.rows() << " & " << temp1.cols() <<*/ "\nForward_output\n" << temp1 << "\n";
       spdlog::debug("tesp");
-      auto temp2=m_loss_function->calculate_loss(); //(temp1, label);
+      auto temp2=m_loss_function->calculate_loss(temp1,label); //(temp1, label);
       std::cout << "Loss at iteration number:" << i << " " << temp2  << std::endl;
     }
 

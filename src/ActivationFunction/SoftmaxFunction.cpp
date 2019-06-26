@@ -1,21 +1,61 @@
 #include "ActivationFunction/SoftmaxFunction.h"
 Eigen::MatrixXf
 SoftmaxFunction::apply_function(const Eigen::MatrixXf &input) const {
-  //TODO Check if correctly applied per column
-  /*auto output=input.array().exp();
-  return (output.rowwise()/output.colwise().sum()).matrix();*/
+  //Substract maximum of each column to lower numerical errors and apply exp
+  //auto output=(input.rowwise()-input.colwise().maxCoeff()).array().exp();
 
-  //auto output = (input.rowwise() - input.colwise().maxCoeff()).array().exp();
-  //auto colsums = output.colwise().sum();
-  //output.array().rowwise() /= colsums;
-  return input;
+  //return (output.rowwise()/output.colwise().sum()).matrix();
+
+  auto Z=input;
+
+  auto A= (Z.rowwise() - Z.colwise().maxCoeff()).array().exp().matrix();
+  Eigen::Array<float, 1, Eigen::Dynamic> colsums = A.colwise().sum();
+  return A.array().rowwise() / colsums;
 
 }
+
 Eigen::MatrixXf
 SoftmaxFunction::apply_derivate(const Eigen::MatrixXf &input) const {
-   return Eigen::MatrixXf();
+  Eigen::MatrixXf softmax_input =apply_function(input);
+  Eigen::MatrixXf output(softmax_input.rows(),softmax_input.cols());
 
-/*  auto temp = np.diag(s)
+  //Eigen::Array<float, 1, Eigen::Dynamic> temp=softmax_input.cwiseProduct(input).colwise().sum();
+  //output=softmax_input.array()*(input.array().rowwise() - temp);
+
+  auto A=softmax_input;
+  auto F=input;
+
+  Eigen::Array<float, 1, Eigen::Dynamic> a_dot_f = A.cwiseProduct(F).colwise().sum();
+  output.array() = A.array() * (F.array().rowwise() - a_dot_f);
+
+
+  return output;
+
+  //RowArray a_dot_f = A.cwiseProduct(F).colwise().sum();
+  //G.array() = A.array() * (F.array().rowwise() - a_dot_f);
+
+//TODO Test other code
+
+/*  for (int i=0; i< softmax_input.rows();i++) {
+    for (int j=0; j< softmax_input.cols(); j++) {
+      if (i==j) {
+        output(i, j) = softmax_input(i) * (1 - softmax_input(i));
+      }
+        else {
+          output(i,j) = -softmax_input(i)*softmax_input(j);
+        }
+      }
+    }
+  return output.colwise().sum();*/
+
+
+/*
+ *     # Reshape the 1-d softmax to 2-d so that np.dot will do the matrix multiplication
+    s = softmax.reshape(-1,1)
+    return np.diagflat(s) - np.dot(s, s.T)
+ *
+ *
+ * auto temp = np.diag(s)
 
   for i in range(len(jacobian_m)):
   for j in range(len(jacobian_m)):
