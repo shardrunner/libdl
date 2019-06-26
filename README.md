@@ -18,11 +18,11 @@ To execute it like this, you can use the `testmain` from the main.cpp.
 ### TODO:
 #### Setup:
 - [ ] Make proper CI Pipline Setup
-- [ ] Smart Pointers vs References/management of objects to hand over
+- [x] Smart Pointers vs References/management of objects to hand over
 - [ ] Fix Doxygen Setup
-- [ ] Add logging setup
-- [ ] More test coverage
+- [ ] Add logging setup with asserts!
+- [x More test coverage
 #### Library:
 - [ ] Add interactivity + feedback
 - [ ] Add convergence checks + on-the-fly adjustments
-- [ ] Add more flexibility/options (cost function, initialization values, activation functions, gradient descent alternatives, network layout)
+- [x] Add more flexibility/options (cost function, initialization values, activation functions, gradient descent alternatives, network layout)
