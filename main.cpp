@@ -112,7 +112,7 @@ int main()
   //test.push_back(inp);
   //std::cout << "flatten: \n" << flatten(test) <<std::endl;
 
-  auto bin_loss = std::make_unique<MultiClassLoss>();
+  auto bin_loss = std::make_unique<BinaryCrossEntropyLoss>();
   auto sigmoid = std::make_unique<SigmoidFunction>();
   auto init = std::make_unique<SimpleRandomInitialization>();
 
@@ -122,7 +122,7 @@ int main()
 
   auto hid_layer=std::make_unique<FullyConnectedLayer>(2,3,std::make_unique<IdentityFunction>(), std::make_unique<DeterministicInitialization>());
   //auto hid2_layer=std::make_unique<FullyConnectedLayer>(120,50,std::make_unique<ReluFunction>(), std::make_unique<HetalInitialization>());
-  auto out_layer=std::make_unique<FullyConnectedLayer>(3,2,std::make_unique<SigmoidFunction>(), std::make_unique<DeterministicInitialization>());
+  auto out_layer=std::make_unique<FullyConnectedLayer>(3,1,std::make_unique<SigmoidFunction>(), std::make_unique<DeterministicInitialization>());
   mnet.add_layer(std::move(hid_layer));
   //mnet.add_layer(std::move(hid2_layer));
   mnet.add_layer(std::move(out_layer));
