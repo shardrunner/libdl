@@ -20,7 +20,9 @@ Eigen::MatrixXf ReluFunction::apply_function(const Eigen::MatrixXf &input) const
   return output;
 }
 
-Eigen::MatrixXf ReluFunction::apply_derivate(const Eigen::MatrixXf &input) const {
+Eigen::MatrixXf
+ReluFunction::apply_derivate(const Eigen::MatrixXf &m_a,
+                             const Eigen::MatrixXf &dC_da) const {
   //-1 same as in apply_function
-  return input.unaryExpr([this](float x) -> float { if (x>0.0) {return 1.0;} else {return (-1)*leak_factor*x; }});
+  return (m_a.unaryExpr([this](float x) -> float { if (x>0.0) {return 1.0;} else {return (-1)*leak_factor*x; }}).array()*dC_da.array()).matrix();
 }

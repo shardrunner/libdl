@@ -1,4 +1,5 @@
 #include "ActivationFunction/SoftmaxFunction.h"
+#include <iostream>
 Eigen::MatrixXf
 SoftmaxFunction::apply_function(const Eigen::MatrixXf &input) const {
   //Substract maximum of each column to lower numerical errors and apply exp
@@ -15,19 +16,19 @@ SoftmaxFunction::apply_function(const Eigen::MatrixXf &input) const {
 }
 
 Eigen::MatrixXf
-SoftmaxFunction::apply_derivate(const Eigen::MatrixXf &input) const {
-  Eigen::MatrixXf softmax_input =apply_function(input);
+SoftmaxFunction::apply_derivate(const Eigen::MatrixXf &m_a,
+                                const Eigen::MatrixXf &dC_da) const {
+  Eigen::MatrixXf softmax_input =apply_function(m_a);
   Eigen::MatrixXf output(softmax_input.rows(),softmax_input.cols());
 
   //Eigen::Array<float, 1, Eigen::Dynamic> temp=softmax_input.cwiseProduct(input).colwise().sum();
   //output=softmax_input.array()*(input.array().rowwise() - temp);
 
-  auto A=softmax_input;
-  auto F=input;
+  auto F=dC_da;
+  auto A= m_a;
 
   Eigen::Array<float, 1, Eigen::Dynamic> a_dot_f = A.cwiseProduct(F).colwise().sum();
   output.array() = A.array() * (F.array().rowwise() - a_dot_f);
-
 
   return output;
 

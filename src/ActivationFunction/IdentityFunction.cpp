@@ -4,6 +4,7 @@ IdentityFunction::apply_function(const Eigen::MatrixXf &input) const {
   return input;
 }
 Eigen::MatrixXf
-IdentityFunction::apply_derivate(const Eigen::MatrixXf &input) const {
-  return Eigen::MatrixXf::Constant(input.rows(),input.cols(),1);
+IdentityFunction::apply_derivate(const Eigen::MatrixXf &m_a,
+                                 const Eigen::MatrixXf &dC_da) const {
+  return dC_da;
 }

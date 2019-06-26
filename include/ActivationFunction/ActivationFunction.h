@@ -19,8 +19,10 @@ public:
 
   /**
    * Applies the derivate of the activation function to the input matrix
-   * @param input The input matrix
+   * @param m_a The input matrix
    */
-  virtual Eigen::MatrixXf apply_derivate(const Eigen::MatrixXf &input) const = 0;
+  virtual Eigen::MatrixXf
+  apply_derivate(const Eigen::MatrixXf &m_a,
+                 const Eigen::MatrixXf &dC_da) const = 0;
 
 };

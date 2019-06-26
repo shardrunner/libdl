@@ -32,11 +32,16 @@ float MultiClassLoss::calculate_loss(const Eigen::MatrixXf &a_prev, const Eigen:
     float temp=a_prev(label(i),i);
     error-=std::log(temp);
   }
+
   return error/label.size();
+
+
 
 }
 void MultiClassLoss::backpropagate(const Eigen::MatrixXf &a_prev,
                                    const Eigen::VectorXi &label) {
+  std::cout << "\nLoss evaluation: \nA_prev:\n" << a_prev << "\nlabel\n" <<label.transpose()<<std::endl;
+
   // Check dimension
   const int nobs = a_prev.cols();
   const int nclass = a_prev.rows();
@@ -57,6 +62,8 @@ void MultiClassLoss::backpropagate(const Eigen::MatrixXf &a_prev,
   {
     temp_loss(label(i), i) = float(-1.0) / a_prev.coeff(label(i), i);
   }
+
+  std::cout << "Loss derivative:\n" << temp_loss << std::endl;
 }
 const Eigen::MatrixXf &MultiClassLoss::get_backpropagate() const {
   return temp_loss;

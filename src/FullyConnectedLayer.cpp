@@ -59,7 +59,7 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev, const E
 
   const int number_training_samples=a_prev.cols();
   //calcualate intermediate value dC/dz
-  Eigen::MatrixXf dC_dz=(m_activation_function->apply_derivate(m_a).array()*dC_da.array()).matrix();
+  Eigen::MatrixXf dC_dz=m_activation_function->apply_derivate(m_a, dC_da);
 
   //normalize sum over changes/derivatives from all samples, by dividing by number of samples
   m_dC_dw=a_prev*dC_dz.transpose()/number_training_samples;
@@ -89,7 +89,7 @@ void FullyConnectedLayer::update_parameter() {
   m_w = m_w - 0.3 * m_dC_dw;
   m_b = m_b - 0.3 * m_dC_db;
 
-  std::cout << "After update: dw\n" << m_w << "\ndb\n" << m_b << std::endl;
+  std::cout << "After update: w\n" << m_w << "\nb\n" << m_b << std::endl;
 }
 
 const Eigen::MatrixXf &FullyConnectedLayer::get_forward_output() {

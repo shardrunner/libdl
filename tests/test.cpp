@@ -90,7 +90,7 @@ SCENARIO("Test activation functions") {
     THEN("The derivate of the sigmoid function should be correctly applied") {
       result << 6.64805576e-03, 1.23374775e-04, 2.49376040e-01, 0.00000000e+00,
           4.51766569e-02, 2.50000000e-01;
-      auto res_sigmoid = sigmoidFun.apply_derivate(input);
+      auto res_sigmoid = sigmoidFun.apply_derivate(input, <#initializer #>);
       REQUIRE(res_sigmoid.isApprox(result));
     }
   }
@@ -106,7 +106,7 @@ SCENARIO("Test activation functions") {
     }
     THEN("The derivative of the relu function should be correctly applied") {
       result << 1.0, 1.0, 1.0, 1.0, 0.0, 0.0;
-      auto res = relu_func.apply_derivate(input);
+      auto res = relu_func.apply_derivate(input, <#initializer #>);
       //      std::cout << "Result: " << result << std::endl;
       //      std::cout << "Red: " << res << std::endl;
       //      std::cout << "Diff " << res-result << std::endl;
@@ -129,7 +129,7 @@ SCENARIO("Test activation functions") {
       soft_in << 1.0, 2.0;
       Eigen::Matrix<float, 2, 1> soft_res;
       soft_res << -0.196612, 0.196612;
-      auto res = softmax.apply_derivate(soft_in);
+      auto res = softmax.apply_derivate(soft_in, <#initializer #>);
       REQUIRE(res.isApprox(soft_res));
     }
   }

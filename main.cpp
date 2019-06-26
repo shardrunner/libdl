@@ -102,7 +102,7 @@ int main()
   labels2 << 0,1,1,0;
   inp2 << 0.0,0.0,1.0,1.0,0.0,1.0,0.0,1.0;
 
-  std::cout << "input\n"<<inp2<< "\nout\n" << labels2 << std::endl;
+  //std::cout << "input\n"<<inp2<< "\nout\n" << labels2 << std::endl;
 
 
   Eigen::MatrixXf inp=flatten_vec(images);
@@ -118,11 +118,11 @@ int main()
 
   //init->print(0);
 
-  auto mnet=NeuralNetwork(std::move(bin_loss),5,1);
+  auto mnet=NeuralNetwork(std::move(bin_loss),2,1);
 
-  auto hid_layer=std::make_unique<FullyConnectedLayer>(2,3,std::make_unique<ReluFunction>(), std::make_unique<DeterministicInitialization>());
+  auto hid_layer=std::make_unique<FullyConnectedLayer>(2,3,std::make_unique<IdentityFunction>(), std::make_unique<DeterministicInitialization>());
   //auto hid2_layer=std::make_unique<FullyConnectedLayer>(120,50,std::make_unique<ReluFunction>(), std::make_unique<HetalInitialization>());
-  auto out_layer=std::make_unique<FullyConnectedLayer>(3,2,std::make_unique<SoftmaxFunction>(), std::make_unique<DeterministicInitialization>());
+  auto out_layer=std::make_unique<FullyConnectedLayer>(3,2,std::make_unique<SigmoidFunction>(), std::make_unique<DeterministicInitialization>());
   mnet.add_layer(std::move(hid_layer));
   //mnet.add_layer(std::move(hid2_layer));
   mnet.add_layer(std::move(out_layer));

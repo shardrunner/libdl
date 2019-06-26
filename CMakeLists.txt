@@ -20,8 +20,6 @@ endif(NOT MNIST_FOUND)
 
 include_directories(${MNIST_INCLUDE_DIR})
 
-
-
 set(DOXYGEN_GENERATE_HTML YES)
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
