@@ -18,6 +18,7 @@
 #include "LossFunction/MultiClassLoss.h"
 #include "ActivationFunction/IdentityFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
+#include <vector>
 
 
 #include "extern/mnist/include/mnist/mnist_reader.hpp"
@@ -101,6 +102,7 @@ int main()
   labels2 << 0,1,1,0;
   inp2 << 0.0,0.0,1.0,1.0,0.0,1.0,0.0,1.0;
 
+  std::cout << "input\n"<<inp2<< "\nout\n" << labels2 << std::endl;
 
 
   Eigen::MatrixXf inp=flatten_vec(images);

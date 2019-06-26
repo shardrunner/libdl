@@ -26,10 +26,5 @@ void XavierInitialization::initialize(Eigen::Ref<Eigen::MatrixXf> input) const {
       input(i, j) = distribution(generator);
     }
   }
-
   //auto temp=input.unaryExpr([&] (float x) {return distribution(generator);});
-
-
-
-
 }
