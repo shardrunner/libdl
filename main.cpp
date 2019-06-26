@@ -113,20 +113,18 @@ int main()
   //test.push_back(inp);
   //std::cout << "flatten: \n" << flatten(test) <<std::endl;
 
-  auto bin_loss = std::make_unique<BinaryCrossEntropyLoss>();
-  auto sigmoid = std::make_unique<SigmoidFunction>();
-  auto init = std::make_unique<SimpleRandomInitialization>();
+  auto bin_loss = std::make_unique<MultiClassLoss>();
 
   //init->print(0);
 
-  auto mnet=NeuralNetwork(std::move(bin_loss),2,1);
+  auto mnet=NeuralNetwork(std::move(bin_loss),10,1);
 
 
   Eigen::MatrixXf img;
   img.resize(9,2);
   img.col(0) << 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9;
   img.col(1) << 1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8;
-  img.col(0) <<0,0,0,0,0,0,0,0,0;
+  //img.col(0) <<0,0,0,0,0,0,0,0,0;
   Eigen::VectorXi labels3;
   labels3.resize(2);
   labels3 << 1,0;
@@ -140,10 +138,10 @@ int main()
   //std::cout << "flatten:\n " << temp << std::endl;
 
   auto hid_layer=std::make_unique<ConvolutionalLayer>(3,3,1,1,2,2,std::make_unique<ReluFunction>(), std::make_unique<DeterministicInitialization>());
-  //auto hid2_layer=std::make_unique<FullyConnectedLayer>(32,32,std::make_unique<ReluFunction>(), std::make_unique<HetalInitialization>());
-  auto out_layer=std::make_unique<FullyConnectedLayer>(4,1,std::make_unique<SigmoidFunction>(), std::make_unique<DeterministicInitialization>());
+  auto hid2_layer=std::make_unique<FullyConnectedLayer>(4,6,std::make_unique<SigmoidFunction>(), std::make_unique<DeterministicInitialization>());
+  auto out_layer=std::make_unique<FullyConnectedLayer>(6,2,std::make_unique<SoftmaxFunction>(), std::make_unique<DeterministicInitialization>());
   mnet.add_layer(std::move(hid_layer));
-  //mnet.add_layer(std::move(hid2_layer));
+  mnet.add_layer(std::move(hid2_layer));
   mnet.add_layer(std::move(out_layer));
 
   //spdlog::error("Here 1");
