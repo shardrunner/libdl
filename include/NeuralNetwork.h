@@ -10,11 +10,11 @@
 
 class NeuralNetwork {
 public:
-  NeuralNetwork(std::unique_ptr<LossFunction> loss_function, int iterations, int divisor);
+  NeuralNetwork(std::unique_ptr<LossFunction> loss_function);
   void add_layer(std::unique_ptr<BaseLayer> layer);
-  void train_network(const Eigen::MatrixXf &input, const Eigen::MatrixXi &label);
+  void train_network(const Eigen::MatrixXf &input, const Eigen::MatrixXi &label,int batch_size, int iterations, int divisor);
   const Eigen::MatrixXf &test_network(const Eigen::MatrixXf &input);
-  Eigen::MatrixXf get_result();
+  Eigen::MatrixXi calc_accuracy(const Eigen::MatrixXf &input,const Eigen::MatrixXi &label);
 
 private:
   std::vector<std::unique_ptr<BaseLayer>> m_layer_list;
@@ -24,6 +24,4 @@ private:
   void feed_forward(const Eigen::MatrixXf &input);
   void backpropagation(const Eigen::MatrixXf &input, const Eigen::MatrixXi &label);
   void update();
-  int m_iterations;
-  int m_divisor;
 };

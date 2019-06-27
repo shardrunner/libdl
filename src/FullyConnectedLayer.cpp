@@ -26,15 +26,15 @@ void FullyConnectedLayer::feed_forward(const Eigen::MatrixXf &input) {
 
   m_z = (m_w.transpose() * input).colwise() + m_b;
 
-  std::cout << "temp:\n" << m_w.transpose() * input << "\nbias\n" << m_b << std::endl;
+  //std::cout << "temp:\n" << m_w.transpose() * input << "\nbias\n" << m_b << std::endl;
 
   m_a=m_activation_function->apply_function(m_z);
 
-  std::cout << "prev_layer\n" << input << std::endl;
+  //std::cout << "prev_layer\n" << input << std::endl;
 
-  std::cout << "Z_forward\n" << m_z << std::endl;
+  //std::cout << "Z_forward\n" << m_z << std::endl;
 
-  std::cout << "Activated_forward\n" << m_a << std::endl;
+  //std::cout << "Activated_forward\n" << m_a << std::endl;
 }
 void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev, const Eigen::MatrixXf &dC_da) {
   /*
@@ -77,7 +77,7 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev, const E
   m_dC_da_prev=m_w*dC_dz;
   //std::cout<<"dC_dw: " << m_dC_dw << "\ndC_db: " << m_dC_db << "\n\n+++++++\n" <<std::endl;//dC_dw2: "<<diff_h_layer << "\ndC_db2: " <<diff_h_bias << "\n-----------------------------------------"<<std::endl;
 
-  std::cout << "Backward_prop\n" << m_dC_da_prev << std::endl;
+  //std::cout << "Backward_prop\n" << m_dC_da_prev << std::endl;
 }
 
 void FullyConnectedLayer::initialize_parameter() {
@@ -87,7 +87,7 @@ void FullyConnectedLayer::initialize_parameter() {
   m_b.setZero();
   //m_w.setRandom();
   //m_b.setRandom();
-  std::cout << "init_Randos\n" << m_w << std::endl;
+  //std::cout << "init_Randos\n" << m_w << std::endl;
 }
 
 //TODO: Use optimizer class
@@ -95,7 +95,7 @@ void FullyConnectedLayer::update_parameter() {
   m_w = m_w - 0.3 * m_dC_dw;
   m_b = m_b - 0.3 * m_dC_db;
 
-  std::cout << "After update: w\n" << m_w << "\nb\n" << m_b << std::endl;
+  //std::cout << "After update: w\n" << m_w << "\nb\n" << m_b << std::endl;
 }
 
 const Eigen::MatrixXf &FullyConnectedLayer::get_forward_output() {

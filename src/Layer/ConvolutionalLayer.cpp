@@ -94,10 +94,10 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
 
   m_a = m_activation_function->apply_function(m_z);
 
-  std::cout << "Conv Feed Forward: Rando weights\n"
+  /*std::cout << "Conv Feed Forward: Rando weights\n"
             << m_w << "\ninput:\n"
             << input << "\nOutput\n"
-            << m_a << std::endl;
+            << m_a << std::endl;*/
 }
 void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
                                          const Eigen::MatrixXf &dC_da) {
@@ -237,11 +237,11 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
 
 
 
-  std::cout << "Conv Backprop: a_prev:\n"
+  /*std::cout << "Conv Backprop: a_prev:\n"
             << a_prev << "\ndC_da\n"
             << dC_da << "\nm_dC_dw\n"
             << m_dC_dw << "\nm_dC_da_prev\n"
-            << m_dC_da_prev << std::endl;
+            << m_dC_da_prev << std::endl;*/
   // spdlog::set_level(spdlog::level::warn);
 }
 
