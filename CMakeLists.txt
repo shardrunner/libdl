@@ -17,7 +17,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(TEST_TARGET testmain)
 include_directories(include)
 
-find_package(OpenMP REQUIRED)
+#find_package(OpenMP REQUIRED)
 find_package(Doxygen)
 
 
@@ -36,10 +36,10 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 #add_subdirectory(extern/pybind11)
 #add_subdirectory(extern/spdlog)
 
-if(NOT TARGET spdlog)
+#if(NOT TARGET spdlog)
     # Stand-alone build
-    find_package(spdlog REQUIRED)
-endif()
+    #find_package(spdlog REQUIRED)
+#endif()
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
 find_package(Git QUIET)
