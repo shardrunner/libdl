@@ -3,18 +3,26 @@
 Build instructions:
 
 git clone git@gitlab.lrz.de:brunner/libdl.git
+
 cd libdl
+
 mkdir build
+
 cd build
+
 cmake ../.
+
 make
+
 ./testmain
 
 The network is also executed and shown on the clang CI runner and the result with the default configuration can be seen there as well (e.g. https://gitlab.lrz.de/brunner/libdl/-/jobs/550453).
 
+Hopefully it builds on MacOS as well, but I couldn't test it.
+
 The network currently takes 2000 training mnist images and 100 images for testing, It goes through 75 iterations. The training takes under 2 minutes for me.
 The accuracy and the error is sometimes a bit wonky, goes up and down or is on a plateau, and it might need some tries (<5) to get a good seed and a accuracy > 0.6. The accuracy can be found above the printed testing images.
-The cause for the wonky convergence might be the SGD as gradient descent function or the simple network architecture.
+The cause for the wonky convergence might be the SGD as gradient descent function or the simple network architecture. I will try to address this for the final project.
 
 The library itself is somewhat modular and most of the implementations already work. The convolution layer however is still limited to one input and output channel.
 
