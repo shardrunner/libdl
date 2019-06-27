@@ -6,7 +6,10 @@
 
 class MaxPoolLayer : public BaseLayer {
 public:
-  MaxPoolLayer(int number_input_channel, int number_output_channel, int filter_width, int filter_heigth, std::unique_ptr<ActivationFunction> activation_function, std::unique_ptr<RandomInitialization> random_initialization);
+  MaxPoolLayer(int number_input_channel, int number_output_channel,
+               int filter_width, int filter_heigth,
+               std::unique_ptr<ActivationFunction> activation_function,
+               std::unique_ptr<RandomInitialization> random_initialization);
   void feed_forward(const Eigen::MatrixXf &input) override;
   void backpropagation(const Eigen::MatrixXf &a_prev,
                        const Eigen::MatrixXf &dC_da) override;

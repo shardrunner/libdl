@@ -15,25 +15,27 @@ void NeuralNetwork::feed_forward(const Eigen::MatrixXf &input) {
     m_layer_list[i]->feed_forward(m_layer_list[i - 1]->get_forward_output());
   }
   // std::cout << "\nOutput:
-  // \n"<<m_layer_list[m_layer_list.size()-1]->get_forward_output() << std::endl;
+  // \n"<<m_layer_list[m_layer_list.size()-1]->get_forward_output() <<
+  // std::endl;
 }
 
 void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input,
                                     const Eigen::MatrixXi &label) {
   int number_layers = m_layer_list.size();
 
-//  spdlog::debug("rows output: {}, columns output: {}",
-//                m_layer_list[number_layers - 1]->get_forward_output().rows(),
-//                m_layer_list[number_layers - 1]->get_forward_output().cols());
-//  spdlog::debug("rows label: {}, columns label: {}", label.rows(),
-//                label.cols());
-//  spdlog::debug("before segfault");
+  //  spdlog::debug("rows output: {}, columns output: {}",
+  //                m_layer_list[number_layers -
+  //                1]->get_forward_output().rows(), m_layer_list[number_layers
+  //                - 1]->get_forward_output().cols());
+  //  spdlog::debug("rows label: {}, columns label: {}", label.rows(),
+  //                label.cols());
+  //  spdlog::debug("before segfault");
   auto temp = (m_layer_list[number_layers - 1]->get_forward_output()).eval();
   // std::cout << label.eval();
   // std::cout << temp.eval();
-  //spdlog::debug("temp");
+  // spdlog::debug("temp");
   m_loss_function->backpropagate(temp, label);
-  //spdlog::debug("after segfault");
+  // spdlog::debug("after segfault");
 
   if (number_layers == 1) {
     m_layer_list[0]->backpropagation(input,
@@ -81,31 +83,33 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
   perm_input = perm_input * perm; // permute columns
   // TODO change if label becomes row
 
-  perm_label = perm*perm_label;
+  perm_label = perm * perm_label;
   // A_perm = perm * A; // permute rows
 
   // std::cout << "orig input\n" << input.colwise().sum() << "\nnew input\n" <<
   // perm_input.colwise().sum() << "\norig label\n" << label << "\nnew label\n"
   // << perm_label <<std::endl;
 
-  int num_batches=(int)perm_input.cols() / batch_size;
-  if (num_batches<0) {
-    num_batches=1;
+  int num_batches = (int)perm_input.cols() / batch_size;
+  if (num_batches < 0) {
+    num_batches = 1;
   }
 
   float loss = 0.0;
   for (int i = 0; i < iterations; i++) {
     for (int j = 0; j < num_batches; j++) {
-      if (num_batches!=1) {
-        auto input_batch =perm_input.block(0, j * batch_size, perm_input.rows(), batch_size);
+      if (num_batches != 1) {
+        auto input_batch =
+            perm_input.block(0, j * batch_size, perm_input.rows(), batch_size);
         auto label_batch =
             perm_label.block(j * batch_size, 0, batch_size, perm_label.cols());
-        //std::cout << "input \n" << input.colwise().sum() << "\ninput batch\n" << input_batch.colwise().sum() <<"\nlabel\n" << label << "\nlabel batch\n" << label_batch << std::endl;
-        //std::cout << "Batch " << j << " of " <<  num_batches<<" in iter " << i << std::endl;
-      }
-      else {
-        auto input_batch=input;
-        auto label_batch=label;
+        // std::cout << "input \n" << input.colwise().sum() << "\ninput batch\n"
+        // << input_batch.colwise().sum() <<"\nlabel\n" << label << "\nlabel
+        // batch\n" << label_batch << std::endl; std::cout << "Batch " << j << "
+        // of " <<  num_batches<<" in iter " << i << std::endl;
+      } else {
+        auto input_batch = input;
+        auto label_batch = label;
       }
       feed_forward(input);
       backpropagation(input, label);
@@ -115,7 +119,7 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
             m_layer_list[m_layer_list.size() - 1]->get_forward_output();
         // std::cout << /*"dim: " <<temp1.rows() << " & " << temp1.cols() <<*/
         // "\nForward_output\n" << temp1 << "\n";
-//        spdlog::debug("tesp");
+        //        spdlog::debug("tesp");
         auto temp2 =
             m_loss_function->calculate_loss(temp1, label); //(temp1, label);
         std::cout << "Loss batch " << j << " of iteration number " << i << ": "
@@ -132,7 +136,7 @@ NeuralNetwork::test_network(const Eigen::MatrixXf &input) {
 }
 
 Eigen::MatrixXi NeuralNetwork::calc_accuracy(const Eigen::MatrixXf &input,
-                                   const Eigen::MatrixXi &label) {
+                                             const Eigen::MatrixXi &label) {
   feed_forward(input);
   auto result = m_layer_list[m_layer_list.size() - 1]->get_forward_output();
 
@@ -142,7 +146,7 @@ Eigen::MatrixXi NeuralNetwork::calc_accuracy(const Eigen::MatrixXf &input,
   Eigen::MatrixXf::Index pos_max;
   for (int i = 0; i < result.cols(); i++) {
     result.col(i).maxCoeff(&pos_max);
-    predictions(i)=(int) pos_max;
+    predictions(i) = (int)pos_max;
     if ((int)pos_max == label(i)) {
       correct += 1;
     }

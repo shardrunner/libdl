@@ -12,17 +12,16 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
   // std::cout << "input:\n" << input[0] << "\nsize: " <<input.size();
   // std::cout << "rows:" << input[0].rows() << " m_w rows(): " <<m_w.rows();
 
-  //std::stringstream ss;
-  //ss << input;
+  // std::stringstream ss;
+  // ss << input;
   // temp << input;
-  //spdlog::error("Input:\n{}", ss.str());
+  // spdlog::error("Input:\n{}", ss.str());
 
   m_a.resize(output_values, input.cols());
   m_z.resize(output_values, input.cols());
   m_z.setZero();
 
-
-  //TODO fix multiple input and output channels, for 1x1 the result is correct
+  // TODO fix multiple input and output channels, for 1x1 the result is correct
   // go through all samples
   for (int k = 0; k < input.cols(); k++) {
     // one filter per output channel
@@ -99,7 +98,7 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
 }
 void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
                                          const Eigen::MatrixXf &dC_da) {
-  m_dC_da_prev.resize(a_prev.rows(),a_prev.cols());
+  m_dC_da_prev.resize(a_prev.rows(), a_prev.cols());
   m_dC_dw.setZero();
   m_dC_da_prev.setZero();
 
@@ -112,8 +111,7 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
   // for (int i =0; i<a_prev.cols()-m_w.cols(); i++) {
   //  for (int j=0; j<a_prev.rows()-m_w.rows(); j++) {
 
-
-  //std::cout << "a_prev:\n" << a_prev << "\ndC_dz\n" << dC_dz << std::endl;
+  // std::cout << "a_prev:\n" << a_prev << "\ndC_dz\n" << dC_dz << std::endl;
   // go through all samples
   for (int k = 0; k < a_prev.cols(); k++) {
     // one filter per output channel
@@ -128,18 +126,23 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
             for (int l = 0; l < output_img_height; l++) {
               int row_input = j + (m_input_width * (i + l)) +
                               (m_input_width * m_input_height * m);
-              int row_filter=j+(m_filter_width*i)+(m_filter_width*m_filter_height*m)+(m_filter_width*m_filter_height*m_number_input_channel*n);
+              int row_filter = j + (m_filter_width * i) +
+                               (m_filter_width * m_filter_height * m) +
+                               (m_filter_width * m_filter_height *
+                                m_number_input_channel * n);
 
-              int filter_channel=output_img_width*l+(output_img_height*output_img_width)*n;
+              int filter_channel = output_img_width * l +
+                                   (output_img_height * output_img_width) * n;
 
-              auto block1=a_prev.block(row_input, k, output_img_width, 1);
-              auto block2=dC_dz.block(filter_channel,k,output_img_width,1);
+              auto block1 = a_prev.block(row_input, k, output_img_width, 1);
+              auto block2 = dC_dz.block(filter_channel, k, output_img_width, 1);
 
+              m_dC_dw(row_filter, 0) += (block1.array() * block2.array()).sum();
 
-
-              m_dC_dw(row_filter,0)+=(block1.array()*block2.array()).sum();
-
-              //std::cout << "row input: " <<row_input << " row filter " << row_filter << " column " << k << "\nblock1:\n" << block1 << "\nblock2\n" << block2 << "\nsum\n" << m_dC_dw(row_filter,0) << std::endl;
+              // std::cout << "row input: " <<row_input << " row filter " <<
+              // row_filter << " column " << k << "\nblock1:\n" << block1 <<
+              // "\nblock2\n" << block2 << "\nsum\n" << m_dC_dw(row_filter,0) <<
+              // std::endl;
 
               // add bias
             }
@@ -149,8 +152,8 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     }
   }
 
-  //average it out by dividing by number of samples
-  m_dC_dw=m_dC_dw/a_prev.cols();
+  // average it out by dividing by number of samples
+  m_dC_dw = m_dC_dw / a_prev.cols();
 
   /*  for (int k = 0; k < a_prev.size(); k++) {
 
@@ -170,29 +173,31 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
           // + m_b(0);
         }
       }*/
-  //TODO implement for multi in and output channel
+  // TODO implement for multi in and output channel
   Eigen::MatrixXf filter_flip;
-  filter_flip.resize(m_filter_width,m_filter_height);
-  //std::cout << "filter\n" <<m_w<<std::endl;
-  for (int i=0; i<m_filter_height;i++) {
-    filter_flip.row(i)=m_w.block(i*m_filter_width,0,m_filter_width,1).transpose();
-    //std::cout <<  "\nfilter flip\n" << filter_flip << "\nblock\n" <<m_w.block(i*m_filter_width,0,m_filter_width,1)<<std::endl;
+  filter_flip.resize(m_filter_width, m_filter_height);
+  // std::cout << "filter\n" <<m_w<<std::endl;
+  for (int i = 0; i < m_filter_height; i++) {
+    filter_flip.row(i) =
+        m_w.block(i * m_filter_width, 0, m_filter_width, 1).transpose();
+    // std::cout <<  "\nfilter flip\n" << filter_flip << "\nblock\n"
+    // <<m_w.block(i*m_filter_width,0,m_filter_width,1)<<std::endl;
   }
   filter_flip = (filter_flip.colwise().reverse()).eval();
-  //std::cout << "After first reverse\n" << filter_flip << std::endl;
+  // std::cout << "After first reverse\n" << filter_flip << std::endl;
   filter_flip = (filter_flip.rowwise().reverse()).eval();
 
-  //std::cout << "flipped filter "<<filter_flip << std::endl;
+  // std::cout << "flipped filter "<<filter_flip << std::endl;
 
   // TODO make more pretty
   // construct bigger matrix with zero padding size 2*(m_dC_da_prev_dim-1) for
   // easier full convolution
-  Eigen::MatrixXf temp_filter(filter_flip.rows() + 2 * (output_img_height- 1),
+  Eigen::MatrixXf temp_filter(filter_flip.rows() + 2 * (output_img_height - 1),
                               filter_flip.cols() + 2 * (output_img_width - 1));
   temp_filter.setZero();
 
-  temp_filter.block(output_img_height - 1, output_img_width - 1, filter_flip.rows(),
-                    filter_flip.cols()) = filter_flip;
+  temp_filter.block(output_img_height - 1, output_img_width - 1,
+                    filter_flip.rows(), filter_flip.cols()) = filter_flip;
 
   // std::cout << "dC_dz: \n" <<filter_flip << "\ntemp_filter: \n" <<
   // temp_filter << std::endl;
@@ -201,7 +206,8 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
   // << "\nflipped filter: \n" <<filter_flip << "\nm_dC_dw: \n" <<m_dC_dw <<
   // std::endl;
 
-  //std::cout << "dC_dz\n" << dC_dz << "\nfilter_temp\n" << temp_filter << std::endl;//"\nfilter\n" << m_w << std::endl;
+  // std::cout << "dC_dz\n" << dC_dz << "\nfilter_temp\n" << temp_filter <<
+  // std::endl;//"\nfilter\n" << m_w << std::endl;
 
   for (int k = 0; k < a_prev.cols(); k++) {
     for (int i = 0; i < m_input_height; i++) {
@@ -212,28 +218,29 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
         // <<(temp_filter.block(i,j,dC_da.rows(),dC_da.cols()).array()*dC_dz.array()).sum()
         // << "\naddress: " << i << "&" <<j << std::endl;
         for (int l = 0; l < output_img_height; l++) {
-          int row_dC_da_prev=j+i*m_input_width;
-          int row_dC_dz=l * output_img_width;
+          int row_dC_da_prev = j + i * m_input_width;
+          int row_dC_dz = l * output_img_width;
 
-
-          auto block1 = temp_filter.block(i+l, j, 1, output_img_width).transpose();
+          auto block1 =
+              temp_filter.block(i + l, j, 1, output_img_width).transpose();
           auto block2 = dC_dz.block(row_dC_dz, k, output_img_width, 1);
 
-          m_dC_da_prev(m_dC_da_prev.rows()-row_dC_da_prev-1, k)+=(block1.array()*block2.array()).sum();
+          m_dC_da_prev(m_dC_da_prev.rows() - row_dC_da_prev - 1, k) +=
+              (block1.array() * block2.array()).sum();
 
-          //std::cout << "row_dC_da_prev " <<row_dC_da_prev << " row dC_dz " << row_dC_dz << " column " << k << "\nblock1:\n" << block1.transpose() << "\nblock2\n" << block2 << "\nsum\n" <<  m_dC_da_prev(row_dC_da_prev, k) << std::endl;
+          // std::cout << "row_dC_da_prev " <<row_dC_da_prev << " row dC_dz " <<
+          // row_dC_dz << " column " << k << "\nblock1:\n" << block1.transpose()
+          // << "\nblock2\n" << block2 << "\nsum\n" <<
+          // m_dC_da_prev(row_dC_da_prev, k) << std::endl;
         }
 
-       // m_dC_da_prev[k](i, j) =
+        // m_dC_da_prev[k](i, j) =
         //   (temp_filter.block(i, j, dC_dz.rows(), dC_dz.cols()).array() *
-          //   dC_dz.array())
-            //    .sum();
+        //   dC_dz.array())
+        //    .sum();
       }
     }
   }
-
-
-
 
   /*std::cout << "Conv Backprop: a_prev:\n"
             << a_prev << "\ndC_da\n"
@@ -258,7 +265,7 @@ void ConvolutionalLayer::update_parameter() {
   }
   temp = (temp.array() / m_dC_dw.size()).matrix();*/
   m_w = m_w - 0.3 * m_dC_dw;
-  //m_b = m_b - 0.3 * m_dC_db;
+  // m_b = m_b - 0.3 * m_dC_db;
 }
 ConvolutionalLayer::ConvolutionalLayer(
     int input_width, int input_height, int number_input_channel,
@@ -277,7 +284,8 @@ ConvolutionalLayer::ConvolutionalLayer(
   output_values = output_img_width * output_img_height * number_output_channel;
 
   m_w.resize(m_filter_height * m_filter_width * m_number_input_channel *
-             m_number_output_channel,1);
+                 m_number_output_channel,
+             1);
   m_dC_dw.resize(m_w.rows(), m_w.cols());
 
   m_b.resize(number_output_channel);

@@ -2,7 +2,7 @@
 
 #include "ActivationFunction.h"
 
-//TODO: Implement move constructor for derivate
+// TODO: Implement move constructor for derivate
 class SigmoidFunction : public ActivationFunction {
 public:
   Eigen::MatrixXf apply_function(const Eigen::MatrixXf &input) const override;

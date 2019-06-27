@@ -5,9 +5,9 @@ project(MBLib VERSION 0.1
 
 set(CMAKE_CXX_STANDARD 17)
 
-if(NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
-endif()
+endif ()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -22,9 +22,9 @@ include_directories(include)
 
 
 find_package(MNIST PATHS extern/mnist)
-if(NOT MNIST_FOUND)
+if (NOT MNIST_FOUND)
     message(FATAL_ERROR "MNIST loader could not be found. It is available under https://github.com/wichtounet/mnist")
-endif(NOT MNIST_FOUND)
+endif (NOT MNIST_FOUND)
 
 include_directories(${MNIST_INCLUDE_DIR})
 
@@ -32,34 +32,34 @@ include_directories(${MNIST_INCLUDE_DIR})
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
 add_subdirectory(extern/Catch2)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 #add_subdirectory(extern/pybind11)
 #add_subdirectory(extern/spdlog)
 
 #if(NOT TARGET spdlog)
-    # Stand-alone build
-    #find_package(spdlog REQUIRED)
+# Stand-alone build
+#find_package(spdlog REQUIRED)
 #endif()
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
 find_package(Git QUIET)
-if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     # Update submodules as needed
     option(GIT_SUBMODULE "Check submodules during build" ON)
-    if(GIT_SUBMODULE)
+    if (GIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 RESULT_VARIABLE GIT_SUBMOD_RESULT)
-        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+        if (NOT GIT_SUBMOD_RESULT EQUAL "0")
             message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-        endif()
-    endif()
-endif()
+        endif ()
+    endif ()
+endif ()
 
-if((NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Catch2/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen3/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/pybind11/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/spdlog/CMakeLists.txt"))
+if ((NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Catch2/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen3/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/pybind11/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/spdlog/CMakeLists.txt"))
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
-endif()
+endif ()
 
 # Interprocedural optimization (from https://cliutils.gitlab.io/modern-cmake)
 #include(CheckIPOSupported)
@@ -69,12 +69,12 @@ endif()
 #endif()
 
 set(HDRS
-#        include/NN.h
+        #        include/NN.h
         include/ActivationFunction/ActivationFunction.h
         include/ActivationFunction/SigmoidFunction.h
         include/ActivationFunction/ReluFunction.h include/Layer/BaseLayer.h include/Layer/FullyConnectedLayer.h include/NeuralNetwork.h include/MTensor.h include/RandomInitialization/RandomInitialization.h include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/LossFunction/CrossEntropyLoss.h include/ActivationFunction/IdentityFunction.h include/LossFunction/MultiClassLoss.h include/LossFunction/MultiCrossEntropyLoss.h include/RandomInitialization/XavierInitialization.h include/RandomInitialization/HetalInitialization.h include/RandomInitialization/DeterministicInitialization.h)
 set(SRCS
-#        src/NN.cpp
+        #        src/NN.cpp
         src/SigmoidFunction.cpp src/ReluFunction.cpp src/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/LossFunction/CrossEntropyLoss.cpp src/ActivationFunction/IdentityFunction.cpp src/LossFunction/MultiClassLoss.cpp src/LossFunction/MultiCrossEntropyLoss.cpp src/RandomInitialization/XavierInitialization.cpp src/RandomInitialization/HetalInitialization.cpp src/RandomInitialization/DeterministicInitialization.cpp)
 
 add_library(NN_lib ${SRCS} ${HDRS})
@@ -111,8 +111,8 @@ set_target_properties(NN_lib PROPERTIES
 
 if (DOXYGEN_FOUND)
     doxygen_add_docs(
-        doxygen
-        ${HDRS}
-        COMMENT "Generate html pages"
+            doxygen
+            ${HDRS}
+            COMMENT "Generate html pages"
     )
 endif (DOXYGEN_FOUND)

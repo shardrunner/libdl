@@ -7,5 +7,5 @@
  */
 class RandomInitialization {
 public:
-  virtual void initialize(Eigen::Ref<Eigen::MatrixXf> input) const =0;
+  virtual void initialize(Eigen::Ref<Eigen::MatrixXf> input) const = 0;
 };

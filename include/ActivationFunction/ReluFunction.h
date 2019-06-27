@@ -4,8 +4,9 @@
 
 class ReluFunction : public ActivationFunction {
   float leak_factor;
+
 public:
-  explicit ReluFunction(float leak_factor=0.0);
+  explicit ReluFunction(float leak_factor = 0.0);
   Eigen::MatrixXf apply_function(const Eigen::MatrixXf &input) const override;
   Eigen::MatrixXf apply_derivate(const Eigen::MatrixXf &m_a,
                                  const Eigen::MatrixXf &dC_da) const override;

@@ -2,7 +2,6 @@
 
 #include <Eigen/Core>
 
-
 /**
  * Represents an activation function
  */
@@ -13,7 +12,8 @@ public:
    * Applies the activation function to the input matrix
    * @param input The input matrix
    */
-  virtual Eigen::MatrixXf apply_function(const Eigen::MatrixXf &input) const = 0;
+  virtual Eigen::MatrixXf
+  apply_function(const Eigen::MatrixXf &input) const = 0;
 
   /**
    * Applies the derivate of the activation function to the input matrix
@@ -22,5 +22,4 @@ public:
   virtual Eigen::MatrixXf
   apply_derivate(const Eigen::MatrixXf &m_a,
                  const Eigen::MatrixXf &dC_da) const = 0;
-
 };

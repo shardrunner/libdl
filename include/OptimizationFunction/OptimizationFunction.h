@@ -3,6 +3,4 @@
 /**
  * Base class for optimization functions
  */
-class OptimizationFunction {
-
-};
+class OptimizationFunction {};
