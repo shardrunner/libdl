@@ -8,7 +8,7 @@ ReluFunction::ReluFunction(float leak_factor) {
 
 Eigen::MatrixXf ReluFunction::apply_function(const Eigen::MatrixXf &input) const {
   //spdlog::set_level(spdlog::level::debug);
-  spdlog::debug("Leak factor: {}",leak_factor);
+  //spdlog::debug("Leak factor: {}",leak_factor);
   //spdlog::debug("Input: {}",input);
   //std::cout << "Input: " << input << std::endl;
   //Mult with -1, because otherwise -0 is the result

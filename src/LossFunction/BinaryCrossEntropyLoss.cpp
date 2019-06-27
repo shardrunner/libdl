@@ -1,7 +1,6 @@
 #include "LossFunction/BinaryCrossEntropyLoss.h"
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+
 #include <iostream>
 
 float BinaryCrossEntropyLoss::calculate_loss(const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const {
@@ -12,9 +11,9 @@ float BinaryCrossEntropyLoss::calculate_loss(const Eigen::MatrixXf &a_prev, cons
   //std::cout << "Prev: " << a_prev << std::endl;
   //std::cout << "label: " << label << std::endl;
   //spdlog::set_level(spdlog::level::debug);
-  spdlog::debug("In calculate loss");
-  spdlog::debug("Dimension prev x: {}, y: {}", a_prev.rows(),a_prev.cols());
-  spdlog::debug("Dimension label x: {}, y: {}", label.rows(),label.cols());
+//  spdlog::debug("In calculate loss");
+//  spdlog::debug("Dimension prev x: {}, y: {}", a_prev.rows(),a_prev.cols());
+//  spdlog::debug("Dimension label x: {}, y: {}", label.rows(),label.cols());
 
   Eigen::RowVectorXf row_label=label.transpose().cast<float>();
 
@@ -46,7 +45,7 @@ void BinaryCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
   {
     throw std::invalid_argument("Target data have incorrect dimension");
   }
-  spdlog::debug("1");
+//  spdlog::debug("1");
 /*  if (a_prev.rows() != 1) {
     throw std::invalid_argument("only one last line");
   }*/

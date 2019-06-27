@@ -18,7 +18,7 @@ set(TEST_TARGET testmain)
 include_directories(include)
 
 #find_package(OpenMP REQUIRED)
-find_package(Doxygen)
+#find_package(Doxygen)
 
 
 find_package(MNIST PATHS extern/mnist)
@@ -28,7 +28,7 @@ endif(NOT MNIST_FOUND)
 
 include_directories(${MNIST_INCLUDE_DIR})
 
-set(DOXYGEN_GENERATE_HTML YES)
+#set(DOXYGEN_GENERATE_HTML YES)
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
 add_subdirectory(extern/Catch2)
@@ -79,22 +79,22 @@ set(SRCS
 
 add_library(NN_lib ${SRCS} ${HDRS})
 
-add_executable(test ../tests/test.cpp tests/test-main.cpp)
+#add_executable(test ../tests/test.cpp tests/test-main.cpp)
 
-target_link_libraries(test NN_lib Catch2::Catch2)
+#target_link_libraries(test NN_lib Catch2::Catch2)
 
-target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
+target_link_libraries(NN_lib Eigen3::Eigen) # spdlog::spdlog)
 
 add_executable(${TEST_TARGET} ../main.cpp)
 
-target_link_libraries(testmain PUBLIC NN_lib OpenMP::OpenMP_CXX)
+target_link_libraries(testmain PUBLIC NN_lib)# OpenMP::OpenMP_CXX)
 
 #if(OpenMP_CXX_FOUND)
 #    target_link_libraries(testmain PUBLIC OpenMP::OpenMP_CXX)
 #endif()
 
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
-target_compile_features(test PUBLIC cxx_std_17)
+#target_compile_features(test PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_compile_definitions(${TEST_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")

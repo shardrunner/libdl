@@ -13,8 +13,6 @@
 #include "RandomInitialization/DeterministicInitialization.h"
 #include <Eigen/Core>
 #include <memory>
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
 #include "LossFunction/MultiClassLoss.h"
 #include "ActivationFunction/IdentityFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
@@ -187,9 +185,7 @@ int main()
   //mnet.add_layer(std::move(hid3_layer));
   mnet.add_layer(std::move(out_layer));
 
-  //spdlog::error("Here 1");
-  //init->print(1);
-  //spdlog::error("Here 2");
+
 
   //mnet.train_network(inp.block(0,0,2,5),labels.block(0,0,1,5));
   mnet.train_network(image,labels,-1,50,1);

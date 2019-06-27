@@ -1,7 +1,5 @@
 #include "Layer/FullyConnectedLayer.h"
 #include <ctime>
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
 #include <iostream>
 
 FullyConnectedLayer::FullyConnectedLayer(const int input_size, const int output_size, std::unique_ptr<ActivationFunction> activation_function, std::unique_ptr<RandomInitialization> random_initialization) : m_activation_function(std::move(activation_function)), m_random_initialization(std::move(random_initialization)) {
@@ -18,11 +16,11 @@ FullyConnectedLayer::FullyConnectedLayer(const int input_size, const int output_
 
 void FullyConnectedLayer::feed_forward(const Eigen::MatrixXf &input) {
   //TODO bias correct per row/column added?
-  int a = m_w.rows();
+/*  int a = m_w.rows();
   int b = m_w.cols();
   int c = input.rows();
   int d = input.cols();
-  int e = m_b.size();
+  int e = m_b.size();*/
 
   m_z = (m_w.transpose() * input).colwise() + m_b;
 
@@ -81,8 +79,8 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev, const E
 }
 
 void FullyConnectedLayer::initialize_parameter() {
-  spdlog::debug("Before call");
-  spdlog::debug("after call");
+//  spdlog::debug("Before call");
+  //spdlog::debug("after call");
   m_random_initialization->initialize(m_w);
   m_b.setZero();
   //m_w.setRandom();
@@ -99,7 +97,7 @@ void FullyConnectedLayer::update_parameter() {
 }
 
 const Eigen::MatrixXf &FullyConnectedLayer::get_forward_output() {
-  spdlog::debug("before a");
+//  spdlog::debug("before a");
   return m_a;
 }
 const Eigen::MatrixXf &FullyConnectedLayer::get_backward_output() {

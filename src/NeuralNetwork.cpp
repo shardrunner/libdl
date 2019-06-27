@@ -1,8 +1,6 @@
 #pragma once
 
 #include "NeuralNetwork.h"
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/spdlog.h"
 #include <algorithm>
 #include <iostream>
 #include <random>
@@ -24,18 +22,18 @@ void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input,
                                     const Eigen::MatrixXi &label) {
   int number_layers = m_layer_list.size();
 
-  spdlog::debug("rows output: {}, columns output: {}",
-                m_layer_list[number_layers - 1]->get_forward_output().rows(),
-                m_layer_list[number_layers - 1]->get_forward_output().cols());
-  spdlog::debug("rows label: {}, columns label: {}", label.rows(),
-                label.cols());
-  spdlog::debug("before segfault");
+//  spdlog::debug("rows output: {}, columns output: {}",
+//                m_layer_list[number_layers - 1]->get_forward_output().rows(),
+//                m_layer_list[number_layers - 1]->get_forward_output().cols());
+//  spdlog::debug("rows label: {}, columns label: {}", label.rows(),
+//                label.cols());
+//  spdlog::debug("before segfault");
   auto temp = (m_layer_list[number_layers - 1]->get_forward_output()).eval();
   // std::cout << label.eval();
   // std::cout << temp.eval();
-  spdlog::debug("temp");
+  //spdlog::debug("temp");
   m_loss_function->backpropagate(temp, label);
-  spdlog::debug("after segfault");
+  //spdlog::debug("after segfault");
 
   if (number_layers == 1) {
     m_layer_list[0]->backpropagation(input,
@@ -117,7 +115,7 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
             m_layer_list[m_layer_list.size() - 1]->get_forward_output();
         // std::cout << /*"dim: " <<temp1.rows() << " & " << temp1.cols() <<*/
         // "\nForward_output\n" << temp1 << "\n";
-        spdlog::debug("tesp");
+//        spdlog::debug("tesp");
         auto temp2 =
             m_loss_function->calculate_loss(temp1, label); //(temp1, label);
         std::cout << "Loss batch " << j << " of iteration number " << i << ": "
