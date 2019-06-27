@@ -21,18 +21,7 @@ include_directories(include)
 #find_package(Doxygen)
 
 
-find_package(MNIST PATHS extern/mnist)
-if (NOT MNIST_FOUND)
-    message(FATAL_ERROR "MNIST loader could not be found. It is available under https://github.com/wichtounet/mnist")
-endif (NOT MNIST_FOUND)
 
-include_directories(${MNIST_INCLUDE_DIR})
-
-#set(DOXYGEN_GENERATE_HTML YES)
-
-# Added submodules (from https://cliutils.gitlab.io/modern-cmake)
-add_subdirectory(extern/Catch2)
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 #add_subdirectory(extern/pybind11)
 #add_subdirectory(extern/spdlog)
 
@@ -60,6 +49,19 @@ endif ()
 if ((NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Catch2/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen3/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/pybind11/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/spdlog/CMakeLists.txt"))
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif ()
+
+find_package(MNIST PATHS extern/mnist)
+if (NOT MNIST_FOUND)
+    message(FATAL_ERROR "MNIST loader could not be found. It is available under https://github.com/wichtounet/mnist")
+endif (NOT MNIST_FOUND)
+
+include_directories(${MNIST_INCLUDE_DIR})
+
+#set(DOXYGEN_GENERATE_HTML YES)
+
+# Added submodules (from https://cliutils.gitlab.io/modern-cmake)
+add_subdirectory(extern/Catch2)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 # Interprocedural optimization (from https://cliutils.gitlab.io/modern-cmake)
 #include(CheckIPOSupported)
