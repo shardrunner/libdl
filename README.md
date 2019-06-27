@@ -10,7 +10,7 @@ cmake ../.
 make
 ./testmain
 
-The network is also executed and shown on the clang CI runner and the result with the default configuration can be seen there as well.
+The network is also executed and shown on the clang CI runner and the result with the default configuration can be seen there as well (e.g. https://gitlab.lrz.de/brunner/libdl/-/jobs/550453).
 
 The network currently takes 2000 training mnist images and 100 images for testing, It goes through 75 iterations. The training takes under 2 minutes for me.
 The accuracy and the error is sometimes a bit wonky, goes up and down or is on a plateau, and it might need some tries (<5) to get a good seed and a accuracy > 0.6. The accuracy can be found above the printed testing images.
