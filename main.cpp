@@ -59,7 +59,7 @@ int main() {
   // convert mnist test dataset to eigen matrix
 
   // take 50 test samples
-  int test_samples = 50;
+  int test_samples = 100;
 
   Eigen::VectorXi test_labels;
   test_labels.resize(test_samples);
@@ -101,7 +101,7 @@ int main() {
   mnet.add_layer(std::move(out_layer));
 
   // train the network
-  mnet.train_network(image, labels, -1, 50, 1);
+  mnet.train_network(image, labels, -1, 75, 1);
 
   // test part of the test set
   auto predictions = mnet.calc_accuracy(test_image, test_labels);
@@ -109,7 +109,7 @@ int main() {
   std::cout << "Some tests \n" << std::endl;
 
   // print some images from the test set with the resulting label
-  for (int z = 0; z < 50; z += 10) {
+  for (int z = 0; z < 100; z += 10) {
     std::cout << "Image from testset: \n";
     for (int i = 0; i < 28; i++) {
       for (int j = 0; j < 28; j++) {
