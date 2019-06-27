@@ -33,6 +33,10 @@ The tests are unfortunately broken as well.
 - [ ] Finish convolution layer
 - [ ] Code cleanup and commenting
 - [x] More test coverage
+- [ ] Add regularization
+- [ ] Add dropout
+- [ ] Add visualisation error, convergence, ...
+- [ ] Add automatisms (grid search)
 - [ ] Add interactivity + feedback
 - [ ] Add convergence checks + on-the-fly adjustments
 - [x] Add more flexibility/options (cost function, initialization values, activation functions, gradient descent alternatives, network layout)
