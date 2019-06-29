@@ -1,6 +1,5 @@
 #include <iostream>
 
-//#include "NN.h"
 #include "ActivationFunction/IdentityFunction.h"
 #include "ActivationFunction/ReluFunction.h"
 #include "ActivationFunction/SigmoidFunction.h"

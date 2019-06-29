@@ -2,10 +2,10 @@
 
 #include "ActivationFunction/ReluFunction.h"
 #include "ActivationFunction/SigmoidFunction.h"
-//#include "NN.h"
+
 #include "Layer/ConvolutionalLayer.h"
 #include "LossFunction/BinaryCrossEntropyLoss.h"
-//#include <Eigen/Core>
+
 #include "ActivationFunction/IdentityFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
 #include "LossFunction/MultiClassLoss.h"
