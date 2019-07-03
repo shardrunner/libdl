@@ -23,13 +23,13 @@ include_directories(include)
 
 
 #add_subdirectory(extern/pybind11)
-#add_subdirectory(extern/spdlog)
-include_directories(extern/spdlog)
+add_subdirectory(extern/spdlog)
+#include_directories(extern/spdlog)
 
-if (NOT TARGET spdlog)
+#if(NOT TARGET spdlog)
 # Stand-alone build
-find_package(spdlog REQUIRED)
-endif ()
+#find_package(spdlog REQUIRED)
+#endif()
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
 find_package(Git QUIET)
