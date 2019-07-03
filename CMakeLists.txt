@@ -23,7 +23,7 @@ include_directories(include)
 
 
 #add_subdirectory(extern/pybind11)
-#add_subdirectory(extern/spdlog)
+add_subdirectory(extern/spdlog)
 
 #if(NOT TARGET spdlog)
 # Stand-alone build
@@ -83,7 +83,7 @@ add_library(NN_lib ${SRCS} ${HDRS})
 
 #target_link_libraries(test NN_lib Catch2::Catch2)
 
-target_link_libraries(NN_lib Eigen3::Eigen) # spdlog::spdlog)
+target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
 
 add_executable(${TEST_TARGET} ../main.cpp)
 
