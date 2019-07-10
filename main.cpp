@@ -4,7 +4,7 @@
 #include "ActivationFunction/ReluFunction.h"
 #include "ActivationFunction/SigmoidFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
-#include "ActivationFunction/TanFunction.h"
+#include "ActivationFunction/TanhFunction.h"
 #include "Layer/ConvolutionalLayer.h"
 #include "Layer/FullyConnectedLayer.h"
 #include "LossFunction/BinaryCrossEntropyLoss.h"

@@ -71,7 +71,7 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev,
 
   const int number_training_samples = a_prev.cols();
   // calcualate intermediate value dC/dz
-  Eigen::MatrixXf dC_dz = m_activation_function->apply_derivate(m_a, dC_da);
+  Eigen::MatrixXf dC_dz = m_activation_function->apply_derivative(m_a, dC_da);
 
   // normalize sum over changes/derivatives from all samples, by dividing by
   // number of samples

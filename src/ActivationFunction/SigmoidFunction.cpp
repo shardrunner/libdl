@@ -2,13 +2,14 @@
 
 Eigen::MatrixXf
 SigmoidFunction::apply_function(const Eigen::MatrixXf &input) const {
+  // Apply sigmoid function element wise
   return (1 / (1 + Eigen::exp((-1) * input.array()))).matrix();
 }
 
 Eigen::MatrixXf
-SigmoidFunction::apply_derivate(const Eigen::MatrixXf &m_a,
-                                const Eigen::MatrixXf &dC_da) const {
-  // TODO Test sigmoid -> double apply? m_a already input?
-  // Eigen::MatrixXf intermediate=SigmoidFunction::apply_function(m_a);
+SigmoidFunction::apply_derivative(const Eigen::MatrixXf &m_a,
+                                  const Eigen::MatrixXf &dC_da) const {
+  // Apply sigmoid derivative element wise and mulitply with derivative next
+  // layer
   return ((m_a.array() * (1 - m_a.array())) * dC_da.array()).matrix();
 }

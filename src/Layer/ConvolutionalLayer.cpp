@@ -105,8 +105,8 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
   // derivative activation
   // std::cout << "m_a :\n" <<m_a << "\ndC_da: \n" << dC_da << std::endl;
   // std::cout << "Der Activation:\n" <<
-  // m_activation_function->apply_derivate(m_a) << std::endl;
-  Eigen::MatrixXf dC_dz = m_activation_function->apply_derivate(m_a, dC_da);
+  // m_activation_function->apply_derivative(m_a) << std::endl;
+  Eigen::MatrixXf dC_dz = m_activation_function->apply_derivative(m_a, dC_da);
 
   // for (int i =0; i<a_prev.cols()-m_w.cols(); i++) {
   //  for (int j=0; j<a_prev.rows()-m_w.rows(); j++) {

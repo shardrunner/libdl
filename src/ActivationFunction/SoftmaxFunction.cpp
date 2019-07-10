@@ -1,6 +1,6 @@
 #include "ActivationFunction/SoftmaxFunction.h"
 #include <iostream>
-//https://github.com/yixuan/MiniDNN/blob/master/include/Activation/Softmax.h
+// https://github.com/yixuan/MiniDNN/blob/master/include/Activation/Softmax.h
 Eigen::MatrixXf
 SoftmaxFunction::apply_function(const Eigen::MatrixXf &input) const {
   // Substract maximum of each column to lower numerical errors and apply exp
@@ -16,8 +16,8 @@ SoftmaxFunction::apply_function(const Eigen::MatrixXf &input) const {
 }
 
 Eigen::MatrixXf
-SoftmaxFunction::apply_derivate(const Eigen::MatrixXf &m_a,
-                                const Eigen::MatrixXf &dC_da) const {
+SoftmaxFunction::apply_derivative(const Eigen::MatrixXf &m_a,
+                                  const Eigen::MatrixXf &dC_da) const {
   Eigen::MatrixXf softmax_input = apply_function(m_a);
   Eigen::MatrixXf output(softmax_input.rows(), softmax_input.cols());
 
