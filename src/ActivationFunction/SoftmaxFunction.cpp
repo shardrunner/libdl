@@ -1,4 +1,5 @@
 #include "ActivationFunction/SoftmaxFunction.h"
+
 #include <iostream>
 // https://github.com/yixuan/MiniDNN/blob/master/include/Activation/Softmax.h
 Eigen::MatrixXf

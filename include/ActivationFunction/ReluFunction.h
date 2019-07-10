@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 /**
  * Represents a Relu function as activation function. Can be a leaky relu.

@@ -4,7 +4,7 @@
 
 // TODO: Implement move constructor for derivate
 /**
- * Represents an activation function
+ * Represents an activation function. An abstract base class
  */
 class ActivationFunction {
 public:
