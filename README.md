@@ -48,3 +48,4 @@ The tests are unfortunately broken as well.
 - [ ] Add interactivity + feedback
 - [ ] Add convergence checks + on-the-fly adjustments
 - [x] Add more flexibility/options (cost function, initialization values, activation functions, gradient descent alternatives, network layout)
+- [ ] Compute derivative manually

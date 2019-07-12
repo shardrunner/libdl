@@ -8,7 +8,7 @@
 
 #include "ActivationFunction/IdentityFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
-#include "LossFunction/MultiClassLoss.h"
+#include "LossFunction/MultiCrossEntropyLoss.h"
 #include "RandomInitialization/SimpleRandomInitialization.h"
 #include <iostream>
 #include <vector>

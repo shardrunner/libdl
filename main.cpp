@@ -8,7 +8,7 @@
 #include "Layer/ConvolutionalLayer.h"
 #include "Layer/FullyConnectedLayer.h"
 #include "LossFunction/BinaryCrossEntropyLoss.h"
-#include "LossFunction/MultiClassLoss.h"
+#include "LossFunction/MultiCrossEntropyLoss.h"
 #include "NeuralNetwork.h"
 #include "RandomInitialization/DeterministicInitialization.h"
 #include "RandomInitialization/HetalInitialization.h"
@@ -79,7 +79,7 @@ int main() {
   }
 
   // initialize loss function
-  auto loss_func = std::make_unique<MultiClassLoss>();
+  auto loss_func = std::make_unique<MultiCrossEntropyLoss>();
 
   // initialize network with loss function
   auto mnet = NeuralNetwork(std::move(loss_func));

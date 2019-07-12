@@ -1,12 +1,16 @@
 #pragma once
 
-#import "LossFunction/LossFunction.h"
+#include "LossFunction/LossFunction.h"
 
+/**
+ * Calculates the cross entropy loss for multi class problems.
+ */
 class MultiCrossEntropyLoss : public LossFunction {
 public:
-  float calculate_loss(const Eigen::MatrixXf &a_prev,
-                       const Eigen::VectorXi &label) const override;
+  [[nodiscard]] float
+  calculate_loss(const Eigen::MatrixXf &a_prev,
+                 const Eigen::VectorXi &label) const override;
   void backpropagate(const Eigen::MatrixXf &a_prev,
                      const Eigen::VectorXi &label) override;
-  const Eigen::MatrixXf &get_backpropagate() const override;
+  [[nodiscard]] const Eigen::MatrixXf &get_backpropagate() const override;
 };
