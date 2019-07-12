@@ -19,7 +19,6 @@ void XavierInitialization::initialize(Eigen::Ref<Eigen::MatrixXf> input) const {
   // stddev = var^-2
   // Xavier init normal: var= 2/(input_size+output_size)
   // for uniform: limit 6 instead of 2
-  std::cout << "input cols: " << input.rows() << std::endl;
   float sigma = std::sqrt(float(2.0) / float(input.rows() + input.cols()));
 
   // instance of class std::normal_distribution with specific mean and stddev

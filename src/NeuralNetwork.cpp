@@ -8,7 +8,6 @@ void NeuralNetwork::add_layer(std::unique_ptr<BaseLayer> layer) {
   m_layer_list.push_back(std::move(layer));
 }
 void NeuralNetwork::feed_forward(const Eigen::MatrixXf &input) {
-  spdlog::error("Test");
   m_layer_list[0]->feed_forward(input);
 
   for (int i = 1; i < m_layer_list.size(); i++) {
