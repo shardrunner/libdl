@@ -49,3 +49,9 @@ The tests are unfortunately broken as well.
 - [ ] Add convergence checks + on-the-fly adjustments
 - [x] Add more flexibility/options (cost function, initialization values, activation functions, gradient descent alternatives, network layout)
 - [ ] Compute derivative manually
+- [ ] Move constructors?
+- [ ] Clarify forward -> save -> backward structure
+- [ ] Convert more to matrix operations
+
+### Questions:
+- Make sub libs to speed up compiling time by not having to compile everything?
