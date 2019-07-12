@@ -2,7 +2,6 @@
 
 #include <random>
 
-#include <iostream>
 // from
 // https://stackoverflow.com/questions/38244877/how-to-use-stdnormal-distribution
 // http://eigen.tuxfamily.org/dox-devel/classEigen_1_1DenseBase.html#title91
