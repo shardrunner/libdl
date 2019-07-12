@@ -2,11 +2,7 @@
 
 #include "NeuralNetwork.h"
 #include <algorithm>
-#include <iostream>
 #include <random>
-
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/spdlog.h"
 
 void NeuralNetwork::add_layer(std::unique_ptr<BaseLayer> layer) {
   m_layer_list.push_back(std::move(layer));
