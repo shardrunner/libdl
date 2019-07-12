@@ -8,6 +8,9 @@
  */
 class LossFunction {
 public:
+  /**
+   * Virtual default destructor.
+   */
   virtual ~LossFunction() = default;
   // TODO Change Row vectors for multi classification
   /**

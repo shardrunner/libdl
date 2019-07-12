@@ -1,7 +1,5 @@
 #include "LossFunction/MultiCrossEntropyLoss.h"
 
-#include <iostream>
-
 float MultiCrossEntropyLoss::calculate_loss(
     const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const {
   // L = -sum(log(phat) * y)

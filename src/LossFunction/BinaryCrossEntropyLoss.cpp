@@ -1,7 +1,5 @@
 #include "LossFunction/BinaryCrossEntropyLoss.h"
 
-#include <iostream>
-
 float BinaryCrossEntropyLoss::calculate_loss(
     const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const {
 

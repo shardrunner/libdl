@@ -1,6 +1,6 @@
 #pragma once
 
 /**
- * Base class for optimization functions
+ * Abstract base class for optimization functions.
  */
 class OptimizationFunction {};
