@@ -20,7 +20,7 @@
 
 #include "extern/mnist/include/mnist/mnist_reader.hpp"
 #include "extern/mnist/include/mnist/mnist_utils.hpp"
-#include "omp.h"
+//#include "omp.h"
 
 int main() {
   // MNIST_DATA_LOCATION set by MNIST cmake config
