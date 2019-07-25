@@ -42,7 +42,19 @@ public:
 
     [[nodiscard]] int col_filter_positions() const;
 
-    [[nodiscard]] const Eigen::MatrixXf &getMIm2ColMatrix() const;
+    /**
+     * Returns the im2col matrix of the input with the filter size
+     * @return The im2col matrix
+     */
+    [[nodiscard]] const Eigen::MatrixXf &get_im2col_matrix() const;
+
+    /**
+     * Reshapes the computed im2col matrix to the correct format.
+     * The im2col matrix has a row per output channel followed by the rows of the next sample.
+     * Therefore the maxtrix has to be transposed and the output channel columns have to be put in their corresponding sample column.
+     * @param num_samples The number of samples in the input.
+     */
+    void reshape_forward_propagation(const Eigen::MatrixXf &input, int num_samples);
 
 public:
     Eigen::MatrixXf m_w;
@@ -53,6 +65,7 @@ public:
     Eigen::VectorXf m_dC_db;
     Eigen::MatrixXf m_dC_da_prev;
     Eigen::MatrixXf m_im2col_matrix;
+    Eigen::MatrixXf m_im2col_reshaped;
 
     int output_values;
 
