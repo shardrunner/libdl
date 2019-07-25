@@ -8,6 +8,9 @@
 #include "Layer/BaseLayer.h"
 #include "LossFunction/LossFunction.h"
 
+
+#include "spdlog/spdlog.h"
+
 /**
  * Represents the neural network and performs the operations on it.
  * Can be populated depending on the needs.
@@ -85,4 +88,6 @@ private:
    * minimization in the backpropagation step.
    */
   void update();
+private:
+    std::shared_ptr<spdlog::logger> m_nn_logger;
 };

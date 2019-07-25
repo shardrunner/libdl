@@ -5,6 +5,8 @@
 #include "Layer/ConvolutionalLayer.h"
 #include <iostream>
 
+#include "HelperFunctions.h"
+
 /*
  * (Input ImgCol x ImgRowx x Channel) x number_samples
  */
@@ -284,9 +286,11 @@ ConvolutionalLayer::ConvolutionalLayer(
           m_activation_function(std::move(activation_function)),
           m_random_initialization(std::move(random_initialization)) {
 
-  output_img_width = input_width - filter_width + 1;
-  output_img_height = input_height - m_filter_height + 1;
-  output_values = output_img_width * output_img_height * number_output_channel;
+    m_convlayer_logger = spdlog::get("convlayer");
+
+    output_img_height = input_height - m_filter_height + 1;
+    output_img_width = input_width - filter_width + 1;
+    output_values = output_img_width * output_img_height * number_output_channel;
 
     m_w.resize(m_filter_height * m_filter_width * m_number_input_channel *
                m_number_output_channel,

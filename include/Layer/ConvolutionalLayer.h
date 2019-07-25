@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <memory>
+#include "spdlog/spdlog.h"
 
 class ConvolutionalLayer : public BaseLayer {
 public:
@@ -43,4 +44,6 @@ public:
 
   std::unique_ptr<ActivationFunction> m_activation_function;
   std::unique_ptr<RandomInitialization> m_random_initialization;
+private:
+    std::shared_ptr<spdlog::logger> m_convlayer_logger;
 };
