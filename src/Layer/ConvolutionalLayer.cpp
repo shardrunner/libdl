@@ -302,3 +302,72 @@ ConvolutionalLayer::ConvolutionalLayer(
 
     initialize_parameter();
 }
+
+std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) const {
+    m_convlayer_logger->info("Start im2col");
+    m_convlayer_logger->debug("Input Matrix:\n{}", HelperFunctions::toString(input_matrix));
+
+    int num_row_filter_positions = row_filter_positions();
+    int num_col_filter_positions = col_filter_positions();
+    int num_filter_positions = num_col_filter_positions * num_row_filter_positions;
+    auto output_matrix = std::make_unique<Eigen::MatrixXf>(m_filter_width * m_filter_height * m_number_input_channel,
+                                                           num_filter_positions * input_matrix.cols());
+    int filter_size = m_filter_width * m_filter_height;
+
+/*    for (int k = 0; k < m_number_input_channel; k++) {
+        for (int i = 0; i < num_col_filter_positions; i++) {
+            for (int j = 0; j < num_row_filter_positions; j++) {
+                for (int m = 0; m < m_filter_width; m++) {
+                    auto col=input_matrix.col(j+m);
+                    auto segment=col.segment(i,m_filter_height);
+                    std::cout << "k:" <<k << " i:" <<i <<" j:" <<j <<" m:"<<m << "\ncol: " << col.transpose() << "\nsegment: " << segment.transpose() << std::endl;
+                    output_matrix->col(j+i*num_row_filter_positions).segment(m*m_filter_height+k*filter_size, m_filter_height)=segment;
+                    //traverse filter field, traverse filter selection row, traverse filter selection height, traverse channels
+                    //int start_pos = m * m_input_height + m_input_height * j + i + m_input_height * m_input_width *
+                    //Eigen::MatrixXf flat_block = input_matrix.block(0, 0);
+
+
+                }
+            }
+        }
+    }*/
+    for (int s = 0; s < input_matrix.cols(); s++) {
+        for (int k = 0; k < m_number_input_channel; k++) {
+            for (int j = 0; j < num_row_filter_positions; j++) {
+                for (int i = 0; i < num_col_filter_positions; i++) {
+                    for (int m = 0; m < m_filter_width; m++) {
+                        auto col = input_matrix.col(s);
+                        auto segment = col.segment(
+                                m_input_height * m + i * m_stride + m_input_height * m_input_width * k +
+                                m_input_height * j * m_stride,
+                                m_filter_height);
+                        //std::cout << "s:" << s << " k:" << k << " i:" << i << " j:" << j << " m:" << m  << " t:" << s * num_col_filter_positions * num_row_filter_positions<< "\nsegment: " << segment.transpose() << std::endl;
+                        output_matrix->col(i + j * num_col_filter_positions +
+                                           s * num_filter_positions).segment(
+                                m * m_filter_height + k * filter_size, m_filter_height) = segment;
+                        //traverse filter field, traverse filter selection row, traverse filter selection height, traverse channels
+                        //int start_pos = m * m_input_height + m_input_height * j + i + m_input_height * m_input_width *
+                        //Eigen::MatrixXf flat_block = input_matrix.block(0, 0);
+
+
+                    }
+                }
+            }
+        }
+    }
+    //m_convlayer_logger->debug("Output Matrix:\n{}",HelperFunctions::toString(output_matrix);
+    m_convlayer_logger->info("End im2col");
+
+    return output_matrix;
+
+    //output_matrix.row(0) = Eigen::Map<const VectorXd>(A.data(), A.size())
+    //VectorXd v =
+}
+
+int ConvolutionalLayer::row_filter_positions() const {
+    return (m_input_width - m_filter_width) / m_stride + 1;
+}
+
+int ConvolutionalLayer::col_filter_positions() const {
+    return (m_input_height - m_filter_height) / m_stride + 1;
+}

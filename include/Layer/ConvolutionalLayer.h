@@ -20,6 +20,18 @@ public:
   const Eigen::MatrixXf &get_backward_output() override;
   void initialize_parameter() override;
   void update_parameter() override;
+    /**
+     * Transforms input matrix to a im2col matrix for matrix multiplication with the kerne.
+     * @param input_matrix The matrix to transform
+     * @return The corresponding im2col matrix
+     */
+    [[nodiscard]] std::unique_ptr<Eigen::MatrixXf> im2col(const Eigen::MatrixXf &input_matrix) const;
+    /**
+     * Returns the number of filter positions.
+     * @return The number of filter positions
+     */
+    [[nodiscard]] int row_filter_positions() const;
+    [[nodiscard]] int col_filter_positions() const;
 
 public:
   Eigen::MatrixXf m_w;
