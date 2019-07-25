@@ -8,9 +8,8 @@
 
 class ConvolutionalLayer : public BaseLayer {
 public:
-  ConvolutionalLayer(
-      int input_width, int input_height, int number_input_channel,
-      int number_output_channel, int filter_width, int filter_heigth,
+  ConvolutionalLayer(int input_height, int input_width, int number_input_channel,
+      int number_output_channel, int filter_heigth, int filter_width, int stride,
       std::unique_ptr<ActivationFunction> activation_function,
       std::unique_ptr<RandomInitialization> random_initialization);
   void feed_forward(const Eigen::MatrixXf &input) override;
@@ -40,6 +39,7 @@ public:
   int m_filter_height;
   int output_img_width;
   int output_img_height;
+  int m_stride;
 
   std::unique_ptr<ActivationFunction> m_activation_function;
   std::unique_ptr<RandomInitialization> m_random_initialization;
