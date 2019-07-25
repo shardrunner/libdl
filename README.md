@@ -52,6 +52,8 @@ The tests are unfortunately broken as well.
 - [ ] Move constructors?
 - [ ] Clarify forward -> save -> backward structure
 - [ ] Convert more to matrix operations
+- [ ] Use noalias()
+- [ ] Activation function remove multiple copies with either pointers, in place or pass result reference
 
 ### Questions:
 - Make sub libs to speed up compiling time by not having to compile everything?
