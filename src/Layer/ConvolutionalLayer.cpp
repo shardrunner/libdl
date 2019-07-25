@@ -10,7 +10,7 @@
 /*
  * (Input ImgCol x ImgRowx x Channel) x number_samples
  */
-void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
+/*void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
     // std::cout << "input:\n" << input[0] << "\nsize: " <<input.size();
     // std::cout << "rows:" << input[0].rows() << " m_w rows(): " <<m_w.rows();
 
@@ -55,11 +55,11 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
                             auto block1 = input.block(row_input, k, m_filter_width, 1);
                             auto block2 = m_w.block(filter_channel, 0, m_filter_width, 1);
 
-                            /*std::cout << "row input: " << row_input << " row output "
+                            *//*std::cout << "row input: " << row_input << " row output "
                                       << row_output << " column " << k << "\nblock1:\n"
                                       << block1 << "\nblock2\n"
                                       << block2 << "\nsum\n"
-                                      << m_z(row_output, k) << std::endl;*/
+                                      << m_z(row_output, k) << std::endl;*//*
 
                             m_z(row_output, k) += (block1.array() * block2.array()).sum();
 
@@ -93,11 +93,11 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
 
     m_a = m_activation_function->apply_function(m_z);
 
-    /*std::cout << "Conv Feed Forward: Rando weights\n"
+    *//*std::cout << "Conv Feed Forward: Rando weights\n"
               << m_w << "\ninput:\n"
               << input << "\nOutput\n"
-              << m_a << std::endl;*/
-}
+              << m_a << std::endl;*//*
+}*/
 
 void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
                                          const Eigen::MatrixXf &dC_da) {
@@ -274,15 +274,15 @@ void ConvolutionalLayer::update_parameter() {
     // m_b = m_b - 0.3 * m_dC_db;
 }
 
-ConvolutionalLayer::ConvolutionalLayer(
-        int input_height, int input_width, int number_input_channel,
-        int number_output_channel, int filter_height, int filter_width, int stride,
-        std::unique_ptr<ActivationFunction> activation_function,
-        std::unique_ptr<RandomInitialization> random_initialization)
+ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int number_input_channel,
+                                       int number_output_channel,
+                                       int filter_heigth, int filter_width, int stride,
+                                       std::unique_ptr<ActivationFunction> activation_function,
+                                       std::unique_ptr<RandomInitialization> random_initialization)
         : m_input_height(input_height), m_input_width(input_width),
           m_number_input_channel(number_input_channel),
           m_number_output_channel(number_output_channel),
-          m_filter_height(filter_height), m_filter_width(filter_width), m_stride(stride),
+          m_filter_height(filter_heigth), m_filter_width(filter_width), m_stride(stride),
           m_activation_function(std::move(activation_function)),
           m_random_initialization(std::move(random_initialization)) {
 
@@ -297,22 +297,44 @@ ConvolutionalLayer::ConvolutionalLayer(
                1);
     m_dC_dw.resize(m_w.rows(), m_w.cols());
 
+    m_im2col_matrix.resize(1,2);
+
     m_b.resize(number_output_channel);
     m_dC_db.resize(m_b.size());
 
     initialize_parameter();
 }
 
-std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) const {
+void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
+    // std::cout << "input:\n" << input[0] << "\nsize: " <<input.size();
+    // std::cout << "rows:" << input[0].rows() << " m_w rows(): " <<m_w.rows();
+
+    // std::stringstream ss;
+    // ss << input;
+    // temp << input;
+    // spdlog::error("Input:\n{}", ss.str());
+
+    m_a.resize(output_values, input.cols());
+    m_z.resize(output_values, input.cols());
+    m_z.setZero();
+}
+
+void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
     m_convlayer_logger->info("Start im2col");
     m_convlayer_logger->debug("Input Matrix:\n{}", HelperFunctions::toString(input_matrix));
 
     int num_row_filter_positions = row_filter_positions();
     int num_col_filter_positions = col_filter_positions();
     int num_filter_positions = num_col_filter_positions * num_row_filter_positions;
-    auto output_matrix = std::make_unique<Eigen::MatrixXf>(m_filter_width * m_filter_height * m_number_input_channel,
-                                                           num_filter_positions * input_matrix.cols());
+    //long temp1=m_filter_width * m_filter_height * m_number_input_channel;
+    //long temp2=num_filter_positions * input_matrix.cols();
+    //m_im2col_matrix.resize(temp1,temp2);
+    m_im2col_matrix.resize(m_filter_width * m_filter_height * m_number_input_channel, num_filter_positions * input_matrix.cols());
+    //m_im2col_matrix=Eigen::MatrixXf::Zero(m_filter_width * m_filter_height * m_number_input_channel, num_filter_positions * input_matrix.cols());
+    //auto output_matrix = std::make_unique<Eigen::MatrixXf::>();
     int filter_size = m_filter_width * m_filter_height;
+    //std::cout << "Tetttttt" << std::endl;
+    //m_convlayer_logger->error("Abort");
 
 /*    for (int k = 0; k < m_number_input_channel; k++) {
         for (int i = 0; i < num_col_filter_positions; i++) {
@@ -342,7 +364,7 @@ std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::im2col(const Eigen::MatrixX
                                 m_input_height * j * m_stride,
                                 m_filter_height);
                         //std::cout << "s:" << s << " k:" << k << " i:" << i << " j:" << j << " m:" << m  << " t:" << s * num_col_filter_positions * num_row_filter_positions<< "\nsegment: " << segment.transpose() << std::endl;
-                        output_matrix->col(i + j * num_col_filter_positions +
+                        m_im2col_matrix.col(i + j * num_col_filter_positions +
                                            s * num_filter_positions).segment(
                                 m * m_filter_height + k * filter_size, m_filter_height) = segment;
                         //traverse filter field, traverse filter selection row, traverse filter selection height, traverse channels
@@ -355,10 +377,10 @@ std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::im2col(const Eigen::MatrixX
             }
         }
     }
-    //m_convlayer_logger->debug("Output Matrix:\n{}",HelperFunctions::toString(output_matrix);
+    //std::cout << "output: \n" << m_im2col_matrix << std::endl;
+    //m_convlayer_logger->error("stop");
+    m_convlayer_logger->debug("Output Matrix:\n{}",HelperFunctions::toString(m_im2col_matrix));
     m_convlayer_logger->info("End im2col");
-
-    return output_matrix;
 
     //output_matrix.row(0) = Eigen::Map<const VectorXd>(A.data(), A.size())
     //VectorXd v =
@@ -370,4 +392,9 @@ int ConvolutionalLayer::row_filter_positions() const {
 
 int ConvolutionalLayer::col_filter_positions() const {
     return (m_input_height - m_filter_height) / m_stride + 1;
+}
+
+const Eigen::MatrixXf &ConvolutionalLayer::getMIm2ColMatrix() const {
+    //std::cout << "IM\n" << m_im2col_matrix<<std::endl;
+    return m_im2col_matrix;
 }
