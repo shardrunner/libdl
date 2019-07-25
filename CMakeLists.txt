@@ -20,7 +20,7 @@ include_directories(include)
 include_directories(extern/)
 
 #find_package(OpenMP REQUIRED)
-#find_package(Doxygen)
+find_package(Doxygen)
 
 #add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
