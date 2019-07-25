@@ -10,17 +10,17 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-march=native")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 #set(PYBIND11_CPP_STANDARD -std=c++1z)
 set(TEST_TARGET testmain)
 include_directories(include)
+include_directories(extern/)
 
 #find_package(OpenMP REQUIRED)
 #find_package(Doxygen)
-
-
 
 #add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
@@ -39,10 +39,12 @@ if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     option(GIT_SUBMODULE "Check submodules during build" ON)
     if (GIT_SUBMODULE)
         message(STATUS "Submodule update")
-        #execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --remote --merge
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        #execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --remote --merge
+        #        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        #        RESULT_VARIABLE GIT_SUBMOD_RESULT)
         if (NOT GIT_SUBMOD_RESULT EQUAL "0")
             message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif ()
@@ -63,8 +65,12 @@ include_directories(${MNIST_INCLUDE_DIR})
 #set(DOXYGEN_GENERATE_HTML YES)
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
+#TODO Cmake folder with findeigen cmake_module_path
+set(CMAKE_MODULE_PATH /cmake)
 add_subdirectory(extern/Catch2)
+#set(EIGEN3_INCLUDE_DIR extern/Eigen3)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+#find_package(Eigen3 3.3 REQUIRED MODULE)
 
 # Interprocedural optimization (from https://cliutils.gitlab.io/modern-cmake)
 #include(CheckIPOSupported)
@@ -84,7 +90,7 @@ add_library(NN_lib ${SRCS} ${HDRS})
 
 #add_executable(test ../tests/test.cpp tests/test-main.cpp)
 
-#target_link_libraries(test NN_lib Catch2::Catch2)
+target_link_libraries(test NN_lib Catch2::Catch2)
 
 target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
 
