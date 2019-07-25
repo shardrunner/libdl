@@ -87,7 +87,7 @@ int main() {
   // TODO Add check input fully conected layer size
   // Network architecture
   auto hid_layer = std::make_unique<ConvolutionalLayer>(
-      28, 28, 1, 1, 3, 3, std::make_unique<ReluFunction>(),
+      28, 28, 1, 1, 3, 3,1, std::make_unique<ReluFunction>(),
       std::make_unique<XavierInitialization>());
   auto hid2_layer = std::make_unique<FullyConnectedLayer>(
       26 * 26, 16, std::make_unique<ReluFunction>(),
