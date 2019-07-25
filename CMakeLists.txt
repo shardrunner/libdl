@@ -88,7 +88,7 @@ set(SRCS
 
 add_library(NN_lib ${SRCS} ${HDRS})
 
-#add_executable(test ../tests/test.cpp tests/test-main.cpp)
+add_executable(test ../tests/test_layers.cpp tests/test-main.cpp)
 
 target_link_libraries(test NN_lib Catch2::Catch2)
 
