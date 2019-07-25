@@ -54,6 +54,7 @@ The tests are unfortunately broken as well.
 - [ ] Convert more to matrix operations
 - [ ] Use noalias()
 - [ ] Activation function remove multiple copies with either pointers, in place or pass result reference
+- [ ] Check reference passing, if they get assigned
 
 ### Questions:
 - Make sub libs to speed up compiling time by not having to compile everything?
