@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 #set(PYBIND11_CPP_STANDARD -std=c++1z)
-set(TEST_TARGET testmain)
+set(TEST_TARGET Mlib_execute)
 include_directories(include)
 include_directories(extern/)
 
@@ -86,24 +86,24 @@ set(HDRS
 set(SRCS
         src/ActivationFunction/SigmoidFunction.cpp src/ActivationFunction/ReluFunction.cpp src/Layer/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanhFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/ActivationFunction/IdentityFunction.cpp src/LossFunction/MultiCrossEntropyLoss.cpp src/RandomInitialization/XavierInitialization.cpp src/RandomInitialization/HetalInitialization.cpp src/RandomInitialization/DeterministicInitialization.cpp src/RandomInitialization/UniformXavierInitialization.cpp src/RandomInitialization/UniformHeInitialization.cpp src/ManageLoggers.cpp src/HelperFunctions.cpp)
 
-add_library(NN_lib ${SRCS} ${HDRS})
+add_library(Mlib ${SRCS} ${HDRS})
 
-add_executable(test ../tests/test_layers.cpp tests/test-main.cpp)
+add_executable(Mlib_test ../tests/test_layers.cpp tests/test-main.cpp)
 
-target_link_libraries(test NN_lib Catch2::Catch2)
+target_link_libraries(Mlib_test Mlib Catch2::Catch2)
 
-target_link_libraries(NN_lib Eigen3::Eigen spdlog::spdlog)
+target_link_libraries(Mlib Eigen3::Eigen spdlog::spdlog)
 
 add_executable(${TEST_TARGET} ../main.cpp)
 
-target_link_libraries(testmain PUBLIC NN_lib)# OpenMP::OpenMP_CXX)
+target_link_libraries(Mlib_execute PUBLIC Mlib)# OpenMP::OpenMP_CXX)
 
 #if(OpenMP_CXX_FOUND)
-#    target_link_libraries(testmain PUBLIC OpenMP::OpenMP_CXX)
+#    target_link_libraries(Mlib_execute PUBLIC OpenMP::OpenMP_CXX)
 #endif()
 
 target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
-#target_compile_features(test PUBLIC cxx_std_17)
+#target_compile_features(Mlib_test PUBLIC cxx_std_17)
 set_target_properties(${TEST_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_compile_definitions(${TEST_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")
@@ -111,7 +111,7 @@ target_compile_definitions(${TEST_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_D
 # Create logs directory
 #file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
-set_target_properties(NN_lib PROPERTIES
+set_target_properties(Mlib PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
