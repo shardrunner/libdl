@@ -21,10 +21,7 @@ include_directories(include)
 #find_package(OpenMP REQUIRED)
 find_package(Doxygen)
 
-#add_subdirectory(extern/pybind11)
-add_subdirectory(extern/spdlog)
-add_subdirectory(extern/Catch2)
-#include_directories(extern/spdlog)
+
 
 #if(NOT TARGET spdlog)
  #Stand-alone build
@@ -38,6 +35,7 @@ find_package(Git QUIET)
 if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     # Update submodules as needed
     option(GIT_SUBMODULE "Check submodules during build" ON)
+    #set(GIT_SUBMODULE OFF)
     if (GIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
@@ -51,6 +49,11 @@ if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         endif ()
     endif ()
 endif ()
+
+#add_subdirectory(extern/pybind11)
+add_subdirectory(extern/spdlog)
+add_subdirectory(extern/Catch2)
+#include_directories(extern/spdlog)
 
 if ((NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Catch2/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen3/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/pybind11/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/spdlog/CMakeLists.txt"))
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
