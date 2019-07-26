@@ -11,7 +11,20 @@ endif ()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
+#TODO flto clang
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")# -flto")
+
+# Interprocedural optimization (from https://cliutils.gitlab.io/modern-cmake/chapters/features/small.html)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT result)
+if(result)
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        #set_target_properties(Mlib PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+        #set_target_properties(Mlib_test PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+        #set_target_properties(Mlib_execute PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif()
+endif()
 
 #set(PYBIND11_CPP_STANDARD -std=c++1z)
 set(TEST_TARGET Mlib_execute)
@@ -118,17 +131,7 @@ set_target_properties(Mlib PROPERTIES
         CXX_EXTENSIONS NO
         )
 
-# Interprocedural optimization (from https://cliutils.gitlab.io/modern-cmake/chapters/features/small.html)
-include(CheckIPOSupported)
-check_ipo_supported(RESULT result)
-if(result)
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        #set_target_properties(Mlib PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-        #set_target_properties(Mlib_test PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-        #set_target_properties(Mlib_execute PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-    endif()
-endif()
+
 
 
 if (DOXYGEN_FOUND)
