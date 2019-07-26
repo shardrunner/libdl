@@ -58,3 +58,6 @@ The tests are unfortunately broken as well.
 
 ### Questions:
 - Make sub libs to speed up compiling time by not having to compile everything?
+
+### Extra:
+Use 'git submodule update --remote --merge' to update the submodules.
