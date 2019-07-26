@@ -67,16 +67,18 @@ public:
     Eigen::MatrixXf m_im2col_matrix;
     Eigen::MatrixXf m_im2col_reshaped;
 
-    int output_values;
+    int m_output_values;
 
+
+    int m_input_height;
+    int m_input_width;
     int m_number_input_channel;
     int m_number_output_channel;
-    int m_input_width;
-    int m_input_height;
-    int m_filter_width;
     int m_filter_height;
-    int output_img_width;
-    int output_img_height;
+    int m_filter_width;
+    int m_output_img_width;
+    int m_output_img_height;
+    int m_output_img_size;
 
 
 
