@@ -24,12 +24,14 @@ find_package(Doxygen)
 
 #add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
+add_subdirectory(extern/Catch2)
 #include_directories(extern/spdlog)
 
 #if(NOT TARGET spdlog)
-# Stand-alone build
-#find_package(spdlog REQUIRED)
+ #Stand-alone build
+# find_package(spdlog REQUIRED)
 #endif()
+
 
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
@@ -62,27 +64,24 @@ endif (NOT MNIST_FOUND)
 
 include_directories(${MNIST_INCLUDE_DIR})
 
-#set(DOXYGEN_GENERATE_HTML YES)
+set(DOXYGEN_GENERATE_HTML YES)
 
 # Added submodules (from https://cliutils.gitlab.io/modern-cmake)
-#TODO Cmake folder with findeigen cmake_module_path
-set(CMAKE_MODULE_PATH /cmake)
-add_subdirectory(extern/Catch2)
-#set(EIGEN3_INCLUDE_DIR extern/Eigen3)
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-#find_package(Eigen3 3.3 REQUIRED MODULE)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
+set(EIGEN3_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/extern/Eigen3")
+find_package(Eigen3 3.3 REQUIRED MODULE)
 
-# Interprocedural optimization (from https://cliutils.gitlab.io/modern-cmake)
-#include(CheckIPOSupported)
-#check_ipo_supported(RESULT result)
-#if(result)
-#    set_target_properties(foo PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-#endif()
+
 
 set(HDRS
         include/ActivationFunction/ActivationFunction.h
         include/ActivationFunction/SigmoidFunction.h
-        include/ActivationFunction/ReluFunction.h include/Layer/BaseLayer.h include/Layer/FullyConnectedLayer.h include/NeuralNetwork.h include/RandomInitialization/RandomInitialization.h include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanhFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/ActivationFunction/IdentityFunction.h include/LossFunction/MultiCrossEntropyLoss.h include/RandomInitialization/XavierInitialization.h include/RandomInitialization/HetalInitialization.h include/RandomInitialization/DeterministicInitialization.h include/RandomInitialization/UniformXavierInitialization.h include/RandomInitialization/UniformHeInitialization.h include/ManageLoggers.h include/HelperFunctions.h)
+        include/ActivationFunction/ReluFunction.h
+        include/Layer/BaseLayer.h
+        include/Layer/FullyConnectedLayer.h
+        include/NeuralNetwork.h
+        include/RandomInitialization/RandomInitialization.h
+        include/LossFunction/LossFunction.h include/OptimizationFunction/OptimizationFunction.h include/RandomInitialization/SimpleRandomInitialization.h include/LossFunction/BinaryCrossEntropyLoss.h include/ActivationFunction/TanhFunction.h include/Layer/ConvolutionalLayer.h include/Layer/MaxPoolLayer.h include/ActivationFunction/SoftmaxFunction.h include/ActivationFunction/IdentityFunction.h include/LossFunction/MultiCrossEntropyLoss.h include/RandomInitialization/XavierInitialization.h include/RandomInitialization/HetalInitialization.h include/RandomInitialization/DeterministicInitialization.h include/RandomInitialization/UniformXavierInitialization.h include/RandomInitialization/UniformHeInitialization.h include/ManageLoggers.h include/HelperFunctions.h)
 set(SRCS
         src/ActivationFunction/SigmoidFunction.cpp src/ActivationFunction/ReluFunction.cpp src/Layer/FullyConnectedLayer.cpp src/RandomInitialization/SimpleRandomInitialization.cpp src/LossFunction/BinaryCrossEntropyLoss.cpp src/NeuralNetwork.cpp src/ActivationFunction/TanhFunction.cpp src/Layer/ConvolutionalLayer.cpp src/Layer/MaxPoolLayer.cpp src/ActivationFunction/SoftmaxFunction.cpp src/ActivationFunction/IdentityFunction.cpp src/LossFunction/MultiCrossEntropyLoss.cpp src/RandomInitialization/XavierInitialization.cpp src/RandomInitialization/HetalInitialization.cpp src/RandomInitialization/DeterministicInitialization.cpp src/RandomInitialization/UniformXavierInitialization.cpp src/RandomInitialization/UniformHeInitialization.cpp src/ManageLoggers.cpp src/HelperFunctions.cpp)
 
