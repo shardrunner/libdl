@@ -11,8 +11,7 @@ endif ()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
-#TODO flto clang
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")# -flto")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")# -flto=thin")
 
 
 #set(PYBIND11_CPP_STANDARD -std=c++1z)
@@ -122,10 +121,10 @@ set_target_properties(Mlib PROPERTIES
 
 
 # Interprocedural optimization (from https://cliutils.gitlab.io/modern-cmake/chapters/features/small.html)
-include(CheckIPOSupported)
-check_ipo_supported(RESULT result)
-if(result)
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT result)
+    if(result)
         cmake_policy(SET CMP0069 NEW)
         set_target_properties(Mlib PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
         set_target_properties(Mlib_test PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
