@@ -56,6 +56,10 @@ public:
      */
     void reshape_forward_propagation(const Eigen::MatrixXf &input, int num_samples);
 
+    [[nodiscard]] const Eigen::MatrixXf &get_m_z() const;
+
+    void set_filter(const Eigen::MatrixXf &input);
+
 public:
     Eigen::MatrixXf m_w;
     Eigen::VectorXf m_b;
@@ -65,7 +69,7 @@ public:
     Eigen::VectorXf m_dC_db;
     Eigen::MatrixXf m_dC_da_prev;
     Eigen::MatrixXf m_im2col_matrix;
-    Eigen::MatrixXf m_im2col_reshaped;
+    //Eigen::MatrixXf m_im2col_reshaped;
 
     int m_output_values;
 

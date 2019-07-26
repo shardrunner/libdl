@@ -368,6 +368,7 @@ void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
                 for (int i = 0; i < num_col_filter_positions; i++) {
                     for (int m = 0; m < m_filter_width; m++) {
                         auto col = input_matrix.col(s);
+                        //assert(i == 0 && "LOLOLOLOL");
                         auto segment = col.segment(
                                 m_input_height * m + i * m_stride + m_input_height * m_input_width * k +
                                 m_input_height * j * m_stride,
@@ -407,6 +408,10 @@ const Eigen::MatrixXf &ConvolutionalLayer::get_im2col_matrix() const {
     return m_im2col_matrix;
 }
 
+const Eigen::MatrixXf &ConvolutionalLayer::get_m_z() const {
+    return m_z;
+}
+
 void ConvolutionalLayer::reshape_forward_propagation(const Eigen::MatrixXf &input, int num_samples) {
     m_convlayer_logger->debug("Start reshape forward propagation");
     m_z.resize(m_output_values, num_samples);
@@ -419,7 +424,17 @@ void ConvolutionalLayer::reshape_forward_propagation(const Eigen::MatrixXf &inpu
             m_z.col(i).segment(m_output_img_size*j, m_output_img_size) = im2col_transpose.col(j).segment(m_output_img_size*i,m_output_img_size);
         }
     }
-    std::cout << HelperFunctions::print_tensor(m_im2col_reshaped, output_img_height,output_img_width, m_number_output_channel)<<std::endl;
-    m_convlayer_logger->debug("Reshaped im2col:\n", HelperFunctions::toString(m_im2col_reshaped));
+    //std::cout << HelperFunctions::print_tensor(m_im2col_reshaped, m_output_img_height, m_output_img_width, m_number_output_channel) << std::endl;
+    m_convlayer_logger->debug("Reshaped im2col:\n", HelperFunctions::toString(m_z));
     m_convlayer_logger->debug("End reshape forward propagation");
+}
+
+void
+ConvolutionalLayer::set_filter(const Eigen::MatrixXf &input) {
+    //assert(filter_height*filter_width*filter_channels==input.size() &&  "Filter");
+
+    if (input.size()!=m_w.size()) {
+        throw std::invalid_argument("New Filter size does not match the old filter size");
+    }
+    m_w=input;
 }
