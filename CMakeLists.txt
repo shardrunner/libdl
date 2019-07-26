@@ -70,6 +70,7 @@ include_directories(${MNIST_INCLUDE_DIR})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/extern/Eigen3/cmake")
 # Set Catch2 cmake module directory in Catch2 submodule
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/extern/Catch2/contrib")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/extern/Catch2/CMake")
 # Set Eigen include dir
 set(EIGEN3_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/extern/Eigen3")
 # Find Eigen and Doxygen package
@@ -134,6 +135,13 @@ target_link_libraries(Mlib PUBLIC Eigen3::Eigen spdlog::spdlog)
 add_executable(Mlib_test ../tests/test_layers.cpp tests/test-main.cpp)
 
 target_link_libraries(Mlib_test PUBLIC Mlib Catch2::Catch2)
+
+# Make CTest
+include(CTest)
+include(Catch)
+catch_discover_tests(Mlib_test)
+#include(ParseAndAddCatchTests)
+#ParseAndAddCatchTests(Mlib_test)
 
 add_executable(${EXECUTABLE_TARGET} ../main.cpp)
 
