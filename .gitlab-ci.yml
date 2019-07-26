@@ -13,7 +13,7 @@ build-linux-gcc:
     - cd build
     - cmake ..
     - make
- #   - ./test
+    - ./Mlib_test
   tags:
     - linux
   cache:
@@ -29,7 +29,7 @@ build-linux-clang:
     - cd build
     - cmake .. -DCMAKE_CXX_COMPILER=/usr/bin/clang++
     - make
-    - ./testmain
+    - ./Mlib_execute
   tags:
     - linux
   cache:
