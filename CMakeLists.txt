@@ -6,6 +6,9 @@ project(MBLib VERSION 0.1
 set(CMAKE_CXX_STANDARD 17)
 set(EXECUTABLE_TARGET Mlib_execute)
 
+# Set cmake policy for ipo
+cmake_policy(SET CMP0069 NEW)
+
 #set build type to release, if no type is specified
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -169,7 +172,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     check_ipo_supported(RESULT ipo_result)
     if (ipo_result)
         message(STATUS "Interprocedural optimization flto activated by cmake: ${ipo_result}")
-        cmake_policy(SET CMP0069 NEW)
         set_target_properties(Mlib PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
         set_target_properties(Mlib_test PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
         set_target_properties(Mlib_execute PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
