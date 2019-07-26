@@ -134,6 +134,7 @@ if(result)
     endif()
 endif()
 
+message(STATUS "Interprocedural optimization flto activated: ${result}")
 
 if (DOXYGEN_FOUND)
     doxygen_add_docs(
