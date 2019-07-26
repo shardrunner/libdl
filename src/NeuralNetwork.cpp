@@ -5,6 +5,7 @@
 #include <random>
 #include <memory>
 
+#include "ManageLoggers.h"
 
 void NeuralNetwork::add_layer(std::unique_ptr<BaseLayer> layer) {
     m_layer_list.push_back(std::move(layer));
@@ -66,7 +67,10 @@ void NeuralNetwork::update() {
 }
 
 NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
-        : m_loss_function(std::move(loss_function)) {}
+        : m_loss_function(std::move(loss_function)) {
+    ManageLoggers loggers;
+    loggers.initLoggers();
+}
 
 void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                                   const Eigen::MatrixXi &label, int batch_size,
