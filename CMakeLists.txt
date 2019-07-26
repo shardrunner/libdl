@@ -9,21 +9,21 @@ set(EXECUTABLE_TARGET Mlib_execute)
 # Set cmake policy for ipo
 cmake_policy(SET CMP0069 NEW)
 
-#set build type to release, if no type is specified
+# Set build type to release, if no type is specified
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
-# set compiler warning flags
+# Set compiler warning flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic")
-# set debugging flags
+# Set debugging flags
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-# set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work
+# Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")# -flto=thin")
 
 #set(PYBIND11_CPP_STANDARD -std=c++1z)
 
-#Set include directorys
+# Set include directorys
 include_directories(include)
 
 # Update submodules (from https://cliutils.gitlab.io/modern-cmake)
@@ -31,7 +31,7 @@ find_package(Git QUIET)
 if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     # Update submodules as needed
     option(GIT_SUBMODULE "Check submodules during build" ON)
-    #set(GIT_SUBMODULE OFF)
+    set(GIT_SUBMODULE OFF)
     if (GIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
