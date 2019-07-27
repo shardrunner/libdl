@@ -98,7 +98,6 @@ set(HDRS
         include/LossFunction/BinaryCrossEntropyLoss.h
         include/ActivationFunction/TanhFunction.h
         include/Layer/ConvolutionalLayer.h
-        include/Layer/MaxPoolLayer.h
         include/ActivationFunction/SoftmaxFunction.h
         include/ActivationFunction/IdentityFunction.h
         include/LossFunction/MultiCrossEntropyLoss.h
@@ -119,7 +118,6 @@ set(SRCS
         src/NeuralNetwork.cpp
         src/ActivationFunction/TanhFunction.cpp
         src/Layer/ConvolutionalLayer.cpp
-        src/Layer/MaxPoolLayer.cpp
         src/ActivationFunction/SoftmaxFunction.cpp
         src/ActivationFunction/IdentityFunction.cpp
         src/LossFunction/MultiCrossEntropyLoss.cpp
