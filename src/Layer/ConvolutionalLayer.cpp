@@ -19,17 +19,17 @@
     // temp << input;
     // spdlog::error("Input:\n{}", ss.str());
 
-    m_a.resize(m_output_values, input.cols());
-    m_z.resize(m_output_values, input.cols());
+    m_a.resize(m_number_output_values, input.cols());
+    m_z.resize(m_number_output_values, input.cols());
     m_z.setZero();
 
     // TODO fix multiple input and output channels, for 1x1 the result is correct
     // go through all samples
     for (int k = 0; k < input.cols(); k++) {
         // one filter per output channel
-        for (int n = 0; n < m_number_output_channel; n++) {
+        for (int n = 0; n < m_number_output_channels; n++) {
             // use filter once per input channel
-            for (int m = 0; m < m_number_input_channel; m++) {
+            for (int m = 0; m < m_number_input_channels; m++) {
                 // traverse height
                 for (int i = 0; i < m_output_img_height; i++) {
                     // traverse width
@@ -38,7 +38,7 @@
                         for (int l = 0; l < m_filter_height; l++) {
                             // input column=k
                             // input row =
-                            // j+(m_output_img_width*i)+(m_output_img_width*m_output_img_height*m)+(m_output_img_width*m_output_img_height*m_number_input_channel*n)
+                            // j+(m_output_img_width*i)+(m_output_img_width*m_output_img_height*m)+(m_output_img_width*m_output_img_height*m_number_input_channels*n)
                             int row_input =
                                     j + (m_input_width * (i + l)) +
                                     (m_input_width * m_input_height * m); // input channels
@@ -49,7 +49,7 @@
                             // filter
                             int filter_channel =
                                     m_filter_width * l + (m_filter_height * m_filter_width) * m +
-                                    (m_filter_height * m_filter_width * m_number_input_channel) *
+                                    (m_filter_height * m_filter_width * m_number_input_channels) *
                                     n;
 
                             auto block1 = input.block(row_input, k, m_filter_width, 1);
@@ -118,9 +118,9 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     // go through all samples
     for (long k = 0; k < a_prev.cols(); k++) {
         // one filter per output channel
-        for (int n = 0; n < m_number_output_channel; n++) {
+        for (int n = 0; n < m_number_output_channels; n++) {
             // use filter once per input channel
-            for (int m = 0; m < m_number_input_channel; m++) {
+            for (int m = 0; m < m_number_input_channels; m++) {
                 // traverse height
                 for (int i = 0; i < m_filter_height; i++) {
                     // traverse width
@@ -132,7 +132,7 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
                             int row_filter = j + (m_filter_width * i) +
                                              (m_filter_width * m_filter_height * m) +
                                              (m_filter_width * m_filter_height *
-                                              m_number_input_channel * n);
+                                              m_number_input_channels * n);
 
                             int filter_channel = m_output_img_width * l +
                                                  (m_output_img_height * m_output_img_width) * n;
@@ -276,36 +276,81 @@ void ConvolutionalLayer::update_parameter() {
 }
 
 ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int number_input_channel,
-                                       int number_output_channel,
-                                       int filter_heigth, int filter_width, int stride,
-                                       std::unique_ptr<ActivationFunction> activation_function,
+                                       int filter_height, int filter_width, int number_output_channel, int stride,
+                                       int padding, std::unique_ptr<ActivationFunction> activation_function,
                                        std::unique_ptr<RandomInitialization> random_initialization)
         : m_input_height(input_height), m_input_width(input_width),
-          m_number_input_channel(number_input_channel),
-          m_number_output_channel(number_output_channel),
-          m_filter_height(filter_heigth), m_filter_width(filter_width), m_stride(stride),
+          m_number_input_channels(number_input_channel),
+          m_filter_height(filter_height), m_filter_width(filter_width),
+          m_number_output_channels(number_output_channel), m_stride(stride), m_padding(padding),
           m_activation_function(std::move(activation_function)),
           m_random_initialization(std::move(random_initialization)) {
 
     m_convlayer_logger = spdlog::get("convlayer");
     m_convlayer_logger->info("Start initialization of convlayer");
 
-    m_output_img_height = row_filter_positions();
-    m_output_img_width = col_filter_positions();
+    m_output_img_height = row_filter_positions(input_width, filter_width, stride, padding);
+    m_output_img_width = col_filter_positions(input_height, filter_height, stride, padding);
     m_output_img_size= m_output_img_height*m_output_img_width;
-    m_output_values = m_output_img_size* m_number_output_channel;
+    m_number_output_values = m_output_img_size * m_number_output_channels;
 
-    m_w.resize(m_number_output_channel,m_filter_height * m_filter_width * m_number_input_channel);
+    m_w.resize(m_number_output_channels, m_filter_height * m_filter_width * m_number_input_channels);
 
     m_dC_dw.resize(m_w.rows(), m_w.cols());
 
-    m_b.resize(m_number_output_channel);
+    m_b.resize(m_number_output_channels);
 
     m_dC_db.resize(m_b.size());
 
     initialize_parameter();
     m_convlayer_logger->info("End initialization of convlayer");
 }
+
+/*void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
+                                         const Eigen::MatrixXf &dC_da) {
+    m_dC_da_prev.resize(a_prev.rows(), a_prev.cols());
+    m_dC_dw.setZero();
+    m_dC_da_prev.setZero();
+
+    // derivative activation
+    // std::cout << "m_a :\n" <<m_a << "\ndC_da: \n" << dC_da << std::endl;
+    // std::cout << "Der Activation:\n" <<
+    // m_activation_function->apply_derivative(m_a) << std::endl;
+    Eigen::MatrixXf dC_dz = m_activation_function->apply_derivative(m_a, dC_da);
+
+
+
+
+    // average it out by dividing by number of samples
+    m_dC_dw = m_dC_dw / a_prev.cols();
+
+
+    // TODO implement for multi in and output channel
+    Eigen::MatrixXf filter_flip;
+    filter_flip.resize(m_filter_width, m_filter_height);
+    // std::cout << "filter\n" <<m_w<<std::endl;
+    for (int i = 0; i < m_filter_height; i++) {
+        filter_flip.row(i) =
+                m_w.block(i * m_filter_width, 0, m_filter_width, 1).transpose();
+        // std::cout <<  "\nfilter flip\n" << filter_flip << "\nblock\n"
+        // <<m_w.block(i*m_filter_width,0,m_filter_width,1)<<std::endl;
+    }
+    filter_flip = (filter_flip.colwise().reverse()).eval();
+    // std::cout << "After first reverse\n" << filter_flip << std::endl;
+    filter_flip = (filter_flip.rowwise().reverse()).eval();
+
+    // std::cout << "flipped filter "<<filter_flip << std::endl;
+
+    // TODO make more pretty
+    // construct bigger matrix with zero padding size 2*(m_dC_da_prev_dim-1) for
+    // easier full convolution
+    Eigen::MatrixXf temp_filter(filter_flip.rows() + 2 * (m_output_img_height - 1),
+                                filter_flip.cols() + 2 * (m_output_img_width - 1));
+    temp_filter.setZero();
+
+    temp_filter.block(m_output_img_height - 1, m_output_img_width - 1,
+                      filter_flip.rows(), filter_flip.cols()) = filter_flip;
+}*/
 
 void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
     // std::cout << "input:\n" << input[0] << "\nsize: " <<input.size();
@@ -317,36 +362,43 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
     // spdlog::error("Input:\n{}", ss.str());
     m_convlayer_logger->info("Feed forward convolution");
 
-    //m_a.resize(m_output_values, input.cols());
-    //m_z.resize(m_output_values, input.cols());
+    //m_a.resize(m_number_output_values, input.cols());
+    //m_z.resize(m_number_output_values, input.cols());
 
-    im2col(input);
+    auto im2col_matrix= im2col(input, m_input_height, m_input_width, m_number_input_channels, m_filter_height,
+                               m_filter_width, m_stride, m_padding);
 
-    reshape_forward_propagation(m_w*m_im2col_matrix, input.cols());
+    m_z=*reshape_im2col_result(m_w * (*im2col_matrix), m_input_height, m_input_width, m_filter_height, m_filter_width,
+                               m_number_output_channels, m_stride, m_padding, input.cols());
 
     m_a=m_activation_function->apply_function(m_z);
 
 }
 
-void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
+std::unique_ptr<Eigen::MatrixXf>
+ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix, int img_height, int img_width,
+                           int number_input_channels, int filter_height, int filter_width, int stride,
+                           int padding) const {
+    //TODO Add padding logic
     m_convlayer_logger->info("Start im2col");
     //m_convlayer_logger->debug("Input Matrix:\n{}", HelperFunctions::toString(input_matrix));
-    m_convlayer_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix; {} filter height; {} filter width", input_matrix.size(), input_matrix.rows(), input_matrix.cols(), m_filter_height, m_filter_width);
+    m_convlayer_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix; {} filter height; {} filter width", input_matrix.size(), input_matrix.rows(), input_matrix.cols(), filter_height, filter_width);
 
-    int num_row_filter_positions = row_filter_positions();
-    int num_col_filter_positions = col_filter_positions();
+    int num_row_filter_positions = row_filter_positions(img_width, filter_width, stride, padding);
+    int num_col_filter_positions = col_filter_positions(img_height, filter_height, stride, padding);
     int num_filter_positions = num_col_filter_positions * num_row_filter_positions;
-    //long temp1=m_filter_width * m_filter_height * m_number_input_channel;
+    //long temp1=m_filter_width * m_filter_height * m_number_input_channels;
     //long temp2=num_filter_positions * input_matrix.cols();
     //m_im2col_matrix.resize(temp1,temp2);
-    m_im2col_matrix.resize(m_filter_width * m_filter_height * m_number_input_channel, num_filter_positions * input_matrix.cols());
-    //m_im2col_matrix=Eigen::MatrixXf::Zero(m_filter_width * m_filter_height * m_number_input_channel, num_filter_positions * input_matrix.cols());
+    auto im2col_matrix=std::make_unique<Eigen::MatrixXf>(filter_width * filter_height * number_input_channels, num_filter_positions * input_matrix.cols());
+
+    //m_im2col_matrix=Eigen::MatrixXf::Zero(m_filter_width * m_filter_height * m_number_input_channels, num_filter_positions * input_matrix.cols());
     //auto output_matrix = std::make_unique<Eigen::MatrixXf::>();
-    int filter_size = m_filter_width * m_filter_height;
+    int filter_size = filter_width * filter_height;
     //std::cout << "Tetttttt" << std::endl;
     //m_convlayer_logger->error("Abort");
 
-/*    for (int k = 0; k < m_number_input_channel; k++) {
+/*    for (int k = 0; k < m_number_input_channels; k++) {
         for (int i = 0; i < num_col_filter_positions; i++) {
             for (int j = 0; j < num_row_filter_positions; j++) {
                 for (int m = 0; m < m_filter_width; m++) {
@@ -364,20 +416,20 @@ void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
         }
     }*/
     for (long s = 0; s < input_matrix.cols(); s++) {
-        for (int k = 0; k < m_number_input_channel; k++) {
+        for (int k = 0; k <number_input_channels; k++) {
             for (int j = 0; j < num_row_filter_positions; j++) {
                 for (int i = 0; i < num_col_filter_positions; i++) {
-                    for (int m = 0; m < m_filter_width; m++) {
+                    for (int m = 0; m < filter_width; m++) {
                         auto col = input_matrix.col(s);
                         //assert(i == 0 && "LOLOLOLOL");
                         auto segment = col.segment(
-                                m_input_height * m + i * m_stride + m_input_height * m_input_width * k +
-                                m_input_height * j * m_stride,
+                                img_height * m + i * stride + img_height * img_width * k +
+                                img_height * j * stride,
                                 m_filter_height);
                         //std::cout << "s:" << s << " k:" << k << " i:" << i << " j:" << j << " m:" << m  << " t:" << s * num_col_filter_positions * num_row_filter_positions<< "\nsegment: " << segment.transpose() << std::endl;
-                        m_im2col_matrix.col(i + j * num_col_filter_positions +
+                        im2col_matrix->col(i + j * num_col_filter_positions +
                                            s * num_filter_positions).segment(
-                                m * m_filter_height + k * filter_size, m_filter_height) = segment;
+                                m * filter_height + k * filter_size, filter_height) = segment;
                         //traverse filter field, traverse filter selection row, traverse filter selection height, traverse channels
                         //int start_pos = m * m_input_height + m_input_height * j + i + m_input_height * m_input_width *
                         //Eigen::MatrixXf flat_block = input_matrix.block(0, 0);
@@ -391,44 +443,51 @@ void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
     //std::cout << "output: \n" << m_im2col_matrix << std::endl;
     //m_convlayer_logger->error("stop");
     //m_convlayer_logger->debug("Output Matrix:\n{}",HelperFunctions::toString(m_im2col_matrix));
-    m_convlayer_logger->debug("{} size output matrix; {} rows output matrix; {} cols output matrix", m_im2col_matrix.size(), m_im2col_matrix.rows(), m_im2col_matrix.rows());
+    m_convlayer_logger->debug("{} size output matrix; {} rows output matrix; {} cols output matrix", im2col_matrix->size(), im2col_matrix->rows(), im2col_matrix->rows());
     m_convlayer_logger->info("End im2col");
 
     //output_matrix.row(0) = Eigen::Map<const VectorXd>(A.data(), A.size())
     //VectorXd v =
+    return im2col_matrix;
 }
 
-int ConvolutionalLayer::row_filter_positions() const {
-    return (m_input_width - m_filter_width) / m_stride + 1;
+int ConvolutionalLayer::row_filter_positions(int img_width, int filter_width, int stride, int padding) const {
+    return (img_width - filter_width+2*padding) / stride + 1;
 }
 
-int ConvolutionalLayer::col_filter_positions() const {
-    return (m_input_height - m_filter_height) / m_stride + 1;
-}
-
-const Eigen::MatrixXf &ConvolutionalLayer::get_im2col_matrix() const {
-    return m_im2col_matrix;
+int ConvolutionalLayer::col_filter_positions(int img_height, int filter_height, int stride, int padding) const {
+    return (img_height - filter_height+2*padding) / stride + 1;
 }
 
 const Eigen::MatrixXf &ConvolutionalLayer::get_m_z() const {
     return m_z;
 }
 
-void ConvolutionalLayer::reshape_forward_propagation(const Eigen::MatrixXf &input, long num_samples) {
+std::unique_ptr<Eigen::MatrixXf>
+ConvolutionalLayer::reshape_im2col_result(const Eigen::MatrixXf &input, int input_height, int input_width,
+                                          int filter_height, int filter_width, int number_output_channels, int stride,
+                                          int padding, long num_samples) const {
     m_convlayer_logger->debug("Start reshape forward propagation");
-    m_z.resize(m_output_values, num_samples);
-    m_convlayer_logger->debug("Dimensions reshaped im2col: {} {}", m_output_values, num_samples);
+
+    auto output_img_height = row_filter_positions(input_width, filter_width, stride, padding);
+    auto output_img_width = col_filter_positions(input_height, filter_height, stride, padding);
+    auto output_img_size= output_img_height*output_img_width;
+    auto num_output_values = output_img_size* number_output_channels;
+
+    auto im2col_reshaped=std::make_unique<Eigen::MatrixXf>(num_output_values, num_samples);
+    m_convlayer_logger->debug("Dimensions reshaped im2col: {} {}", num_output_values, num_samples);
 
     auto im2col_transpose=input.transpose();
-    for (int i=0; i< num_samples; i++) {
-        for (int j=0; j< m_number_output_channel; j++) {
+    for (long i=0; i< num_samples; i++) {
+        for (int j=0; j < number_output_channels; j++) {
             //m_convlayer_logger->debug("Transferred column\n{}",HelperFunctions::toString(im2col_transpose.col(i)));
-            m_z.col(i).segment(m_output_img_size*j, m_output_img_size) = im2col_transpose.col(j).segment(m_output_img_size*i,m_output_img_size);
+            im2col_reshaped->col(i).segment(output_img_size * j, output_img_size) = im2col_transpose.col(j).segment(output_img_size * i, output_img_size);
         }
     }
-    //std::cout << HelperFunctions::print_tensor(m_im2col_reshaped, m_output_img_height, m_output_img_width, m_number_output_channel) << std::endl;
+    //std::cout << HelperFunctions::print_tensor(m_im2col_reshaped, m_output_img_height, m_output_img_width, m_number_output_channels) << std::endl;
     //m_convlayer_logger->debug("Reshaped im2col:\n", HelperFunctions::toString(m_z));
     m_convlayer_logger->debug("End reshape forward propagation");
+    return im2col_reshaped;
 }
 
 void
