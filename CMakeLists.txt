@@ -168,6 +168,7 @@ set_target_properties(Mlib PROPERTIES
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     include(CheckIPOSupported)
     check_ipo_supported(RESULT ipo_result)
+    #if(TRUE)
     if (ipo_result)
         message(STATUS "Interprocedural optimization flto activated by cmake: ${ipo_result}")
         set_target_properties(Mlib PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)

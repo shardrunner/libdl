@@ -106,25 +106,27 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
     if (num_batches < 0) {
         num_batches = 1;
     }
+    Eigen::MatrixXf input_batch;
+    Eigen::MatrixXi label_batch;
 
     //float loss = 0.0;
     for (int i = 0; i < iterations; i++) {
         for (int j = 0; j < num_batches; j++) {
             if (num_batches != 1) {
-                auto input_batch =
+                input_batch =
                         perm_input.block(0, j * batch_size, perm_input.rows(), batch_size);
-                auto label_batch =
+                label_batch =
                         perm_label.block(j * batch_size, 0, batch_size, perm_label.cols());
                 // std::cout << "input \n" << input.colwise().sum() << "\ninput batch\n"
                 // << input_batch.colwise().sum() <<"\nlabel\n" << label << "\nlabel
                 // batch\n" << label_batch << std::endl; std::cout << "Batch " << j << "
                 // of " <<  num_batches<<" in iter " << i << std::endl;
             } else {
-                auto input_batch = input;
-                auto label_batch = label;
+                input_batch = input;
+                label_batch = label;
             }
-            feed_forward(input);
-            backpropagation(input, label);
+            feed_forward(input_batch);
+            backpropagation(input_batch, label_batch);
             update();
             if (i % divisor == 0) {
                 auto temp1 =
