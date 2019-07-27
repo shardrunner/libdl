@@ -47,17 +47,17 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev,
    * Input -> prev layer -> current layer -> next layer -> Loss
    *
    *
-   * C: Loss, w: weights, z: result before activation [z=w*a(prev)+b], a:
-   * activated z [sigma(z)], d: derivative, a_prev: a of previous layer
-   * dC/dw=(dz/dw)*(da/dz)*(dC/da)=(dz/dw)*(dC/dz)
+   * C: Loss, w: weights, z: result before activation [z=w*a(prev)+b],
+   * a: activated z [sigma(z)], d: derivative, a_prev: a of previous layer
+   * dC/dw=(dz/dw)*(da/dz)*(dC/da)=(dz/dw)*(dC/dz) (dC/dw is normalized with the number of samples)
    * dz/dw=a_prev
    * da/dz=derivative activation function with z
-   * dC/da=derivative from next layer (see intermediate results dC/da(prev))
+   * dC/da=derivative from next layer (computation see intermediate results dC/da(prev))
    *
    * Intermediate results:
    * derivative for previous layer computation (for next step/prev layer in
    * backprop):
-   * dC/da_prev=sum[(dz/da_prev)*(da/dz)*(dC/da)]=sum[(dz/da_prev)*(dC/dz)]
+   * dC/da_prev=(dz/da_prev)*(da/dz)*(dC/da)]=(dz/da_prev)*(dC/dz)
    * dz/da_prev=w
    *
    * bias backprop:
