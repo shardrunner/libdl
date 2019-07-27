@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <random>
 #include <memory>
+#include "omp.h"
+#include <thread>
 
 #include "ManageLoggers.h"
 #include "HelperFunctions.h"
@@ -69,6 +71,12 @@ void NeuralNetwork::update() {
 
 NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
         : m_loss_function(std::move(loss_function)) {
+    std::cout << "C++ Test: " << std::thread::hardware_concurrency() << std::endl;
+    std::cout << "OpenMP setting:" << omp_get_num_procs() << std::endl;
+    //Try to set thread number to the physical core number (without HT), because Eigen is slower otherwise (https://eigen.tuxfamily.org/dox-devel/TopicMultiThreading.html)
+    omp_set_num_threads(omp_get_num_procs()/2);
+
+    //init loggers
     ManageLoggers loggers;
     loggers.initLoggers();
     m_nn_logger=spdlog::get("nn");
