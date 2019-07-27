@@ -18,8 +18,8 @@ endif ()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic")
 # Set debugging flags
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-# Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")# -flto=thin")
+# Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work; mtune and march optimize for used (native) processor, ffast-math sacrifices accuracy for speed
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -mtune=native -ffast-math")# -flto=thin")
 
 #set(PYBIND11_CPP_STANDARD -std=c++1z)
 
@@ -79,6 +79,8 @@ set(EIGEN3_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/extern/Eigen3")
 # Find Eigen and Doxygen package
 find_package(Eigen3 3.3 REQUIRED MODULE)
 find_package(Doxygen)
+find_package(OpenMP)
+
 
 # Set Doxygen to generate docs
 set(DOXYGEN_GENERATE_HTML YES)
@@ -146,13 +148,25 @@ catch_discover_tests(Mlib_test)
 
 add_executable(${EXECUTABLE_TARGET} ../main.cpp)
 
-target_link_libraries(Mlib_execute PUBLIC Mlib)
+target_link_libraries(${EXECUTABLE_TARGET} PUBLIC Mlib)
 
 target_compile_features(${EXECUTABLE_TARGET} PUBLIC cxx_std_17)
 
 set_target_properties(${EXECUTABLE_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_compile_definitions(${EXECUTABLE_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")
+
+if(OpenMP_CXX_FOUND)
+    message(STATUS "Enabled OpenMP")
+    target_link_libraries(Mlib PUBLIC OpenMP::OpenMP_CXX)
+    target_link_libraries(${EXECUTABLE_TARGET} PUBLIC OpenMP::OpenMP_CXX)
+    target_link_libraries(Mlib_test PUBLIC OpenMP::OpenMP_CXX)
+
+    #include(ProcessorCount)
+    #ProcessorCount(N)
+    #set(${OMP_NUM_THREADS} "2")
+    #message(STATUS Found ${N} cores)
+endif()
 
 # Create logs directory
 #file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
