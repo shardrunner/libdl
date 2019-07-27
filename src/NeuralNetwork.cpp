@@ -78,7 +78,8 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
 void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                                   const Eigen::MatrixXi &label, int batch_size,
                                   int iterations, int divisor) {
-
+    m_nn_logger->info("Started training network");
+    m_nn_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix;; {} batch size; {} iterations", input.size(), input.rows(), input.cols(), batch_size, iterations);
     auto perm_input = input;
     auto perm_label = label;
 
