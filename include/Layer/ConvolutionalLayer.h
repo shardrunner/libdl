@@ -54,7 +54,7 @@ public:
      * Therefore the maxtrix has to be transposed and the output channel columns have to be put in their corresponding sample column.
      * @param num_samples The number of samples in the input.
      */
-    void reshape_forward_propagation(const Eigen::MatrixXf &input, int num_samples);
+    void reshape_forward_propagation(const Eigen::MatrixXf &input, long num_samples);
 
     [[nodiscard]] const Eigen::MatrixXf &get_m_z() const;
 

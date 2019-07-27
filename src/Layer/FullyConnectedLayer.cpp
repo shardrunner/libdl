@@ -1,5 +1,5 @@
 #include "Layer/FullyConnectedLayer.h"
-#include <ctime>
+//#include <ctime>
 #include <iostream>
 
 FullyConnectedLayer::FullyConnectedLayer(
@@ -69,7 +69,7 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev,
    *
    */
 
-  const int number_training_samples = a_prev.cols();
+  const long number_training_samples = a_prev.cols();
   // calcualate intermediate value dC/dz
   Eigen::MatrixXf dC_dz = m_activation_function->apply_derivative(m_a, dC_da);
 

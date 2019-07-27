@@ -26,7 +26,7 @@ ReluFunction::apply_derivative(const Eigen::MatrixXf &m_a,
                                const Eigen::MatrixXf &dC_da) const {
     // Apply an unary expression corresponding to a derivative relu lambda to
     // every matrix element and multiply with derivative next layer if elem >0 ->
-    // 1 else -> -elem*leak_factor (leak_factor 0 by defautl)
+    // 1 else -> -elem*leak_factor (leak_factor 0 by default)
     return (m_a.unaryExpr([this](float x) -> float {
                 if (x > 0.0) {
                     return 1.0;

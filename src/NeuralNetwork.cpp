@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "ManageLoggers.h"
+#include "HelperFunctions.h"
 
 void NeuralNetwork::add_layer(std::unique_ptr<BaseLayer> layer) {
     m_layer_list.push_back(std::move(layer));
@@ -14,7 +15,7 @@ void NeuralNetwork::add_layer(std::unique_ptr<BaseLayer> layer) {
 void NeuralNetwork::feed_forward(const Eigen::MatrixXf &input) {
     m_layer_list[0]->feed_forward(input);
 
-    for (int i = 1; i < m_layer_list.size(); i++) {
+    for (unsigned long i = 1; i < m_layer_list.size(); i++) {
         m_layer_list[i]->feed_forward(m_layer_list[i - 1]->get_forward_output());
     }
     // std::cout << "\nOutput:
@@ -24,7 +25,7 @@ void NeuralNetwork::feed_forward(const Eigen::MatrixXf &input) {
 
 void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input,
                                     const Eigen::MatrixXi &label) {
-    int number_layers = m_layer_list.size();
+    const unsigned long number_layers = m_layer_list.size();
 
     //  spdlog::debug("rows output: {}, columns output: {}",
     //                m_layer_list[number_layers -
@@ -50,7 +51,7 @@ void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input,
             m_layer_list[number_layers - 2]->get_forward_output(),
             m_loss_function->get_backpropagate());
 
-    for (int i = number_layers - 2; i > 0; i--) {
+    for (unsigned long i = number_layers - 2; i > 0; i--) {
         m_layer_list[i]->backpropagation(
                 m_layer_list[i - 1]->get_forward_output(),
                 m_layer_list[i + 1]->get_backward_output());
@@ -61,8 +62,8 @@ void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input,
 }
 
 void NeuralNetwork::update() {
-    for (int i = 0; i < m_layer_list.size(); i++) {
-        m_layer_list[i]->update_parameter();
+    for (auto & i : m_layer_list) {
+        i->update_parameter();
     }
 }
 
@@ -70,6 +71,8 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
         : m_loss_function(std::move(loss_function)) {
     ManageLoggers loggers;
     loggers.initLoggers();
+    m_nn_logger=spdlog::get("nn");
+    m_nn_logger->info("Initialized neural network");
 }
 
 void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
@@ -104,7 +107,7 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
         num_batches = 1;
     }
 
-    float loss = 0.0;
+    //float loss = 0.0;
     for (int i = 0; i < iterations; i++) {
         for (int j = 0; j < num_batches; j++) {
             if (num_batches != 1) {
@@ -128,7 +131,7 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                         m_layer_list[m_layer_list.size() - 1]->get_forward_output();
                 // std::cout << /*"dim: " <<temp1.rows() << " & " << temp1.cols() <<*/
                 // "\nForward_output\n" << temp1 << "\n";
-                //        spdlog::debug("tesp");
+                //        spdlog::debug("test");
                 auto temp2 =
                         m_loss_function->calculate_loss(temp1, label); //(temp1, label);
                 std::cout << "Loss batch " << j << " of iteration number " << i << ": "
@@ -153,13 +156,13 @@ Eigen::MatrixXi NeuralNetwork::calc_accuracy(const Eigen::MatrixXf &input,
 
     int correct = 0;
     Eigen::MatrixXf::Index pos_max;
-    for (int i = 0; i < result.cols(); i++) {
+    for (long i = 0; i < result.cols(); i++) {
         result.col(i).maxCoeff(&pos_max);
         predictions(i) = (int) pos_max;
         if ((int) pos_max == label(i)) {
             correct += 1;
         }
     }
-    std::cout << "\naccuracy " << (float) correct / label.size() << std::endl;
+    std::cout << "\naccuracy " << (double) correct / (double) label.size() << std::endl;
     return predictions;
 }

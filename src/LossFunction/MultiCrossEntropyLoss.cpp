@@ -1,6 +1,6 @@
 #include "LossFunction/MultiCrossEntropyLoss.h"
 
-float MultiCrossEntropyLoss::calculate_loss(
+double MultiCrossEntropyLoss::calculate_loss(
     const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const {
   // L = -sum(log(phat) * y)
   // in = phat
@@ -22,20 +22,20 @@ float MultiCrossEntropyLoss::calculate_loss(
 
   //(-1)*(label.array()*Eigen::log(a_prev.array())).sum();
 
-  float error = 0.0;
-  for (int i = 0; i < label.size(); i++) {
-    float temp = a_prev(label(i), i);
+  double error = 0.0;
+  for (long i = 0; i < label.size(); i++) {
+    double temp = a_prev(label(i), i);
     error -= std::log(temp);
   }
 
-  return error / label.size();
+  return error / (double) label.size();
 }
 void MultiCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
                                           const Eigen::VectorXi &label) {
 
   // Check dimension
-  const int nobs = a_prev.cols();
-  const int nclass = a_prev.rows();
+  const long nobs = a_prev.cols();
+  const long nclass = a_prev.rows();
 
   if (label.size() != nobs) {
     throw std::invalid_argument(

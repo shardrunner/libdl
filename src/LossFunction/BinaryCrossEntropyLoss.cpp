@@ -1,17 +1,17 @@
 #include "LossFunction/BinaryCrossEntropyLoss.h"
 
-float BinaryCrossEntropyLoss::calculate_loss(
+double BinaryCrossEntropyLoss::calculate_loss(
     const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const {
 
-  int num_samples = label.size();
+  const long num_samples = label.size();
 
   Eigen::RowVectorXf row_label = label.transpose().cast<float>();
 
   auto left_side = row_label.cwiseProduct((a_prev.array().log()).matrix());
   auto right_side = ((1 - row_label.array()).matrix())
                         .cwiseProduct(((1 - a_prev.array()).log()).matrix());
-  float cost = (left_side + right_side).sum();
-  cost = (-1) * cost / float(num_samples);
+  double cost = (left_side + right_side).sum();
+  cost = (-1) * cost / double(num_samples);
 
   return cost;
 
@@ -20,8 +20,8 @@ float BinaryCrossEntropyLoss::calculate_loss(
 void BinaryCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
                                            const Eigen::VectorXi &label) {
 
-  const int nobs = a_prev.cols();
-  const int nvar = a_prev.rows();
+  const long nobs = a_prev.cols();
+  const long nvar = a_prev.rows();
 
   Eigen::RowVectorXi label_row = label.transpose();
 

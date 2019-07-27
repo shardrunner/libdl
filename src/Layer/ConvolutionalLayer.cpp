@@ -116,7 +116,7 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
 
     // std::cout << "a_prev:\n" << a_prev << "\ndC_dz\n" << dC_dz << std::endl;
     // go through all samples
-    for (int k = 0; k < a_prev.cols(); k++) {
+    for (long k = 0; k < a_prev.cols(); k++) {
         // one filter per output channel
         for (int n = 0; n < m_number_output_channel; n++) {
             // use filter once per input channel
@@ -212,7 +212,7 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     // std::cout << "dC_dz\n" << dC_dz << "\nfilter_temp\n" << temp_filter <<
     // std::endl;//"\nfilter\n" << m_w << std::endl;
 
-    for (int k = 0; k < a_prev.cols(); k++) {
+    for (long k = 0; k < a_prev.cols(); k++) {
         for (int i = 0; i < m_input_height; i++) {
             for (int j = 0; j < m_input_width; j++) {
                 // std::cout << "block\n"
@@ -330,7 +330,8 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
 
 void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
     m_convlayer_logger->info("Start im2col");
-    m_convlayer_logger->debug("Input Matrix:\n{}", HelperFunctions::toString(input_matrix));
+    //m_convlayer_logger->debug("Input Matrix:\n{}", HelperFunctions::toString(input_matrix));
+    m_convlayer_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix; {} filter height; {} filter width", input_matrix.size(), input_matrix.rows(), input_matrix.cols(), m_filter_height, m_filter_width);
 
     int num_row_filter_positions = row_filter_positions();
     int num_col_filter_positions = col_filter_positions();
@@ -362,7 +363,7 @@ void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
             }
         }
     }*/
-    for (int s = 0; s < input_matrix.cols(); s++) {
+    for (long s = 0; s < input_matrix.cols(); s++) {
         for (int k = 0; k < m_number_input_channel; k++) {
             for (int j = 0; j < num_row_filter_positions; j++) {
                 for (int i = 0; i < num_col_filter_positions; i++) {
@@ -389,7 +390,8 @@ void ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix) {
     }
     //std::cout << "output: \n" << m_im2col_matrix << std::endl;
     //m_convlayer_logger->error("stop");
-    m_convlayer_logger->debug("Output Matrix:\n{}",HelperFunctions::toString(m_im2col_matrix));
+    //m_convlayer_logger->debug("Output Matrix:\n{}",HelperFunctions::toString(m_im2col_matrix));
+    m_convlayer_logger->debug("{} size output matrix; {} rows output matrix; {} cols output matrix", m_im2col_matrix.size(), m_im2col_matrix.rows(), m_im2col_matrix.rows());
     m_convlayer_logger->info("End im2col");
 
     //output_matrix.row(0) = Eigen::Map<const VectorXd>(A.data(), A.size())
@@ -412,7 +414,7 @@ const Eigen::MatrixXf &ConvolutionalLayer::get_m_z() const {
     return m_z;
 }
 
-void ConvolutionalLayer::reshape_forward_propagation(const Eigen::MatrixXf &input, int num_samples) {
+void ConvolutionalLayer::reshape_forward_propagation(const Eigen::MatrixXf &input, long num_samples) {
     m_convlayer_logger->debug("Start reshape forward propagation");
     m_z.resize(m_output_values, num_samples);
     m_convlayer_logger->debug("Dimensions reshaped im2col: {} {}", m_output_values, num_samples);
@@ -420,12 +422,12 @@ void ConvolutionalLayer::reshape_forward_propagation(const Eigen::MatrixXf &inpu
     auto im2col_transpose=input.transpose();
     for (int i=0; i< num_samples; i++) {
         for (int j=0; j< m_number_output_channel; j++) {
-            m_convlayer_logger->debug("Transferred column\n{}",HelperFunctions::toString(im2col_transpose.col(i)));
+            //m_convlayer_logger->debug("Transferred column\n{}",HelperFunctions::toString(im2col_transpose.col(i)));
             m_z.col(i).segment(m_output_img_size*j, m_output_img_size) = im2col_transpose.col(j).segment(m_output_img_size*i,m_output_img_size);
         }
     }
     //std::cout << HelperFunctions::print_tensor(m_im2col_reshaped, m_output_img_height, m_output_img_width, m_number_output_channel) << std::endl;
-    m_convlayer_logger->debug("Reshaped im2col:\n", HelperFunctions::toString(m_z));
+    //m_convlayer_logger->debug("Reshaped im2col:\n", HelperFunctions::toString(m_z));
     m_convlayer_logger->debug("End reshape forward propagation");
 }
 

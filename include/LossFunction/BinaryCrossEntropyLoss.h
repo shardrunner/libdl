@@ -7,7 +7,7 @@
  */
 class BinaryCrossEntropyLoss : public LossFunction {
 public:
-  [[nodiscard]] float
+  [[nodiscard]] double
   calculate_loss(const Eigen::MatrixXf &a_prev,
                  const Eigen::VectorXi &label) const override;
 

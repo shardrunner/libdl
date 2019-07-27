@@ -9,7 +9,7 @@ SigmoidFunction::apply_function(const Eigen::MatrixXf &input) const {
 Eigen::MatrixXf
 SigmoidFunction::apply_derivative(const Eigen::MatrixXf &m_a,
                                   const Eigen::MatrixXf &dC_da) const {
-  // Apply sigmoid derivative element wise and mulitply with derivative next
+  // Apply sigmoid derivative element wise and multiply with derivative next
   // layer
   return ((m_a.array() * (1 - m_a.array())) * dC_da.array()).matrix();
 }

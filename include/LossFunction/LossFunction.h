@@ -19,7 +19,7 @@ public:
    * @param label The ground truth label set for the training input.
    * @return The calculated normalized loss for the set of training images.
    */
-  [[nodiscard]] virtual float
+  [[nodiscard]] virtual double
   calculate_loss(const Eigen::MatrixXf &a_prev,
                  const Eigen::VectorXi &label) const = 0;
 

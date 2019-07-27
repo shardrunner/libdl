@@ -11,7 +11,7 @@ std::string HelperFunctions::toString(const Eigen::MatrixXf &mat) {
 std::string HelperFunctions::print_tensor(const Eigen::MatrixXf &input, int img_height, int img_width, int num_channels) {
     std::stringstream ss;
     ss << "Matrix of size: " << input.size() << "; Number of samples: " <<input.cols() << "; Images of height: " << img_height << ", width: " << img_width << ", channels: " << num_channels << std::endl;
-    for (int i =0; i < input.cols(); i++) {
+    for (long i =0; i < input.cols(); i++) {
         ss << "\nSample: " << i <<std::endl;
         for (int j=0; j< num_channels; j++) {
             ss << "Channel: " << j << std::endl;
