@@ -79,11 +79,16 @@ public:
     /**
      * Add zero padding to the input matrix.
      * Generates a matrix with +2*padding cols and rows and copies the old matrix in the middle.
+     * Because a tensor is embedded in the matrix, the padding is a bit more complex.
      * @param input The input matrix that should be padded.
      * @param padding The size of the padding. A ring of 0 would be a padding of size 1.
      * @return A pointer to the padded new matrix.
      */
-    [[nodiscard]] std::unique_ptr<Eigen::MatrixXf> pad_matrix(const Eigen::MatrixXf &input, int padding) const;
+    [[nodiscard]] std::unique_ptr<Eigen::MatrixXf>
+    pad_matrix(const Eigen::MatrixXf &input, int padding, int img_height, int img_width,
+               int number_channels) const;
+
+    std::unique_ptr<Eigen::MatrixXf> flip_filter() const;
 
 public:
     Eigen::MatrixXf m_w;

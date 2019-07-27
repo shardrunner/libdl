@@ -286,6 +286,8 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
           m_activation_function(std::move(activation_function)),
           m_random_initialization(std::move(random_initialization)) {
 
+    assert(filter_height==filter_width && "Filter has to be quadratic");
+
     m_convlayer_logger = spdlog::get("convlayer");
     m_convlayer_logger->info("Start initialization of convlayer");
 
@@ -332,14 +334,11 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     // use largest image between filter and dC/dz as filter
     //int filter_size=std::min(m_filter_height*m_filter_width,m_output_img_size);
 
-    auto dC_dz_im2col=im2col(dC_dz, m_output_img_height, m_output_img_width, m_number_output_channels, m_output_img_height, m_output_img_width, m_stride, m_padding)
+    auto dC_dz_im2col=im2col(dC_dz, m_output_img_height, m_output_img_width, m_number_output_channels, m_output_img_height, m_output_img_width, m_stride, m_padding);
     auto a_prev_im2col=im2col(a_prev,m_input_height,m_input_width,m_number_input_channels,m_output_img_height,m_output_img_width,m_stride,m_padding);
 
-    // dC/dw=Conv(a_prev,dC/dz)
-    m_dC_dw=*dC_dz_im2col*(*a_prev_im2col);
-
-    // average it out by dividing by number of samples
-    m_dC_dw = m_dC_dw / a_prev.cols();
+    // dC/dw=Conv(a_prev,dC/dz) and normalization
+    m_dC_dw=(*dC_dz_im2col*(*a_prev_im2col).transpose())/dC_dz.cols();
 
 //TODO Resize output
 //TODO omp parallel for im2col?
@@ -347,11 +346,13 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
 //TODO python -c "import psutil; psutil.cpu_count(logical=False)"
 //TODO Test openmp cores deeper
 
-/*    // TODO implement for multi in and output channel
-    Eigen::MatrixXf filter_flip;
-    filter_flip.resize(m_filter_width, m_filter_height);
-    // std::cout << "filter\n" <<m_w<<std::endl;
-    for (int i = 0; i < m_filter_height; i++) {
+    auto flipped_filter=flip_filter();
+
+    auto dC_dz_padded= pad_matrix(dC_dz, m_filter_width - 1, 0, 0, 0);
+
+
+
+/*    for (int i = 0; i < m_filter_height; i++) {
         filter_flip.row(i) =
                 m_w.block(i * m_filter_width, 0, m_filter_width, 1).transpose();
         // std::cout <<  "\nfilter flip\n" << filter_flip << "\nblock\n"
@@ -359,19 +360,10 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     }
     filter_flip = (filter_flip.colwise().reverse()).eval();
     // std::cout << "After first reverse\n" << filter_flip << std::endl;
-    filter_flip = (filter_flip.rowwise().reverse()).eval();
+    filter_flip = (filter_flip.rowwise().reverse()).eval();*/
 
     // std::cout << "flipped filter "<<filter_flip << std::endl;
 
-    // TODO make more pretty
-    // construct bigger matrix with zero padding size 2*(m_dC_da_prev_dim-1) for
-    // easier full convolution
-    Eigen::MatrixXf temp_filter(filter_flip.rows() + 2 * (m_output_img_height - 1),
-                                filter_flip.cols() + 2 * (m_output_img_width - 1));
-    temp_filter.setZero();
-
-    temp_filter.block(m_output_img_height - 1, m_output_img_width - 1,
-                      filter_flip.rows(), filter_flip.cols()) = filter_flip;*/
 }
 
 void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
@@ -504,11 +496,33 @@ const Eigen::MatrixXf &ConvolutionalLayer::get_dC_dw() const {
     return m_dC_dw;
 }
 
-std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::pad_matrix(const Eigen::MatrixXf &input, int padding) const {
-    auto padded_input=std::make_unique<Eigen::MatrixXf>(input.rows()+2*padding,input.cols()+2*padding);
+std::unique_ptr<Eigen::MatrixXf>
+ConvolutionalLayer::pad_matrix(const Eigen::MatrixXf &input, int padding, int img_height, int img_width,
+                               int number_channels) const {
+    auto img_size=img_height*img_width;
+    auto img_height_padded=img_height+2*padding;
+    auto img_width_padded=img_width+2*padding;
+    auto img_size_padded=img_height_padded*img_width_padded;
+
+    // new_size=((height+2*padding)*(width+2*padding))*number_channels
+    auto padded_input=std::make_unique<Eigen::MatrixXf>(img_size_padded*number_channels,input.cols());
+
     padded_input->setZero();
 
-    padded_input->block(padding,padding,input.rows(),input.cols())=input;
-
+    for (int i=0; i<number_channels; i++) {
+        for (int j=0; j<img_width; j++) {
+            // Added rows of padding + skip already processed img + skip already processed cols + skip first pads of rows
+            padded_input->block(img_height_padded*padding+img_size_padded*number_channels+img_height_padded*j+padding,0,img_height,input.cols())=input.block(img_size*number_channels+img_height*j,0,img_height,input.cols());
+        }
+    }
     return padded_input;
+}
+
+std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::flip_filter() const {
+    auto flipped_filter=std::make_unique<Eigen::MatrixXf>(m_w.rows(), m_w.cols());
+    // std::cout << "filter\n" <<m_w<<std::endl;
+    for (int i=0; i< m_number_input_channels; i++) {
+        flipped_filter->block(0,i*m_filter_height*m_filter_width,m_w.rows(),m_filter_height*m_filter_width)=m_w.block(0,i*m_filter_height*m_filter_width,m_w.rows(),m_filter_height*m_filter_width).rowwise().reverse();
+    }
+    return flipped_filter;
 }
