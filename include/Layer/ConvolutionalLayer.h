@@ -16,6 +16,21 @@ public:
 
     void feed_forward(const Eigen::MatrixXf &input) override;
 
+    void feed_forward_old(const Eigen::MatrixXf &input);
+
+    void backpropagation_old(const Eigen::MatrixXf &a_prev,
+                         const Eigen::MatrixXf &dC_da);
+
+    /**
+     * Backpropagation operation of the convolution layer.
+     * Implemented using im2col for faster computation.
+     * dC_dw=conv(a_prev, (dC_da coeffmult* da_dz)
+     * a_prev: feed forward result previous layer
+     * dC_da: derivative next layer
+     * da_dz: derivative of activation function of layer
+     * @param a_prev Feed forward result of the previous layer
+     * @param dC_da Derivative of the next layer
+     */
     void backpropagation(const Eigen::MatrixXf &a_prev,
                          const Eigen::MatrixXf &dC_da) override;
 
@@ -34,7 +49,7 @@ public:
      */
     [[nodiscard]] std::unique_ptr<Eigen::MatrixXf>
     im2col(const Eigen::MatrixXf &input_matrix, int img_height, int img_width,
-           int number_input_channels, int filter_height, int filter_width, int stride, int padding) const;
+           int number_img_channels, int filter_height, int filter_width, int stride, int padding) const;
 
     /**
      * Returns the number of filter positions.
@@ -57,7 +72,18 @@ public:
 
     [[nodiscard]] const Eigen::MatrixXf &get_m_z() const;
 
+    [[nodiscard]] const Eigen::MatrixXf &get_dC_dw() const;
+
     void set_filter(const Eigen::MatrixXf &input);
+
+    /**
+     * Add zero padding to the input matrix.
+     * Generates a matrix with +2*padding cols and rows and copies the old matrix in the middle.
+     * @param input The input matrix that should be padded.
+     * @param padding The size of the padding. A ring of 0 would be a padding of size 1.
+     * @return A pointer to the padded new matrix.
+     */
+    [[nodiscard]] std::unique_ptr<Eigen::MatrixXf> pad_matrix(const Eigen::MatrixXf &input, int padding) const;
 
 public:
     Eigen::MatrixXf m_w;
