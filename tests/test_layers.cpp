@@ -284,6 +284,27 @@ SCENARIO("Test Convolutional Layer") {
                 Eigen::MatrixXf output_matrix = output_matrixd.cast<float>();
                 REQUIRE(conv_layer.get_weights_derivative().isApprox(output_matrix));
             }
+            THEN("It should be correct for a more complex input") {
+                //std::cout << "\n\n-----------------------------------------------------------------------------------------------------------\n\n"<< std::endl;
+                ConvolutionalLayer conv_layer(
+                        3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
+                        std::make_unique<DeterministicInitialization>());
+                Eigen::MatrixXf input_matrix(27, 1);
+                input_matrix <<16,47,68,24,18,12,32,26,9,26,24,2,57,21,11,43,12,19,18,4,81,47,6,22,21,12,13;
+                //std::cout << "Filter\n"<<HelperFunctions::print_tensor(filter_matrix.transpose(),2,2,3);
+                Eigen::MatrixXd der_matrix(8, 1);
+                der_matrix.transpose() << 0.1678, 0.002, 0.098, 0.246, 0.5, 0.21, 0.67, 0.487;
+                Eigen::MatrixXf de_matrix = der_matrix.cast<float>();
+                //std::cout << "Derivative\n"<<HelperFunctions::print_tensor(de_matrix,2,2,2);
+
+                conv_layer.backpropagate_weights(input_matrix,de_matrix);
+
+                Eigen::MatrixXd output_matrixd(27, 1);
+                output_matrixd.transpose()
+                        << 30, 28.7678, 6.722, 51.0322, 64.376, 19.61, 14.642, 22.528, 8.766, 18.339, 11.3634, 1.476, 47.6112, 44.7626, 8.981, 31.212, 38.992, 11.693, 41.6848, 37.8224, 4.336, 98.3552, 99.7084, 35.284, 56.622, 73.295, 19.962;
+                Eigen::MatrixXf output_matrix = output_matrixd.cast<float>();
+                //REQUIRE(conv_layer.get_input_derivative().isApprox(output_matrix));
+            }
         }
         WHEN("The inputs are backpropagated") {
             THEN("It should be correct for a simple input") {
@@ -307,7 +328,7 @@ SCENARIO("Test Convolutional Layer") {
                 REQUIRE(conv_layer.get_input_derivative().isApprox(output_matrix));
             }
             THEN("It should be correct for a more complex input") {
-                std::cout << "\n\n-----------------------------------------------------------------------------------------------------------\n\n"<< std::endl;
+                //std::cout << "\n\n-----------------------------------------------------------------------------------------------------------\n\n"<< std::endl;
                 ConvolutionalLayer conv_layer(
                         3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
                         std::make_unique<DeterministicInitialization>());
@@ -315,11 +336,11 @@ SCENARIO("Test Convolutional Layer") {
                 filter_matrix << 0,-1,1,0,2,4,3,5,-2,24,68,16,18,22,32,60,23,46,7,35,42,81,20,78;
                 conv_layer.set_filter(filter_matrix);
                 filter_matrix=*(conv_layer.flip_filter());
-                std::cout << "Filter\n"<<HelperFunctions::print_tensor(filter_matrix.transpose(),2,2,3);
+                //std::cout << "Filter\n"<<HelperFunctions::print_tensor(filter_matrix.transpose(),2,2,3);
                 Eigen::MatrixXd der_matrix(8, 1);
                 der_matrix.transpose() << 0.1678, 0.002, 0.098, 0.246, 0.5, 0.21, 0.67, 0.487;
                 Eigen::MatrixXf de_matrix = der_matrix.cast<float>();
-                std::cout << "Derivative\n"<<HelperFunctions::print_tensor(de_matrix,2,2,2);
+                //std::cout << "Derivative\n"<<HelperFunctions::print_tensor(de_matrix,2,2,2);
 
                 conv_layer.set_filter(filter_matrix);
 

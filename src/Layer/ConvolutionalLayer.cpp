@@ -98,29 +98,29 @@ void ConvolutionalLayer::backpropagate_weights(const Eigen::MatrixXf& a_prev, co
     auto res=(a_prev_im2col2->transpose()*(*dC_dz_im2col2))/dC_dz.cols();
     //std::cout << "res\n" << res << std::endl;
     m_dC_dw.noalias()=*reshape_im2col_result(res,m_input_height,m_input_width,m_output_img_height,m_output_img_width,m_number_output_channels,m_stride,m_padding,dC_dz.cols());
-    //std::cout << "m_dC_dw\n" << m_dC_dw << std::endl;
+    std::cout << "m_dC_dw\n" << m_dC_dw << std::endl;
 }
 
 void ConvolutionalLayer::backpropagate_input(const Eigen::MatrixXf &dC_dz) {
     auto flipped_filter=im2col2(flip_filter()->transpose(),m_filter_height,m_filter_width,m_number_input_channels,m_filter_height,m_filter_width,m_stride,m_padding);
-    std::cout << "Filter\n" << m_w << std::endl;
-    std::cout << "Flipped filter\n" << *flipped_filter << std::endl;
+    //std::cout << "Filter\n" << m_w << std::endl;
+    //std::cout << "Flipped filter\n" << *flipped_filter << std::endl;
     //std::cout << HelperFunctions::print_tensor(flipped_filter->transpose(),2,2,1) << std::endl;
 
     auto padding = m_filter_width - 1;
     auto dC_dz_padded= pad_matrix(dC_dz, padding, m_output_img_height, m_output_img_width, m_number_output_channels);
-    std::cout << "undPadded Matrix\n" << dC_dz << std::endl;
-    std::cout << "Padded Matrix\n" << *dC_dz_padded << std::endl;
-    std::cout << HelperFunctions::print_tensor(*dC_dz_padded,m_output_img_height+2*padding,m_output_img_width+2*padding,m_number_output_channels) << std::endl;
+    //std::cout << "undPadded Matrix\n" << dC_dz << std::endl;
+    //std::cout << "Padded Matrix\n" << *dC_dz_padded << std::endl;
+    //std::cout << HelperFunctions::print_tensor(*dC_dz_padded,m_output_img_height+2*padding,m_output_img_width+2*padding,m_number_output_channels) << std::endl;
 
     auto dC_dz_padded_im2col=im2col(*dC_dz_padded,m_output_img_height+2*padding,m_output_img_width+2*padding,m_number_output_channels,m_filter_height,m_filter_width,m_stride,m_padding);
-    std::cout << "im2col Matrix\n" << *dC_dz_padded_im2col << std::endl;
+    //std::cout << "im2col Matrix\n" << *dC_dz_padded_im2col << std::endl;
     //std::cout << HelperFunctions::print_tensor(*dC_dz_padded,m_output_img_height+2*m_padding,m_output_img_width+2*m_padding,m_number_output_channels) << std::endl;
 
     m_dC_da_prev.noalias()=*reshape_im2col_result(dC_dz_padded_im2col->transpose()*(*flipped_filter),m_output_img_height+2*padding,m_output_img_width+2*padding,m_filter_height,m_filter_width,m_number_input_channels,m_stride,m_padding,dC_dz.cols());
-    std::cout << "res\n" << m_dC_da_prev << std::endl;
-    std::cout << HelperFunctions::print_tensor_comma(m_dC_da_prev);
-    std::cout << HelperFunctions::print_tensor(m_dC_da_prev,m_input_height,m_input_width,m_number_input_channels);
+    //std::cout << "res\n" << m_dC_da_prev << std::endl;
+    //std::cout << HelperFunctions::print_tensor_comma(m_dC_da_prev);
+    //std::cout << HelperFunctions::print_tensor(m_dC_da_prev,m_input_height,m_input_width,m_number_input_channels);
 }
 
 
