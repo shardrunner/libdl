@@ -17,7 +17,7 @@ void ConvolutionalLayer::initialize_parameter() {
     m_b.setZero();
     m_random_initialization->initialize(m_w);
     //m_w <<   0.680375,  -0.211234,   0.566198, 0.59688, 0.823295,-0.604897,  -0.329554  ,0.536459,-0.444451 ,0.10794 ,  -0.0452059,0.257742,  -0.270431, 0.0268018,   0.904459,0.83239;
-    m_w << 1,1,1,0,0,0,0,1,1,0,1,1,0,1,-1,1,0,0,0,1,-1,0,0,1;
+    //m_w << 1,1,1,0,0,0,0,1,1,0,1,1,0,1,-1,1,0,0,0,1,-1,0,0,1;
 }
 
 void ConvolutionalLayer::update_parameter() {
@@ -56,7 +56,7 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
     m_dC_db.resize(m_b.size());
 
     initialize_parameter();
-    std::cout << "init_Randos\n" << m_w << std::endl;
+    //std::cout << "init_Randos\n" << m_w << std::endl;
     m_convlayer_logger->info("End initialization of convlayer");
 }
 
@@ -360,49 +360,4 @@ const Eigen::MatrixXf &ConvolutionalLayer::get_weights_derivative() const {
 
 const Eigen::MatrixXf &ConvolutionalLayer::get_input_derivative() const {
     return m_dC_da_prev;
-}
-
-std::unique_ptr<Eigen::MatrixXf>
-ConvolutionalLayer::im2col3(const Eigen::MatrixXf &input, int img_height, int img_width, int img_channels,
-                            int img_samples, int filter_height, int filter_width, int filter_channels,
-                            int filter_samples, int stride, int padding, bool sum_samples, int output_channels,
-                            int output_samples, bool filter) const {
-
-    m_convlayer_logger->info("Start im2col");
-    m_convlayer_logger->debug(
-            "{} size input matrix; {} rows input matrix; {} cols input matrix; {} filter height; {} filter width",
-            input.size(), input.rows(), input.cols(), filter_height, filter_width);
-
-    auto num_row_filter_positions = row_filter_positions(img_width, filter_width, stride, padding);
-    auto num_col_filter_positions = col_filter_positions(img_height, filter_height, stride, padding);
-    auto num_filter_positions = num_col_filter_positions * num_row_filter_positions;
-
-    auto im2col_matrix = std::make_unique<Eigen::MatrixXf>(filter_width * filter_height * img_channels,
-                                                           num_filter_positions * input.cols());
-
-    int filter_size = filter_width * filter_height;
-
-    for (long s = 0; s < input.cols(); s++) {
-        for (int k = 0; k < img_channels; k++) {
-            for (int j = 0; j < num_row_filter_positions; j++) {
-                for (int i = 0; i < num_col_filter_positions; i++) {
-                    for (int m = 0; m < filter_width; m++) {
-                        auto col = input.col(s);
-                        auto segment = col.segment(
-                                img_height * m + i * stride + img_height * img_width * k +
-                                img_height * j * stride,
-                                m_filter_height);
-                        im2col_matrix->col(i + j * num_col_filter_positions +
-                                           s * num_filter_positions).segment(
-                                m * filter_height + k * filter_size, filter_height) = segment;
-                    }
-                }
-            }
-        }
-    }
-    m_convlayer_logger->debug("{} size output matrix; {} rows output matrix; {} cols output matrix",
-                              im2col_matrix->size(), im2col_matrix->rows(), im2col_matrix->rows());
-    m_convlayer_logger->info("End im2col");
-
-    return im2col_matrix;
 }

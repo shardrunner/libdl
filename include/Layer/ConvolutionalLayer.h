@@ -50,12 +50,6 @@ public:
     im2col2(const Eigen::MatrixXf &input_matrix, int img_height, int img_width,
            int number_img_channels, int filter_height, int filter_width, int stride, int padding) const;
 
-    std::unique_ptr<Eigen::MatrixXf>
-    im2col3(const Eigen::MatrixXf &input, int img_height, int img_width, int img_channels,
-            int img_samples, int filter_height, int filter_width, int filter_channels,
-            int filter_samples, int stride, int padding, bool sum_samples, int output_channels,
-            int output_samples, bool filter) const;
-
     /**
      * Returns the number of filter positions.
      * @return The number of filter positions
