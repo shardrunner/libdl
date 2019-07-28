@@ -22,8 +22,8 @@ void ConvolutionalLayer::initialize_parameter() {
 
 void ConvolutionalLayer::update_parameter() {
     //TODO transpose weg
-    m_w = m_w - 0.3 * m_dC_dw.transpose();
-    m_b = m_b - 0.3 * m_dC_db;
+    m_w = m_w - 0.1 * m_dC_dw.transpose();
+    m_b = m_b - 0.1 * m_dC_db;
 }
 
 ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int number_input_channel,
@@ -85,7 +85,7 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
     //Apply activation function
     m_activation_function->apply_function(m_a);
 
-    std::cout << "Conv Feed\n" << "\ninput:\n" << input << "\nOutput\n" << m_a<< std::endl;
+    //std::cout << "Conv Feed\n" << "\ninput:\n" << input << "\nOutput\n" << m_a<< std::endl;
 }
 
 void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
@@ -105,7 +105,7 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
 
     backpropagate_input(dC_dz);
 
-    std::cout << "Conv Backprop: a_prev:\n" << a_prev << "\ndC_da\n" << dC_da << "\nm_dC_dw\n" << m_dC_dw << "\nm_dC_da_prev\n" << m_dC_da_prev << "\ndC_db\n" << m_dC_db << std::endl;
+    //std::cout << "Conv Backprop: a_prev:\n" << a_prev << "\ndC_da\n" << dC_da << "\nm_dC_dw\n" << m_dC_dw << "\nm_dC_da_prev\n" << m_dC_da_prev << "\ndC_db\n" << m_dC_db << std::endl;
     m_convlayer_logger->info("End backpropagation");
 }
 

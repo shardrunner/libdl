@@ -12,6 +12,7 @@
 #include "NeuralNetwork.h"
 #include "RandomInitialization/DeterministicInitialization.h"
 #include "RandomInitialization/HetalInitialization.h"
+#include "RandomInitialization/UniformHeInitialization.h"
 #include "RandomInitialization/SimpleRandomInitialization.h"
 #include "RandomInitialization/XavierInitialization.h"
 #include <Eigen/Core>
@@ -87,7 +88,7 @@ int main() {
     //images.push_back(img);
     Eigen::VectorXi labels3;
     labels3.resize(2);
-    labels3 << 1,0;
+    labels3 << 1,3;
 
   // initialize loss function
   auto loss_func = std::make_unique<MultiCrossEntropyLoss>();
@@ -97,37 +98,58 @@ int main() {
 
   // TODO Add check input fully conected layer size
   // Network architecture
-  auto hid_layer = std::make_unique<ConvolutionalLayer>(
-      3, 3, 3, 2, 2, 2,1,0, std::make_unique<ReluFunction>(),
-      std::make_unique<DeterministicInitialization>());
-  auto hid2_layer = std::make_unique<FullyConnectedLayer>(
-      8, 6, std::make_unique<SigmoidFunction>(),
-      std::make_unique<DeterministicInitialization>());
-  auto out_layer = std::make_unique<FullyConnectedLayer>(
-      6, 2, std::make_unique<SoftmaxFunction>(),
-      std::make_unique<DeterministicInitialization>());
-  mnet.add_layer(std::move(hid_layer));
-  mnet.add_layer(std::move(hid2_layer));
-  mnet.add_layer(std::move(out_layer));
+/*    auto hid_layer = std::make_unique<ConvolutionalLayer>(
+            3, 3, 3, 2, 2, 2,1,0, std::make_unique<ReluFunction>(),
+            std::make_unique<DeterministicInitialization>());
+    auto hid2_layer = std::make_unique<FullyConnectedLayer>(
+            8, 6, std::make_unique<SigmoidFunction>(),
+            std::make_unique<DeterministicInitialization>());
+    auto out_layer = std::make_unique<FullyConnectedLayer>(
+            6, 4, std::make_unique<SoftmaxFunction>(),
+            std::make_unique<DeterministicInitialization>());
+    mnet.add_layer(std::move(hid_layer));
+    mnet.add_layer(std::move(hid2_layer));
+    mnet.add_layer(std::move(out_layer));*/
+
+    auto hid_layer = std::make_unique<ConvolutionalLayer>(
+            28, 28, 1, 2, 2, 2,1,0, std::make_unique<ReluFunction>(),
+            std::make_unique<XavierInitialization>());
+    auto hid15_layer = std::make_unique<ConvolutionalLayer>(
+            27, 27, 2, 4, 4, 4,1,0, std::make_unique<ReluFunction>(),
+            std::make_unique<XavierInitialization>());
+    auto hid2_layer = std::make_unique<FullyConnectedLayer>(
+            24 * 24*4, 64, std::make_unique<ReluFunction>(),
+            std::make_unique<HetalInitialization>());
+    auto out_layer = std::make_unique<FullyConnectedLayer>(
+            64, 10, std::make_unique<SoftmaxFunction>(),
+            std::make_unique<XavierInitialization>());
+    mnet.add_layer(std::move(hid_layer));
+    mnet.add_layer(std::move(hid15_layer));
+    mnet.add_layer(std::move(hid2_layer));
+    mnet.add_layer(std::move(out_layer));
+
+
+    //test_image=image.block(0,200,image.rows(),100);
+    //test_labels=labels.segment(200,100);
 
   // train the network
-  mnet.train_network(img, labels3, -1, 2, 1);
+  mnet.train_network(image, labels, 128, 50, 10);
 
   // test part of the test set
-  //auto predictions = mnet.calc_accuracy(test_image, test_labels);
+  auto predictions = mnet.calc_accuracy(test_image, test_labels);
 
-  //std::cout << "Some tests \n" << std::endl;
+  std::cout << "Some tests \n" << std::endl;
 
   // print some images from the test set with the resulting label
   for (int z = 0; z < 100; z += 10) {
     std::cout << "Image from testset: \n";
     for (int i = 0; i < 28; i++) {
       for (int j = 0; j < 28; j++) {
-        //std::cout << test_image(j + i * 28, z) << " ";
+        std::cout << test_image(j + i * 28, z) << " ";
       }
-      //std::cout << std::endl;
+      std::cout << std::endl;
     }
-    //std::cout << "Label from testset: " << test_labels(z) << std::endl;
-    //std::cout << "Predicted: " << predictions(z) << std::endl;
+    std::cout << "Label from testset: " << test_labels(z) << std::endl;
+    std::cout << "Predicted: " << predictions(z) << std::endl;
   }
 }

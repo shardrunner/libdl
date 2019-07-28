@@ -6,6 +6,7 @@
 #include <memory>
 #include "omp.h"
 #include <thread>
+#include <chrono>
 
 #include "ManageLoggers.h"
 #include "HelperFunctions.h"
@@ -86,8 +87,11 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
 void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                                   const Eigen::MatrixXi &label, int batch_size,
                                   int iterations, int divisor) {
-    m_nn_logger->info("Started training network");
+    m_nn_logger->warn("Started training network");
     m_nn_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix;; {} batch size; {} iterations", input.size(), input.rows(), input.cols(), batch_size, iterations);
+
+     //auto t1=std::chrono::high_resolution_clock::now();
+
     auto perm_input = input;
     auto perm_label = label;
 
@@ -144,12 +148,13 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                 // "\nForward_output\n" << temp1 << "\n";
                 //        spdlog::debug("test");
                 auto temp2 =
-                        m_loss_function->calculate_loss(temp1, label); //(temp1, label);
-                std::cout << "Loss batch " << j << " of iteration number " << i << ": "
-                          << temp2 << std::endl;
+                        m_loss_function->calculate_loss(temp1, label_batch); //(temp1, label);
+                m_nn_logger->warn("Loss batch {} of iteration number {}: {} ",j,i,temp2);
+                m_nn_logger->warn("Forward output {}",HelperFunctions::toString(temp1));
             }
         }
     }
+    m_nn_logger->warn("Ended training network");
 }
 
 const Eigen::MatrixXf &
