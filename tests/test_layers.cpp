@@ -104,8 +104,8 @@ SCENARIO("Test Convolutional Layer") {
                         3, 3, 1, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
                         std::make_unique<DeterministicInitialization>());
                 Eigen::MatrixXf input_matrix(2, 12);
-                input_matrix << 0,1,-1,0,5,3,4,2,16,68,24,-2,
-                                60,32,22,18,35,7,46,23,78,20,81,42;
+                input_matrix << 0, 1, -1, 0, 5, 3, 4, 2, 16, 68, 24, -2,
+                        60, 32, 22, 18, 35, 7, 46, 23, 78, 20, 81, 42;
                 input_matrix.transposeInPlace();
                 //std::cout << "Res1. \n" << input_matrix << std::endl;
                 auto im2col_matrix = conv_layer.im2col(input_matrix, 2, 2, 3, 2, 2, 1, 0);
@@ -191,21 +191,142 @@ SCENARIO("Test Convolutional Layer") {
                         3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
                         std::make_unique<DeterministicInitialization>());
                 Eigen::MatrixXf input_matrix(27, 1);
-                input_matrix << 16,47,68,24,18,12,32,26,9,26,24,2,57,21,11,43,12,19,18,4,81,47,6,22,21,12,13;
-                HelperFunctions::print_tensor(input_matrix, 3,3,3);
+                input_matrix
+                        << 16, 47, 68, 24, 18, 12, 32, 26, 9, 26, 24, 2, 57, 21, 11, 43, 12, 19, 18, 4, 81, 47, 6, 22, 21, 12, 13;
+                HelperFunctions::print_tensor(input_matrix, 3, 3, 3);
                 //std::cout << "Input: \n" << HelperFunctions::print_tensor(input_matrix,3,3,1) << std::endl;
                 //input_matrix.transposeInPlace();
                 Eigen::MatrixXf filter(2, 12);
-                filter << 0,1,-1,0,5,3,4,2,16,68,24,-2,
-                        60,32,22,18,35,7,46,23,78,20,81,42;
+                filter << 0, 1, -1, 0, 5, 3, 4, 2, 16, 68, 24, -2,
+                        60, 32, 22, 18, 35, 7, 46, 23, 78, 20, 81, 42;
                 //filter.transposeInPlace();
                 conv_layer.set_filter(filter);
                 conv_layer.feed_forward(input_matrix);
                 //std::cout << HelperFunctions::print_tensor(conv_layer.get_forward_output(), 2,2,2) << std::endl;
                 Eigen::MatrixXf output_matrix(8, 1);
-                output_matrix << 2171,5954,2170,2064,13042,11023,13575,6425;
+                output_matrix << 2171, 5954, 2170, 2064, 13042, 11023, 13575, 6425;
                 //std::cout << "Other\n" << HelperFunctions::print_tensor(output_matrix, 2,2,2) << std::endl;
                 REQUIRE(conv_layer.get_forward_output().isApprox(output_matrix));
+            }
+        }
+    }
+    GIVEN("Padding function for the convolution layer") {
+        ConvolutionalLayer conv_layer(
+                2, 3, 2, 1, 1, 2, 1, 2, std::make_unique<IdentityFunction>(),
+                std::make_unique<DeterministicInitialization>());
+        Eigen::MatrixXf input_matrix(12, 2);
+        input_matrix.transpose()
+                << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24;
+        WHEN("Pad matrix function is applied with padding 2") {
+            auto input_padded = conv_layer.pad_matrix(input_matrix, 2, 2, 3, 2);
+            THEN("The matrix is correctly padded with 2") {
+                //std::cout << HelperFunctions::print_tensor(input_matrix, 2,3,2) << std::endl;
+                //std::cout << "two \n "<<HelperFunctions::print_tensor(*input_padded, 6,7,2) << std::endl;
+
+                //std::cout << "TEst\n" << HelperFunctions::print_tensor_comma(*input_padded) << std::endl;
+                Eigen::MatrixXf output_matrix(84, 2);
+                output_matrix
+                        << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13, 2, 14, 0, 0, 0, 0, 0, 0, 0, 0, 3, 15, 4, 16, 0, 0, 0, 0, 0, 0, 0, 0, 5, 17, 6, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 19, 8, 20, 0, 0, 0, 0, 0, 0, 0, 0, 9, 21, 10, 22, 0, 0, 0, 0, 0, 0, 0, 0, 11, 23, 12, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+
+                REQUIRE(input_padded->isApprox(output_matrix));
+            }
+        }
+        WHEN("Pad matrix function is applied with padding 0") {
+            auto input_padded = conv_layer.pad_matrix(input_matrix, 0, 2, 3, 2);
+            THEN("The matrix is correctly padded with 0") {
+                REQUIRE(input_padded->isApprox(input_matrix));
+            }
+        }
+    }
+    GIVEN("A flip kernel function") {
+        WHEN("A 2x2 filter is flipped") {
+            ConvolutionalLayer conv_layer(
+                    2, 3, 2, 2, 2, 2, 1, 2, std::make_unique<IdentityFunction>(),
+                    std::make_unique<DeterministicInitialization>());
+            Eigen::MatrixXf filter_matrix(2, 8);
+            filter_matrix << 0,1,-1,0,5,3,4,2,
+                    1,2,3,4,5,6,7,8;
+            conv_layer.set_filter(filter_matrix);
+            auto filter_flipped=conv_layer.flip_filter();
+            THEN("The flipping should be correct") {
+                Eigen::MatrixXf output_matrix(2, 8);
+                output_matrix<< 0, -1, 1, 0, 2, 4, 3, 5, 4, 3, 2, 1, 8, 7, 6, 5;
+                //std::cout << "not t\n" << *filter_flipped << "\nt\n" << (*filter_flipped).transpose() << std::endl;
+                //std::cout << "TEst\n" << HelperFunctions::print_tensor_comma((*filter_flipped).transpose()) << std::endl;
+                //std::cout << "TEst not t\n" << HelperFunctions::print_tensor_comma((*filter_flipped)) << std::endl;
+                //std::cout << "two \n "<<HelperFunctions::print_tensor((*filter_flipped).transpose(), 2,2,2) << std::endl;
+                REQUIRE(filter_flipped->isApprox(output_matrix));
+
+            }
+        }
+        WHEN("A 3x3 filter is flipped") {
+            ConvolutionalLayer conv_layer(
+                    2, 3, 2, 3, 3, 1, 1, 2, std::make_unique<IdentityFunction>(),
+                    std::make_unique<DeterministicInitialization>());
+            Eigen::MatrixXf filter_matrix(1, 18);
+            filter_matrix << 0,1,-1,0,5,3,4,2,5,1,2,3,4,5,6,7,8,9;
+            //std::cout << "two \n " << HelperFunctions::print_tensor((filter_matrix).transpose(), 3, 3, 2)
+            //          << std::endl;
+            conv_layer.set_filter(filter_matrix);
+            auto filter_flipped=conv_layer.flip_filter();
+            THEN("The flipping should be correct") {
+                //std::cout << "TEst\n" << HelperFunctions::print_tensor_comma(*filter_flipped) << std::endl;
+                //std::cout << "two \n " << HelperFunctions::print_tensor((*filter_flipped).transpose(), 3, 3, 2)
+                //          << std::endl;
+                Eigen::MatrixXf output_matrix(1, 18);
+                output_matrix<< 5, 2, 4, 3, 5, 0, -1, 1, 0, 9, 8, 7, 6, 5, 4, 3, 2, 1;
+                REQUIRE(filter_flipped->isApprox(output_matrix));
+            }
+        }
+    }
+    GIVEN("A backpropagation function") {
+        WHEN("The bias is backpropagated") {
+
+            THEN("It should be correct for a simple input") {
+                ConvolutionalLayer conv_layer(
+                        4, 4, 1, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
+                        std::make_unique<DeterministicInitialization>());
+                Eigen::MatrixXd input_matrixd(18, 1);
+                input_matrixd.transpose() << 0.5,0.2,0.7,0.3,0.65,0.23,0.13,0.18,0.42,0.75,0.08,0.21,0.12,0.04,0.24,0.68,0.15,0.34;
+                Eigen::MatrixXf input_matrix=input_matrixd.cast <float> ();
+                //std::cout << "Input \n" << HelperFunctions::print_tensor((input_matrix), 3, 3, 2) << std::endl;
+                conv_layer.backpropagate_bias(input_matrix);
+                //std::cout << "Bias\n" << conv_layer.get_bias() << std::endl;
+                Eigen::VectorXf output_matrix(2);
+                output_matrix << (float) 3.31, (float) 2.61;
+                REQUIRE(conv_layer.get_bias_derivative().isApprox(output_matrix));
+            }
+            THEN("It should be correct for a multi-sample input") {
+                ConvolutionalLayer conv_layer(
+                        4, 4, 1, 3, 3, 1, 1, 0, std::make_unique<IdentityFunction>(),
+                        std::make_unique<DeterministicInitialization>());
+                Eigen::MatrixXf input_matrix(4, 2);
+                input_matrix.transpose() << 1,2,3,4,5,6,7,8;
+                //std::cout << "Input \n" << HelperFunctions::print_tensor((input_matrix), 2, 2, 1) << std::endl;
+                conv_layer.backpropagate_bias(input_matrix);
+                //std::cout << "Bias\n" << conv_layer.get_bias_derivative() << std::endl;
+                REQUIRE(conv_layer.get_bias_derivative()(0)==18);
+            }
+        }
+        WHEN("The weights are backpropagated") {
+            THEN("It should be correct for a simple input") {
+                ConvolutionalLayer conv_layer(
+                        3, 3, 1, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
+                        std::make_unique<DeterministicInitialization>());
+                Eigen::MatrixXf input_matrix(9, 1);
+                input_matrix.transpose() << 16,47,68,24,18,12,32,26,9;
+                Eigen::MatrixXd der_matrix(8, 1);
+                der_matrix.transpose() << 0,-0.0000294504954,0,0,0,0.00000639539432,0,0;
+                Eigen::MatrixXf de_matrix=der_matrix.cast <float> ();
+                std::cout << "Input1 \n" << HelperFunctions::print_tensor((input_matrix), 3, 3, 1) << std::endl;
+                std::cout << "Input2 \n" << HelperFunctions::print_tensor((de_matrix), 2, 2, 2) << std::endl;
+                conv_layer.backpropagate_weights(input_matrix,de_matrix);
+                std::cout << "res\n" << conv_layer.get_weights_derivative() << std::endl;
+                std::cout << "res2 \n" << HelperFunctions::print_tensor(conv_layer.get_weights_derivative(), 2, 2, 2) << std::endl;
+                //std::cout << "Bias\n" << conv_layer.get_bias() << std::endl;
+                //Eigen::VectorXf output_matrix(2);
+                //output_matrix << (float) 3.31, (float) 2.61;
+                //REQUIRE(conv_layer.get_bias_derivative().isApprox(output_matrix));
             }
         }
     }

@@ -74,7 +74,27 @@ public:
 
     [[nodiscard]] const Eigen::MatrixXf &get_dC_dw() const;
 
-    void set_filter(const Eigen::MatrixXf &input);
+    void set_filter(const Eigen::MatrixXf &new_filter);
+
+    void set_bias(const Eigen::VectorXf &new_bias);
+
+    [[nodiscard]] const Eigen::VectorXf& get_bias() const;
+
+    [[nodiscard]] const Eigen::VectorXf& get_bias_derivative() const;
+
+    [[nodiscard]] const Eigen::MatrixXf& get_filter() const;
+
+    const Eigen::MatrixXf& get_weights_derivative() const;
+
+    const Eigen::MatrixXf& get_input_derivative() const;
+
+    void backpropagate_bias(const Eigen::MatrixXf &dC_dz);
+
+    void backpropagate_weights(const Eigen::MatrixXf& a_prev, const Eigen::MatrixXf &dC_dz);
+
+    //void backpropagate_activation(const Eigen::MatrixXf& dC_da);
+
+    void backpropagate_input(const Eigen::MatrixXf& dC_dz);
 
     /**
      * Add zero padding to the input matrix.
@@ -88,7 +108,7 @@ public:
     pad_matrix(const Eigen::MatrixXf &input, int padding, int img_height, int img_width,
                int number_channels) const;
 
-    std::unique_ptr<Eigen::MatrixXf> flip_filter() const;
+    [[nodiscard]] std::unique_ptr<Eigen::MatrixXf> flip_filter() const;
 
 public:
     Eigen::MatrixXf m_w;

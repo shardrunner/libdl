@@ -310,6 +310,10 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
 
 void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
                                          const Eigen::MatrixXf &dC_da) {
+    m_convlayer_logger->info("Begin backpropagation");
+    std::cout << "a_prev: " << HelperFunctions::print_tensor(a_prev, m_input_height,m_input_width,m_number_input_channels) << std::endl;
+    std::cout << "dC_da: " << HelperFunctions::print_tensor(dC_da, m_output_img_height,m_output_img_width,m_number_output_channels) << std::endl;
+
     //m_dC_da_prev.resize(a_prev.rows(), a_prev.cols());
     //m_dC_dw.setZero();
     //m_dC_da_prev.setZero();
@@ -322,11 +326,13 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     //Compute intermidiate result dC/dz=(da/dz)*(dC/da)
     auto dC_dz = m_activation_function->apply_derivative(m_a, dC_da);
 
-    // Compute backpropagation of bias by summing over the channels of all samples and normalizing by dividing by the number of samples
-    for (int i=0; i<m_number_output_channels; i++) {
-        m_dC_db(i)=dC_dz.block(m_output_img_size*i,0,m_output_img_size,dC_dz.cols()).sum()/dC_dz.cols();
-    }
+    std::cout << "dC_dz: " << HelperFunctions::print_tensor(dC_dz, m_output_img_height,m_output_img_width,m_number_output_channels) << std::endl;
 
+    backpropagate_bias(dC_dz);
+
+    backpropagate_weights(a_prev,dC_dz);
+
+    backpropagate_input(dC_dz);
 
 
     //std::cout << "Reshaped\n" << dC_dz.resize(m_number_output_channels,) << std::endl;
@@ -334,11 +340,7 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     // use largest image between filter and dC/dz as filter
     //int filter_size=std::min(m_filter_height*m_filter_width,m_output_img_size);
 
-    auto dC_dz_im2col=im2col(dC_dz, m_output_img_height, m_output_img_width, m_number_output_channels, m_output_img_height, m_output_img_width, m_stride, m_padding);
-    auto a_prev_im2col=im2col(a_prev,m_input_height,m_input_width,m_number_input_channels,m_output_img_height,m_output_img_width,m_stride,m_padding);
 
-    // dC/dw=Conv(a_prev,dC/dz) and normalization
-    m_dC_dw=(*dC_dz_im2col*(*a_prev_im2col).transpose())/dC_dz.cols();
 
 //TODO Resize output
 //TODO omp parallel for im2col?
@@ -346,9 +348,10 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
 //TODO python -c "import psutil; psutil.cpu_count(logical=False)"
 //TODO Test openmp cores deeper
 
-    auto flipped_filter=flip_filter();
 
-    auto dC_dz_padded= pad_matrix(dC_dz, m_filter_width - 1, 0, 0, 0);
+
+    //m_z = *reshape_im2col_result(m_w * (*im2col_input), m_input_height, m_input_width, m_filter_height, m_filter_width,
+    //                             m_number_output_channels, m_stride, m_padding, input.cols());
 
 
 
@@ -363,8 +366,38 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     filter_flip = (filter_flip.rowwise().reverse()).eval();*/
 
     // std::cout << "flipped filter "<<filter_flip << std::endl;
-
+    m_convlayer_logger->info("End backpropagation");
 }
+
+void ConvolutionalLayer::backpropagate_bias(const Eigen::MatrixXf &dC_dz) {
+    // Compute backpropagation of bias by summing over the channels of all samples and normalizing by dividing by the number of samples
+    for (int i=0; i<m_number_output_channels; i++) {
+        m_dC_db(i)=(float) (dC_dz.block(m_output_img_size*i,0,m_output_img_size,dC_dz.cols()).sum()/((double)dC_dz.cols()));
+    }
+
+    //std::cout << "m_dC_db:\n " << m_dC_db << std::endl;
+}
+
+void ConvolutionalLayer::backpropagate_weights(const Eigen::MatrixXf& a_prev, const Eigen::MatrixXf &dC_dz) {
+    auto dC_dz_im2col=im2col(dC_dz, m_output_img_height, m_output_img_width, m_number_output_channels, m_output_img_height, m_output_img_width, m_stride, m_padding);
+    std::cout << "dC_dz_im2col=\n" << *dC_dz_im2col << std::endl;
+    auto a_prev_im2col=im2col(a_prev,m_input_height,m_input_width,m_number_input_channels,m_output_img_height,m_output_img_width,m_stride,m_padding);
+    std::cout << "a_prev_im2col\n" << *a_prev_im2col << std::endl;
+
+    // dC/dw=Conv(a_prev,dC/dz) and normalization
+    m_dC_dw.noalias()=((*dC_dz_im2col)*a_prev_im2col->transpose())/dC_dz.cols();
+}
+
+void ConvolutionalLayer::backpropagate_input(const Eigen::MatrixXf &dC_dz) {
+    auto flipped_filter=flip_filter();
+
+    auto dC_dz_padded= pad_matrix(dC_dz, m_filter_width - 1, m_output_img_height, m_output_img_width, m_number_output_channels);
+
+    auto dC_dz_padded_im2col=im2col(*dC_dz_padded,m_output_img_height+2*m_padding,m_output_img_width+2*m_padding,m_number_output_channels,m_filter_height,m_filter_width,m_stride,m_padding);
+
+    m_dC_da_prev.noalias()=(*flipped_filter)*(*dC_dz_padded_im2col);
+}
+
 
 void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
     m_convlayer_logger->info("Feed forward convolution");
@@ -483,13 +516,13 @@ ConvolutionalLayer::reshape_im2col_result(const Eigen::MatrixXf &input, int inpu
 }
 
 void
-ConvolutionalLayer::set_filter(const Eigen::MatrixXf &input) {
-    //assert(filter_height*filter_width*filter_channels==input.size() &&  "Filter");
+ConvolutionalLayer::set_filter(const Eigen::MatrixXf &new_filter) {
+    //assert(filter_height*filter_width*filter_channels==new_filter.size() &&  "Filter");
 
-    if (input.size() != m_w.size()) {
+    if (new_filter.rows() != m_w.rows() || new_filter.cols() != m_w.cols()) {
         throw std::invalid_argument("New Filter size does not match the old filter size");
     }
-    m_w = input;
+    m_w = new_filter;
 }
 
 const Eigen::MatrixXf &ConvolutionalLayer::get_dC_dw() const {
@@ -499,30 +532,66 @@ const Eigen::MatrixXf &ConvolutionalLayer::get_dC_dw() const {
 std::unique_ptr<Eigen::MatrixXf>
 ConvolutionalLayer::pad_matrix(const Eigen::MatrixXf &input, int padding, int img_height, int img_width,
                                int number_channels) const {
+    m_convlayer_logger->info("Start padding matrix");
+    m_convlayer_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix; {} img height; {} img width; {} number_channels; {} size padding", input.size(), input.rows(), input.cols(), img_height,img_width,number_channels,padding);
     auto img_size=img_height*img_width;
     auto img_height_padded=img_height+2*padding;
     auto img_width_padded=img_width+2*padding;
     auto img_size_padded=img_height_padded*img_width_padded;
 
     // new_size=((height+2*padding)*(width+2*padding))*number_channels
-    auto padded_input=std::make_unique<Eigen::MatrixXf>(img_size_padded*number_channels,input.cols());
+    auto input_padded=std::make_unique<Eigen::MatrixXf>(img_size_padded * number_channels, input.cols());
 
-    padded_input->setZero();
+    m_convlayer_logger->debug("{} size output matrix; {} rows output matrix; {} cols output matrix", input_padded->size(), input_padded->rows(), input_padded->cols());
+
+    input_padded->setZero();
 
     for (int i=0; i<number_channels; i++) {
         for (int j=0; j<img_width; j++) {
             // Added rows of padding + skip already processed img + skip already processed cols + skip first pads of rows
-            padded_input->block(img_height_padded*padding+img_size_padded*number_channels+img_height_padded*j+padding,0,img_height,input.cols())=input.block(img_size*number_channels+img_height*j,0,img_height,input.cols());
+            input_padded->block(img_height_padded * padding + img_size_padded * i + img_height_padded * j + padding, 0, img_height, input.cols())=input.block(img_size * i + img_height * j, 0, img_height, input.cols());
         }
     }
-    return padded_input;
+    m_convlayer_logger->info("Finished padding matrix");
+    return input_padded;
 }
 
 std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::flip_filter() const {
+    m_convlayer_logger->info("Start flipping filter");
     auto flipped_filter=std::make_unique<Eigen::MatrixXf>(m_w.rows(), m_w.cols());
     // std::cout << "filter\n" <<m_w<<std::endl;
     for (int i=0; i< m_number_input_channels; i++) {
         flipped_filter->block(0,i*m_filter_height*m_filter_width,m_w.rows(),m_filter_height*m_filter_width)=m_w.block(0,i*m_filter_height*m_filter_width,m_w.rows(),m_filter_height*m_filter_width).rowwise().reverse();
     }
+    m_convlayer_logger->info("Finished flipping filter");
     return flipped_filter;
+}
+
+void ConvolutionalLayer::set_bias(const Eigen::VectorXf &new_bias) {
+    //assert(filter_height*filter_width*filter_channels==new_filter.size() &&  "Filter");
+
+    if (new_bias.rows() != m_b.rows() || new_bias.cols() != m_b.cols()) {
+        throw std::invalid_argument("New bias size does not match the old bias size");
+    }
+    m_b = new_bias;
+}
+
+const Eigen::VectorXf &ConvolutionalLayer::get_bias() const {
+    return m_b;
+}
+
+const Eigen::VectorXf& ConvolutionalLayer::get_bias_derivative() const {
+    return m_dC_db;
+}
+
+const Eigen::MatrixXf &ConvolutionalLayer::get_filter() const {
+    return m_w;
+}
+
+const Eigen::MatrixXf &ConvolutionalLayer::get_weights_derivative() const {
+    return m_dC_dw;
+}
+
+const Eigen::MatrixXf &ConvolutionalLayer::get_input_derivative() const {
+    return m_dC_da_prev;
 }
