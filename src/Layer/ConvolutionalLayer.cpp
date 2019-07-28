@@ -98,7 +98,7 @@ void ConvolutionalLayer::backpropagate_weights(const Eigen::MatrixXf& a_prev, co
     auto res=(a_prev_im2col2->transpose()*(*dC_dz_im2col2))/dC_dz.cols();
     //std::cout << "res\n" << res << std::endl;
     m_dC_dw.noalias()=*reshape_im2col_result(res,m_input_height,m_input_width,m_output_img_height,m_output_img_width,m_number_output_channels,m_stride,m_padding,dC_dz.cols());
-    std::cout << "m_dC_dw\n" << m_dC_dw << std::endl;
+    //std::cout << "m_dC_dw\n" << m_dC_dw << std::endl;
 }
 
 void ConvolutionalLayer::backpropagate_input(const Eigen::MatrixXf &dC_dz) {
