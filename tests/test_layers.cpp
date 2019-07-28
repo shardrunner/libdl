@@ -123,7 +123,7 @@ SCENARIO("Test Convolutional Layer") {
                 Eigen::MatrixXf filter(1, 4);
                 filter << -0.5, 0.5, 0, 1;
                 auto im2col_matrix = conv_layer.im2col(input_matrix, 3, 3, 1, 2, 2, 1, 0);
-                auto im2col_reshaped = conv_layer.reshape_im2col_result(filter * (*im2col_matrix), 3, 3, 2, 2, 1, 1, 0,
+                auto im2col_reshaped = conv_layer.reshape_im2col_result((filter * (*im2col_matrix)).transpose(), 3, 3, 2, 2, 1, 1, 0,
                                                                         input_matrix.cols());
                 //std::cout << HelperFunctions::print_tensor(conv_layer.get_m_z(), 4,1,1);
                 Eigen::MatrixXf output_matrix(4, 1);
@@ -142,7 +142,7 @@ SCENARIO("Test Convolutional Layer") {
                 filter << -1, -0.5, 0, 0.5,
                         1, 1.5, 2, 0;
                 auto im2col_matrix = conv_layer.im2col(input_matrix, 3, 3, 1, 2, 2, 2, 0);
-                auto im2col_reshaped = conv_layer.reshape_im2col_result(filter * (*im2col_matrix), 3, 3, 2, 2, 2, 2, 0,
+                auto im2col_reshaped = conv_layer.reshape_im2col_result((filter * (*im2col_matrix)).transpose(), 3, 3, 2, 2, 2, 2, 0,
                                                                         input_matrix.cols());
                 //std::cout << HelperFunctions::print_tensor(conv_layer.get_m_z(), 1,1,2);
                 Eigen::MatrixXf output_matrix(2, 2);
@@ -323,6 +323,12 @@ SCENARIO("Test Convolutional Layer") {
                 conv_layer.backpropagate_weights(input_matrix,de_matrix);
                 std::cout << "res\n" << conv_layer.get_weights_derivative() << std::endl;
                 std::cout << "res2 \n" << HelperFunctions::print_tensor(conv_layer.get_weights_derivative(), 2, 2, 2) << std::endl;
+                std::cout << HelperFunctions::print_tensor_comma(conv_layer.get_weights_derivative());
+
+                Eigen::MatrixXd output_matrixd(8, 1);
+                output_matrixd.transpose() << -0.00138417, -0.00200263, -0.000530109, -0.000353406, 0.000300584, 0.000434887, 0.000115117, 7.67447e-05;
+                Eigen::MatrixXf output_matrix=output_matrixd.cast <float> ();
+                REQUIRE(conv_layer.get_weights_derivative().isApprox(output_matrix));
                 //std::cout << "Bias\n" << conv_layer.get_bias() << std::endl;
                 //Eigen::VectorXf output_matrix(2);
                 //output_matrix << (float) 3.31, (float) 2.61;
