@@ -189,7 +189,7 @@ ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix, int img_height, 
                         auto segment = col.segment(
                                 img_height * m + i * stride + img_height * img_width * k +
                                 img_height * j * stride,
-                                m_filter_height);
+                                filter_height);
                         im2col_matrix->col(i + j * num_col_filter_positions +
                                            s * num_filter_positions).segment(
                                 m * filter_height + k * filter_size, filter_height) = segment;
@@ -233,7 +233,7 @@ ConvolutionalLayer::im2col2(const Eigen::MatrixXf &input_matrix, int img_height,
                         auto segment = col.segment(
                                 img_height * m + i * stride + img_height * img_width * k +
                                 img_height * j * stride,
-                                m_filter_height);
+                                filter_height);
                         im2col_matrix->col(i + j * num_col_filter_positions +
                                            k * num_filter_positions).segment(
                                 m * filter_height + s * filter_size, filter_height) = segment;
