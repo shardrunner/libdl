@@ -26,6 +26,13 @@ std::string HelperFunctions::print_tensor(const Eigen::MatrixXf &input, int img_
     return ss.str();
 }
 
+std::string HelperFunctions::print_tensor_comma(const Eigen::MatrixXf &input) {
+    std::stringstream ss;
+    Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", ", ", "", "", " << ", ";");
+    ss << input.format(CommaInitFmt) << std::endl;
+    return ss.str();
+}
+
 std::string HelperFunctions::print_tensor_first(const Eigen::MatrixXf &input, int img_height, int img_width, int num_channels) {
     std::stringstream ss;
     ss << "Matrix of size: " << input.size() << "; Number of samples: " <<input.cols() << "; Images of height: " << img_height << ", width: " << img_width << ", channels: " << num_channels << std::endl;
