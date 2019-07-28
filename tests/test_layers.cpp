@@ -265,7 +265,7 @@ SCENARIO("Test Convolutional Layer") {
                 REQUIRE(conv_layer.get_bias_derivative()(0) == 18);
             }
         }
-        WHEN("The weights are backpropagated") {
+/*        WHEN("The weights are backpropagated") {
             THEN("It should be correct for a simple input") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
@@ -305,7 +305,7 @@ SCENARIO("Test Convolutional Layer") {
                 Eigen::MatrixXf output_matrix = output_matrixd.cast<float>();
                 //REQUIRE(conv_layer.get_input_derivative().isApprox(output_matrix));
             }
-        }
+        }*/
         WHEN("The inputs are backpropagated") {
             THEN("It should be correct for a simple input") {
                 ConvolutionalLayer conv_layer(
