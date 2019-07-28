@@ -55,6 +55,9 @@ The tests are unfortunately broken as well.
 - [ ] Use noalias()
 - [ ] Activation function remove multiple copies with either pointers, in place or pass result reference
 - [ ] Check reference passing, if they get assigned
+- [ ] omp parallel for im2col?
+- [ ] python -c "import psutil; psutil.cpu_count(logical=False)"
+- [ ] Test openmp cores deeper
 
 ### Questions:
 - Make sub libs to speed up compiling time by not having to compile everything?

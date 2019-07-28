@@ -16,11 +16,6 @@ public:
 
     void feed_forward(const Eigen::MatrixXf &input) override;
 
-    void feed_forward_old(const Eigen::MatrixXf &input);
-
-    void backpropagation_old(const Eigen::MatrixXf &a_prev,
-                         const Eigen::MatrixXf &dC_da);
-
     /**
      * Backpropagation operation of the convolution layer.
      * Implemented using im2col for faster computation.
