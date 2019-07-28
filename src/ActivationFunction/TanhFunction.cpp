@@ -1,9 +1,9 @@
 #include "ActivationFunction/TanhFunction.h"
 
-Eigen::MatrixXf
-TanhFunction::apply_function(const Eigen::MatrixXf &input) const {
+void
+TanhFunction::apply_function(Eigen::MatrixXf &input) const {
   // Apply tanh element wise
-  return (input.array().tanh()).matrix();
+  input.array() = input.array().tanh();
 }
 Eigen::MatrixXf
 TanhFunction::apply_derivative(const Eigen::MatrixXf &m_a,

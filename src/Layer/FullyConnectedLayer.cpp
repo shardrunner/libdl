@@ -26,18 +26,22 @@ void FullyConnectedLayer::feed_forward(const Eigen::MatrixXf &input) {
     int d = input.cols();
     int e = m_b.size();*/
 
-  m_z = (m_w.transpose() * input).colwise() + m_b;
+
+  m_a.noalias() = (m_w.transpose() * input).colwise() + m_b;
+
 
   // std::cout << "temp:\n" << m_w.transpose() * input << "\nbias\n" << m_b <<
   // std::endl;
 
-  m_a = m_activation_function->apply_function(m_z);
+  m_activation_function->apply_function(m_a);
 
   // std::cout << "prev_layer\n" << input << std::endl;
 
   // std::cout << "Z_forward\n" << m_z << std::endl;
 
   // std::cout << "Activated_forward\n" << m_a << std::endl;
+
+    //std::cout << "prev_layer\n" << input <<  "\nbias\n" << m_b <<  "\nZ_forward\n" << m_z << "\nActivated_forward\n" << m_a << std::endl;
 }
 void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev,
                                           const Eigen::MatrixXf &dC_da) {
@@ -75,18 +79,18 @@ void FullyConnectedLayer::backpropagation(const Eigen::MatrixXf &a_prev,
 
   // normalize sum over changes/derivatives from all samples, by dividing by
   // number of samples
-  m_dC_dw = a_prev * dC_dz.transpose() / number_training_samples;
+  m_dC_dw.noalias() = a_prev * dC_dz.transpose() / number_training_samples;
 
   // also normalize sum of bias changes calculating mean and shrinking to vector
   m_dC_db = dC_dz.rowwise().mean();
 
   // calcualate derivative for prev layer (next step in backprop)
-  m_dC_da_prev = m_w * dC_dz;
+  m_dC_da_prev.noalias() = m_w * dC_dz;
   // std::cout<<"dC_dw: " << m_dC_dw << "\ndC_db: " << m_dC_db <<
   // "\n\n+++++++\n" <<std::endl;//dC_dw2: "<<diff_h_layer << "\ndC_db2: "
   // <<diff_h_bias << "\n-----------------------------------------"<<std::endl;
 
-  // std::cout << "Backward_prop\n" << m_dC_da_prev << std::endl;
+  //std::cout << "Backward_prop\n" << m_dC_da_prev << std::endl;
 }
 
 void FullyConnectedLayer::initialize_parameter() {
@@ -104,7 +108,7 @@ void FullyConnectedLayer::update_parameter() {
   m_w = m_w - 0.3 * m_dC_dw;
   m_b = m_b - 0.3 * m_dC_db;
 
-  // std::cout << "After update: w\n" << m_w << "\nb\n" << m_b << std::endl;
+  //std::cout << "After update: w\n" << m_w << "\nb\n" << m_b << std::endl;
 }
 
 const Eigen::MatrixXf &FullyConnectedLayer::get_forward_output() {

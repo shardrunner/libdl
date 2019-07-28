@@ -22,7 +22,7 @@ private:
   Eigen::MatrixXf m_w;
   Eigen::VectorXf m_b;
   Eigen::MatrixXf m_a;
-  Eigen::MatrixXf m_z;
+//  Eigen::MatrixXf m_z;
   Eigen::MatrixXf m_dC_dw;
   Eigen::MatrixXf m_dC_db;
   Eigen::MatrixXf m_dC_da_prev;

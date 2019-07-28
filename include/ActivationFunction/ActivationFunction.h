@@ -15,8 +15,8 @@ public:
    * @param input The input matrix
    * @return The activated input matrix
    */
-  [[nodiscard]] virtual Eigen::MatrixXf
-  apply_function(const Eigen::MatrixXf &input) const = 0;
+  virtual void
+  apply_function(Eigen::MatrixXf &input) const = 0;
 
   /**
    * Calculates the derivative of the activation function in respect to the

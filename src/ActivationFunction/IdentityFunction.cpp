@@ -1,8 +1,8 @@
 #include "ActivationFunction/IdentityFunction.h"
 
-Eigen::MatrixXf
-IdentityFunction::apply_function(const Eigen::MatrixXf &input) const {
-  return input;
+void
+IdentityFunction::apply_function(Eigen::MatrixXf &input) const {
+
 }
 Eigen::MatrixXf
 IdentityFunction::apply_derivative(const Eigen::MatrixXf &m_a,

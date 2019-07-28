@@ -75,7 +75,7 @@ public:
                           int filter_height, int filter_width, int number_output_channels, int stride,
                           int padding, long num_samples) const;
 
-    [[nodiscard]] const Eigen::MatrixXf &get_m_z() const;
+  //  [[nodiscard]] const Eigen::MatrixXf &get_m_z() const;
 
     [[nodiscard]] const Eigen::MatrixXf &get_dC_dw() const;
 
@@ -119,7 +119,7 @@ public:
     Eigen::MatrixXf m_w;
     Eigen::VectorXf m_b;
     Eigen::MatrixXf m_a;
-    Eigen::MatrixXf m_z;
+  //  Eigen::MatrixXf m_z;
     Eigen::MatrixXf m_dC_dw;
     Eigen::VectorXf m_dC_db;
     Eigen::MatrixXf m_dC_da_prev;

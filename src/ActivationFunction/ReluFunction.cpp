@@ -6,19 +6,17 @@ ReluFunction::ReluFunction(float leak_factor) {
     this->leak_factor = leak_factor;
 }
 
-Eigen::MatrixXf
-ReluFunction::apply_function(const Eigen::MatrixXf &input) const {
+void
+ReluFunction::apply_function(Eigen::MatrixXf &input) const {
     // Apply an unary expression corresponding to a relu lambda to every matrix
     // element if elem <0 -> 0 else -> elem
-    auto output = (input.unaryExpr([this](float x) {
+    input = (input.unaryExpr([this](float x) {
         if (x >= 0.0) {
             return x;
         } else {
             return (-1) * leak_factor * x;
         }
-    })).eval();
-
-    return output;
+    }));
 }
 
 Eigen::MatrixXf

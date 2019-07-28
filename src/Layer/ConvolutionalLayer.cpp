@@ -70,21 +70,20 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
 
     //std::cout << "m_w\n" << HelperFunctions::print_tensor(m_w.transpose(),m_filter_height,m_filter_width,m_number_input_channels) << "\nRaw\n" << m_w << std::endl;
 
-    Eigen::MatrixXf temp=(m_w * (*im2col_input)).transpose();
     //std::cout << "empt\n" << temp << std::endl;
 
-    m_z = *reshape_im2col_result(temp, m_input_height, m_input_width, m_filter_height, m_filter_width,
+    m_a = *reshape_im2col_result((m_w * (*im2col_input)).transpose(), m_input_height, m_input_width, m_filter_height, m_filter_width,
                                  m_number_output_channels, m_stride, m_padding, input.cols());
 
     //std::cout << "Reshaped:\n" << m_z << std::endl;
 
     //Add corresponding bias to all output channels
     for (int i =0; i<m_number_output_channels; i++) {
-        m_z.block(i*m_output_img_size,0,m_output_img_size,m_z.cols()).array()+=m_b(i);
+        m_a.block(i*m_output_img_size,0,m_output_img_size,m_a.cols()).array()+=m_b(i);
     }
 
     //Apply activation function
-    m_a = m_activation_function->apply_function(m_z);
+    m_activation_function->apply_function(m_a);
 
     std::cout << "Conv Feed\n" << "\ninput:\n" << input << "\nOutput\n" << m_a<< std::endl;
 }
@@ -120,9 +119,9 @@ void ConvolutionalLayer::backpropagate_bias(const Eigen::MatrixXf &dC_dz) {
 void ConvolutionalLayer::backpropagate_weights(const Eigen::MatrixXf& a_prev, const Eigen::MatrixXf &dC_dz) {
     //std::cout << "a_prev\n" << a_prev << std::endl;
     //std::cout << "dC_dz\n" << dC_dz << std::endl;
-    auto dC_dz_im2col=im2col(dC_dz, m_output_img_height, m_output_img_width, m_number_output_channels, m_output_img_height, m_output_img_width, m_stride, m_padding);
+    //auto dC_dz_im2col=im2col(dC_dz, m_output_img_height, m_output_img_width, m_number_output_channels, m_output_img_height, m_output_img_width, m_stride, m_padding);
     //std::cout << "dC_dz_im2col=\n" << *dC_dz_im2col << std::endl;
-    auto a_prev_im2col=im2col(a_prev,m_input_height,m_input_width,m_number_input_channels,m_output_img_height,m_output_img_width,m_stride,m_padding);
+    //auto a_prev_im2col=im2col(a_prev,m_input_height,m_input_width,m_number_input_channels,m_output_img_height,m_output_img_width,m_stride,m_padding);
     //std::cout << "a_prev_im2col\n" << *a_prev_im2col << std::endl;
 
     auto dC_dz_im2col2=im2col2(dC_dz, m_output_img_height, m_output_img_width, m_number_output_channels, m_output_img_height, m_output_img_width, m_stride, m_padding);
@@ -131,9 +130,9 @@ void ConvolutionalLayer::backpropagate_weights(const Eigen::MatrixXf& a_prev, co
     //std::cout << "a_prev_im2col2\n" << *a_prev_im2col2 << std::endl;
 
     //dC/dw=Conv(a_prev,dC/dz) and normalization
-    auto res=(a_prev_im2col2->transpose()*(*dC_dz_im2col2))/dC_dz.cols();
+
     //std::cout << "res\n" << res << std::endl;
-    m_dC_dw=res;
+    m_dC_dw.noalias()=(a_prev_im2col2->transpose()*(*dC_dz_im2col2))/dC_dz.cols();
     //m_dC_dw.noalias()=*reshape_im2col_result(res,m_input_height,m_input_width,m_output_img_height,m_output_img_width,m_number_output_channels,m_stride,m_padding,m_number_output_channels);
     //std::cout << "m_dC_dw\n" << m_dC_dw << std::endl;
     //TODO Fix weights test
@@ -258,9 +257,9 @@ int ConvolutionalLayer::col_filter_positions(int img_height, int filter_height, 
     return (img_height - filter_height + 2 * padding) / stride + 1;
 }
 
-const Eigen::MatrixXf &ConvolutionalLayer::get_m_z() const {
-    return m_z;
-}
+//const Eigen::MatrixXf &ConvolutionalLayer::get_m_z() const {
+//    return Eigen::MatrixXf::Zero(1,1);
+//}
 
 //TODO Try resize instead
 std::unique_ptr<Eigen::MatrixXf>

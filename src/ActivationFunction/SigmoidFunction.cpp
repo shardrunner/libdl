@@ -1,9 +1,9 @@
 #include <ActivationFunction/SigmoidFunction.h>
 
-Eigen::MatrixXf
-SigmoidFunction::apply_function(const Eigen::MatrixXf &input) const {
+void
+SigmoidFunction::apply_function(Eigen::MatrixXf &input) const {
   // Apply sigmoid function element wise
-  return (1 / (1 + Eigen::exp((-1) * input.array()))).matrix();
+  input.array() = (1 / (1 + Eigen::exp((-1) * input.array())));
 }
 
 Eigen::MatrixXf

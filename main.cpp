@@ -78,6 +78,17 @@ int main() {
     test_labels(i) = (int)unsigned(dataset.test_labels[i]);
   }
 
+    Eigen::MatrixXf img;
+    img.resize(27,2);
+    //img << 1,2,3,4,5,6,7,8,9;//,10,11,12,13,14,15,16,17,18;
+    img.col(0) << 1,0,-3,4,0,3,4,1,0,0,0,2,4,5,2,3,-4,0,0,0,-4,-5,3,1,0,-3,0;
+    img.col(1) << 0,0,-4,-5,3,1,0,-3,0,1,2,1,0,0,3,-2,0,4,0,3,4,1,0,0,0,2,4;
+    //img.col(0) <<0,0,0,0,0,0,0,0,0;
+    //images.push_back(img);
+    Eigen::VectorXi labels3;
+    labels3.resize(2);
+    labels3 << 1,0;
+
   // initialize loss function
   auto loss_func = std::make_unique<MultiCrossEntropyLoss>();
 
@@ -87,36 +98,36 @@ int main() {
   // TODO Add check input fully conected layer size
   // Network architecture
   auto hid_layer = std::make_unique<ConvolutionalLayer>(
-      28, 28, 1, 1, 3, 3,1, std::make_unique<ReluFunction>(),
-      std::make_unique<XavierInitialization>());
+      3, 3, 3, 2, 2, 2,1,0, std::make_unique<ReluFunction>(),
+      std::make_unique<DeterministicInitialization>());
   auto hid2_layer = std::make_unique<FullyConnectedLayer>(
-      26 * 26, 16, std::make_unique<ReluFunction>(),
-      std::make_unique<HetalInitialization>());
+      8, 6, std::make_unique<SigmoidFunction>(),
+      std::make_unique<DeterministicInitialization>());
   auto out_layer = std::make_unique<FullyConnectedLayer>(
-      16, 10, std::make_unique<SoftmaxFunction>(),
-      std::make_unique<XavierInitialization>());
+      6, 2, std::make_unique<SoftmaxFunction>(),
+      std::make_unique<DeterministicInitialization>());
   mnet.add_layer(std::move(hid_layer));
   mnet.add_layer(std::move(hid2_layer));
   mnet.add_layer(std::move(out_layer));
 
   // train the network
-  mnet.train_network(image, labels, -1, 2, 1);
+  mnet.train_network(img, labels3, -1, 2, 1);
 
   // test part of the test set
-  auto predictions = mnet.calc_accuracy(test_image, test_labels);
+  //auto predictions = mnet.calc_accuracy(test_image, test_labels);
 
-  std::cout << "Some tests \n" << std::endl;
+  //std::cout << "Some tests \n" << std::endl;
 
   // print some images from the test set with the resulting label
   for (int z = 0; z < 100; z += 10) {
     std::cout << "Image from testset: \n";
     for (int i = 0; i < 28; i++) {
       for (int j = 0; j < 28; j++) {
-        std::cout << test_image(j + i * 28, z) << " ";
+        //std::cout << test_image(j + i * 28, z) << " ";
       }
-      std::cout << std::endl;
+      //std::cout << std::endl;
     }
-    std::cout << "Label from testset: " << test_labels(z) << std::endl;
-    std::cout << "Predicted: " << predictions(z) << std::endl;
+    //std::cout << "Label from testset: " << test_labels(z) << std::endl;
+    //std::cout << "Predicted: " << predictions(z) << std::endl;
   }
 }
