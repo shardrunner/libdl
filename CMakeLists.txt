@@ -78,11 +78,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/extern/Catch2/CMake")
 set(EIGEN3_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/extern/Eigen3")
 # Find Eigen and Doxygen package
 find_package(Eigen3 3.3 REQUIRED MODULE)
-if(EIGEN3_VERSION)
+if (EIGEN3_VERSION)
     message(STATUS "Eigen Version: ${EIGEN3_VERSION}")
-else()
+else ()
     message(STATUS "Used installed Eigen version")
-endif()
+endif ()
 find_package(Doxygen)
 find_package(OpenMP)
 
@@ -140,7 +140,10 @@ set(Tests
         tests/TestConvLayer.cpp
         tests/test-main.cpp
         tests/TestActivations.cpp
-        tests/TestFCLayer.cpp tests/TestLossFunctions.cpp tests/TestInitialization.cpp)
+        tests/TestFCLayer.cpp
+        tests/TestLossFunctions.cpp
+        tests/TestInitialization.cpp
+        tests/TestNetwork.cpp)
 
 add_library(Mlib STATIC ${SRCS} ${HDRS})
 
@@ -167,7 +170,7 @@ set_target_properties(${EXECUTABLE_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_compile_definitions(${EXECUTABLE_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")
 
-if(OpenMP_CXX_FOUND)
+if (OpenMP_CXX_FOUND)
     message(STATUS "Enabled OpenMP")
     target_link_libraries(Mlib PUBLIC OpenMP::OpenMP_CXX)
     target_link_libraries(${EXECUTABLE_TARGET} PUBLIC OpenMP::OpenMP_CXX)
@@ -177,7 +180,7 @@ if(OpenMP_CXX_FOUND)
     #ProcessorCount(N)
     #set(${OMP_NUM_THREADS} "2")
     #message(STATUS Found ${N} cores)
-endif()
+endif ()
 
 # Create logs directory
 #file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
