@@ -54,9 +54,9 @@ public:
      * Returns the number of filter positions.
      * @return The number of filter positions
      */
-    [[nodiscard]] int row_filter_positions(int img_width, int filter_width, int stride, int padding) const;
+    [[nodiscard]] int row_filter_positions(int img_width, int filter_width, int stride) const;
 
-    [[nodiscard]] int col_filter_positions(int img_height, int filter_height, int stride, int padding) const;
+    [[nodiscard]] int col_filter_positions(int img_height, int filter_height, int stride) const;
 
     /**
      * Reshapes the computed im2col matrix to the correct format.
