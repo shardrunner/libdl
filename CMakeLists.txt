@@ -78,6 +78,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/extern/Catch2/CMake")
 set(EIGEN3_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/extern/Eigen3")
 # Find Eigen and Doxygen package
 find_package(Eigen3 3.3 REQUIRED MODULE)
+if(EIGEN3_VERSION)
+    message(STATUS "Eigen Version: ${EIGEN3_VERSION}")
+else()
+    message(STATUS "Used installed Eigen version")
+endif()
 find_package(Doxygen)
 find_package(OpenMP)
 
