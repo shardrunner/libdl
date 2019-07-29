@@ -7,7 +7,7 @@
 class FullyConnectedLayer : public BaseLayer {
 public:
   FullyConnectedLayer(
-      int input_size, int output_size,
+      const int input_size, const int output_size,
       std::unique_ptr<ActivationFunction> activation_function,
       std::unique_ptr<RandomInitialization> random_initialization);
   void feed_forward(const Eigen::MatrixXf &input) override;

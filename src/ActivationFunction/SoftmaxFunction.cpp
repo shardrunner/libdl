@@ -4,6 +4,9 @@
 
 #include <iostream>
 // https://github.com/yixuan/MiniDNN/blob/master/include/Activation/Softmax.h
+// https://stats.stackexchange.com/questions/267576/matrix-representation-of-softmax-derivatives-in-backpropagation
+// https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/
+//https://medium.com/@aerinykim/how-to-implement-the-softmax-derivative-independently-from-any-loss-function-ae6d44363a9d
 void
 SoftmaxFunction::apply_function(Eigen::MatrixXf &input) const {
     // Subtract maximum of each column to lower numerical errors and apply exp
