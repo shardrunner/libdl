@@ -47,7 +47,7 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
        m_convlayer_logger->flush();
        throw std::invalid_argument("Filter is not quadratic. Abort");
     }
-    if (m_filter_height> m_input_height || m_filter_width > m_input_width) {
+    if (m_filter_height> m_input_height+2*padding || m_filter_width > m_input_width+2*padding) {
         m_convlayer_logger->error("One filter dimension is bigger than the input + padding dimension.");
         m_convlayer_logger->flush();
         throw std::invalid_argument("Filter dimension is bigger than input + padding dimension. Abort");
@@ -66,6 +66,11 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
         m_convlayer_logger->error("Input and filter dimensions have to be greater than 0");
         m_convlayer_logger->flush();
         throw std::invalid_argument("Input and filter dimensions have to be greater than 0. Abort");
+    }
+    if (m_padding >0) {
+        m_convlayer_logger->error("Padding is currently not supported");
+        m_convlayer_logger->flush();
+        throw std::invalid_argument("Padding is currently not supported. Abort");
     }
 
     m_output_img_height = row_filter_positions(input_width, filter_width, stride, padding);
@@ -187,7 +192,7 @@ void ConvolutionalLayer::backpropagate_input(const Eigen::MatrixXf &dC_dz) {
 }
 
 
-
+//TODO im2col without segments
 std::unique_ptr<Eigen::MatrixXf>
 ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix, int img_height, int img_width,
                            int number_img_channels, int filter_height, int filter_width, int stride,

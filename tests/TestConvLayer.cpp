@@ -186,7 +186,7 @@ SCENARIO("Test Convolutional Layer") {
         }
     }GIVEN("Padding function for the convolution layer") {
         ConvolutionalLayer conv_layer(
-                2, 3, 2, 1, 1, 2, 1, 2, std::make_unique<IdentityFunction>(),
+                2, 3, 2, 1, 1, 2, 1, 0, std::make_unique<IdentityFunction>(),
                 std::make_unique<DeterministicInitialization>());
         Eigen::MatrixXf input_matrix(12, 2);
         input_matrix.transpose()
@@ -209,7 +209,7 @@ SCENARIO("Test Convolutional Layer") {
     }GIVEN("A flip kernel function") {
         WHEN("A 2x2 filter is flipped") {
             ConvolutionalLayer conv_layer(
-                    2, 3, 2, 2, 2, 2, 1, 2, std::make_unique<IdentityFunction>(),
+                    2, 3, 2, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
                     std::make_unique<DeterministicInitialization>());
             Eigen::MatrixXf filter_matrix(2, 8);
             filter_matrix << 0, 1, -1, 0, 5, 3, 4, 2,
@@ -224,7 +224,7 @@ SCENARIO("Test Convolutional Layer") {
             }
         }WHEN("A 3x3 filter is flipped") {
             ConvolutionalLayer conv_layer(
-                    2, 3, 2, 3, 3, 1, 1, 2, std::make_unique<IdentityFunction>(),
+                    3, 3, 2, 3, 3, 1, 1, 0, std::make_unique<IdentityFunction>(),
                     std::make_unique<DeterministicInitialization>());
             Eigen::MatrixXf filter_matrix(1, 18);
             filter_matrix << 0, 1, -1, 0, 5, 3, 4, 2, 5, 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -370,6 +370,21 @@ SCENARIO("Test Convolutional Layer") {
                 Eigen::VectorXf res_dC_db(1);
                 res_dC_db << 2.5;
                 REQUIRE(conv.get_bias_derivative().isApprox(res_dC_db));
+            }
+        }
+
+    }
+    GIVEN("A stride greater than 1") {
+        ConvolutionalLayer conv = ConvolutionalLayer(4, 4, 1, 2, 2, 1, 2, 0, std::make_unique<IdentityFunction>(),
+                                                     std::make_unique<DeterministicInitialization>());
+        Eigen::MatrixXf input_matrix(16, 1);
+        input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9,0,-3,2,0,0,1,1;
+        WHEN("Im2col is applied") {
+            auto im2col_matrix = conv.im2col(input_matrix, 4, 4, 1, 2, 2, 2, 0);
+            Eigen::MatrixXf output_matrix(4, 4);
+            output_matrix << 1, 7, 9, -3, 4, 2, 0, 2, 5, 3, 0, 1, 8, 6, 0, 1;
+            THEN("It should work") {
+                REQUIRE(im2col_matrix->isApprox(output_matrix));
             }
         }
     }
