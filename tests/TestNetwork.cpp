@@ -49,7 +49,7 @@ SCENARIO("Test complete network") {
         WHEN("The network is trained") {
             mnet.train_network(input, labels, -1, 50, -1);
             THEN("The loss should be predictable") {
-                REQUIRE(std::abs(mnet.get_loss(mnet.test_network(input), labels) - 0.403376) < 0.0000001);
+                REQUIRE(std::abs(mnet.get_loss(mnet.test_network(input), labels) - 0.403376) < 0.0001);
             }
 
         }
@@ -89,7 +89,7 @@ SCENARIO("Test complete network") {
         WHEN("The network is trained") {
             mnet.train_network(input, labels, -1, 50, -11);
             THEN("The loss should be predictable") {
-                REQUIRE(std::abs(mnet.get_loss(mnet.test_network(input), labels) - 0.496379) < 0.00001);
+                REQUIRE(std::abs(mnet.get_loss(mnet.test_network(input), labels) - 0.496379) < 0.0001);
             }
 
         }
