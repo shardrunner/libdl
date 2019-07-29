@@ -135,12 +135,18 @@ set(SRCS
         src/RandomInitialization/UniformHeInitialization.cpp
         src/ManageLoggers.cpp
         src/HelperFunctions.cpp)
+#tests
+set(Tests
+        tests/TestConvLayer.cpp
+        tests/test-main.cpp
+        tests/TestActivations.cpp
+        tests/TestFCLayer.cpp tests/TestLossFunctions.cpp tests/TestInitialization.cpp)
 
 add_library(Mlib STATIC ${SRCS} ${HDRS})
 
 target_link_libraries(Mlib PUBLIC Eigen3::Eigen spdlog::spdlog)
 
-add_executable(Mlib_test ../tests/test_layers.cpp tests/test-main.cpp)
+add_executable(Mlib_test ${Tests})
 
 target_link_libraries(Mlib_test PUBLIC Mlib Catch2::Catch2)
 
