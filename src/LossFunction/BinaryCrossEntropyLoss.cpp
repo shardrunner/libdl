@@ -1,5 +1,7 @@
 #include "LossFunction/BinaryCrossEntropyLoss.h"
 
+#include <iostream>
+
 double BinaryCrossEntropyLoss::calculate_loss(
     const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const {
 
@@ -40,6 +42,7 @@ void BinaryCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
                   .select((float(1) - a_prev.array()).cwiseInverse(),
                           -a_prev.cwiseInverse())
                   .matrix();
+  //std::cout << "Binary derivative: \nInput: \n" << a_prev << "\nLabels: \n" << label << "\nloss:\n" << temp_loss << std::endl;
 }
 const Eigen::MatrixXf &BinaryCrossEntropyLoss::get_backpropagate() const {
   return temp_loss;

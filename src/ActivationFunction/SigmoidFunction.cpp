@@ -11,5 +11,7 @@ SigmoidFunction::apply_derivative(const Eigen::MatrixXf &m_a,
                                   const Eigen::MatrixXf &dC_da) const {
   // Apply sigmoid derivative element wise and multiply with derivative next
   // layer
+  //std::cout << "ma\n" << m_a << "\ndC_da\n" << dC_da << std::endl;
+  //auto Eigen::MatrixXf
   return ((m_a.array() * (1 - m_a.array())) * dC_da.array()).matrix();
 }
