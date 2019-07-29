@@ -49,12 +49,25 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
        m_convlayer_logger->flush();
        throw std::invalid_argument("Filter is not quadratic. Abort");
     }
-    else {
-        if (m_filter_height> m_input_height+2*m_padding || m_filter_width > m_input_width+2*m_padding) {
-            m_convlayer_logger->error("One filter dimension is bigger than the input + padding dimension.");
-            m_convlayer_logger->flush();
-            throw std::invalid_argument("Filter dimension is bigger than input + padding dimension. Abort");
-        }
+    if (m_filter_height> m_input_height || m_filter_width > m_input_width) {
+        m_convlayer_logger->error("One filter dimension is bigger than the input + padding dimension.");
+        m_convlayer_logger->flush();
+        throw std::invalid_argument("Filter dimension is bigger than input + padding dimension. Abort");
+    }
+    if (m_padding <0) {
+        m_convlayer_logger->error("Negative padding is not allowed");
+        m_convlayer_logger->flush();
+        throw std::invalid_argument("Negative padding is not allowed. Abort");
+    }
+    if (m_stride <1) {
+        m_convlayer_logger->error("A stride smaller than 1 is not allowed");
+        m_convlayer_logger->flush();
+        throw std::invalid_argument("A stride smaller than 1 is not allowed. Abort");
+    }
+    if (m_input_height < 1 || m_input_width<1 || m_filter_height < 1 || m_filter_width < 1 || m_number_input_channels < 1 || m_number_output_channels < 1) {
+        m_convlayer_logger->error("Input and filter dimensions have to be greater than 0");
+        m_convlayer_logger->flush();
+        throw std::invalid_argument("Input and filter dimensions have to be greater than 0. Abort");
     }
 
     m_output_img_height = row_filter_positions(m_input_width, m_filter_width, m_stride);
