@@ -39,10 +39,21 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
           m_activation_function(std::move(activation_function)),
           m_random_initialization(std::move(random_initialization)) {
 
-    assert(filter_height==filter_width && "Filter has to be quadratic");
-
     m_convlayer_logger = spdlog::get("convlayer");
     m_convlayer_logger->info("Start initialization of convlayer");
+
+    if (m_filter_height!=m_filter_width) {
+       m_convlayer_logger->error("Filter is not quadratic. Non quadratic filter are currently not supported.");
+       m_convlayer_logger->flush();
+       throw std::invalid_argument("Filter is not quadratic. Abort");
+    }
+    else {
+        if (m_filter_height> m_input_height+2*m_padding || m_filter_width > m_input_width+2*m_padding) {
+            m_convlayer_logger->error("One filter dimension is bigger than the input + padding dimension.");
+            m_convlayer_logger->flush();
+            throw std::invalid_argument("Filter dimension is bigger than input + padding dimension. Abort");
+        }
+    }
 
     m_output_img_height = row_filter_positions(input_width, filter_width, stride, padding);
     m_output_img_width = col_filter_positions(input_height, filter_height, stride, padding);
