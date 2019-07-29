@@ -183,7 +183,7 @@ set_target_properties(Mlib PROPERTIES
         CXX_EXTENSIONS NO
         )
 
-# Check for and enable Interprocedural optimization (flto flag, link optimization) (from https://cliutils.gitlab.io/modern-cmake/chapters/features/small.html)
+# Check for and enable Interprocedural optimization (flto flag, link optimization) (from https://cliutils.gitlab.io/modern-cmake/chapters/features/small.html and https://stackoverflow.com/questions/35922966/lto-with-llvm-and-cmake)
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     include(CheckIPOSupported)
     check_ipo_supported(RESULT ipo_result)
