@@ -24,7 +24,7 @@ public:
                  const Eigen::VectorXi &label) const = 0;
 
   /**
-   * Calculates the derivative of the loss function in repsect to the input and
+   * Calculates the derivative of the loss function in respect to the input and
    * the label in the backpropagation step. The result is saved internally.
    * @param a_prev The feed forward result of the previous layer.
    * @param label The ground truth label set for the training input.
@@ -40,5 +40,5 @@ public:
   [[nodiscard]] virtual const Eigen::MatrixXf &get_backpropagate() const = 0;
 
 protected:
-  Eigen::MatrixXf temp_loss;
+  Eigen::MatrixXf backprop_loss;
 };
