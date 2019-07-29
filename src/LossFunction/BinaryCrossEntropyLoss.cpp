@@ -18,11 +18,7 @@ void BinaryCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
                                            const Eigen::VectorXi &label) {
     Eigen::RowVectorXi label_row = label.transpose();
 
-    assert(a_prev.cols() == label_row.cols() && a_prev.rows() == label_row.rows() && a_prev.rows() == 1 &&
-           "Label and input dimensions do not match!");
-    //if ((label_row.cols() != nobs) || (label_row.rows() != nvar)) {
-    //  throw std::invalid_argument("Target data have incorrect dimension");
-    //}
+    assert(a_prev.cols() == label_row.size() && a_prev.rows() == 1 && "Label and input dimensions do not match!");
 
     Eigen::RowVectorXf label_row_float = label_row.cast<float>();
     backprop_loss.array() =
@@ -33,7 +29,6 @@ void BinaryCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
                     .select((float(1) - a_prev.array()).cwiseInverse(),
                             -a_prev.cwiseInverse())
                     .matrix();*/
-
 }
 
 const Eigen::MatrixXf &BinaryCrossEntropyLoss::get_backpropagate() const {

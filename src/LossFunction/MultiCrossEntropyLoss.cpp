@@ -1,13 +1,13 @@
 #include "LossFunction/MultiCrossEntropyLoss.h"
 
-#include <iostream>
-
 double MultiCrossEntropyLoss::calculate_loss(
         const Eigen::MatrixXf &a_prev, const Eigen::VectorXi &label) const {
 
     long label_size = label.size();
 
     assert(a_prev.cols() == label.size() && "Number of labels does not match number of outputs");
+    assert((std::abs(a_prev.col(0).sum() - 1.0) < 0.0000001) &&
+           "Column sum not 1. Please use softmax activation for last layer");
 
     double error = 0.0;
     for (long i = 0; i < label_size; i++) {
@@ -25,11 +25,8 @@ void MultiCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
     const long number_samples = a_prev.cols();
 
     assert(number_samples == label.size() && "Number of labels does not match number of outputs");
-
-    /*if (label.size() != number_samples) {
-      throw std::invalid_argument(
-          "[class MultiClassEntropy]: Label and input do have incorrect dimensions");
-    }*/
+    assert((std::abs(a_prev.col(0).sum() - 1.0) < 0.0000001) &&
+           "Column sum not 1. Please use softmax activation for last layer");
 
     backprop_loss.resize(a_prev.rows(), number_samples);
     backprop_loss.setZero();
