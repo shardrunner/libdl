@@ -57,6 +57,7 @@ public:
   Eigen::MatrixXi calc_accuracy(const Eigen::MatrixXf &input,
                                 const Eigen::MatrixXi &label);
 
+  void check_network(long input_size);
 private:
   /**
    * Vector of pointers to the layers contained in the neural network.

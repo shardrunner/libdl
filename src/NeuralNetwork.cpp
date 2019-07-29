@@ -77,6 +77,8 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
     //Try to set thread number to the physical core number (without HT), because Eigen is slower otherwise (https://eigen.tuxfamily.org/dox-devel/TopicMultiThreading.html)
     omp_set_num_threads(omp_get_num_procs()/2);
 
+
+
     //init loggers
     ManageLoggers loggers;
     loggers.initLoggers();
@@ -89,6 +91,8 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                                   int iterations, int divisor) {
     m_nn_logger->warn("Started training network");
     m_nn_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix;; {} batch size; {} iterations", input.size(), input.rows(), input.cols(), batch_size, iterations);
+
+    check_network(input.rows());
 
      //auto t1=std::chrono::high_resolution_clock::now();
 
@@ -150,7 +154,7 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                 auto temp2 =
                         m_loss_function->calculate_loss(temp1, label_batch); //(temp1, label);
                 m_nn_logger->warn("Loss batch {} of iteration number {}: {} ",j,i,temp2);
-                m_nn_logger->warn("Forward output {}",HelperFunctions::toString(temp1));
+                //m_nn_logger->warn("Forward output {}",HelperFunctions::toString(temp1));
             }
         }
     }
@@ -181,4 +185,19 @@ Eigen::MatrixXi NeuralNetwork::calc_accuracy(const Eigen::MatrixXf &input,
     }
     std::cout << "\naccuracy " << (double) correct / (double) label.size() << std::endl;
     return predictions;
+}
+
+void NeuralNetwork::check_network(long input_size) {
+    auto output=input_size;
+    for (unsigned long i=0; i<m_layer_list.size(); i++) {
+        auto input= m_layer_list[i]->get_number_inputs();
+        if (output!=input) {
+            m_nn_logger->error("Mismatch of layer dimensions!");
+            m_nn_logger->error("Layer {} has output {} and next layer {} has input {}.", i-1, output,i,input);
+            m_nn_logger->flush();
+            throw std::invalid_argument("Layer dimensions mismatch. See log for more information");
+        }
+        output= m_layer_list[i]->get_number_outputs();
+    }
+    m_nn_logger->info("Layer dimensions match");
 }
