@@ -32,7 +32,8 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
                                        int filter_height, int filter_width, int number_output_channel, int stride,
                                        int padding, std::unique_ptr<ActivationFunction> activation_function,
                                        std::unique_ptr<RandomInitialization> random_initialization)
-        : m_number_input_channels(number_input_channel),
+        : m_input_height(input_height), m_input_width(input_width),
+          m_number_input_channels(number_input_channel),
           m_filter_height(filter_height), m_filter_width(filter_width),
           m_number_output_channels(number_output_channel), m_stride(stride), m_padding(padding),
           m_activation_function(std::move(activation_function)),
@@ -40,9 +41,6 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
 
     m_convlayer_logger = spdlog::get("convlayer");
     m_convlayer_logger->info("Start initialization of convlayer");
-
-    m_input_height=input_height+2*m_padding;
-    m_input_width=input_width+2*m_padding;
 
     if (m_filter_height!=m_filter_width) {
        m_convlayer_logger->error("Filter is not quadratic. Non quadratic filter are currently not supported.");
@@ -70,8 +68,8 @@ ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int nu
         throw std::invalid_argument("Input and filter dimensions have to be greater than 0. Abort");
     }
 
-    m_output_img_height = row_filter_positions(m_input_width, m_filter_width, m_stride);
-    m_output_img_width = col_filter_positions(m_input_height, m_filter_height, m_stride);
+    m_output_img_height = row_filter_positions(input_width, filter_width, stride, padding);
+    m_output_img_width = col_filter_positions(input_height, filter_height, stride, padding);
     m_output_img_size = m_output_img_height * m_output_img_width;
     m_number_output_values = m_output_img_size * m_number_output_channels;
 
@@ -199,8 +197,8 @@ ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix, int img_height, 
             "{} size input matrix; {} rows input matrix; {} cols input matrix; {} filter height; {} filter width",
             input_matrix.size(), input_matrix.rows(), input_matrix.cols(), filter_height, filter_width);
 
-    auto num_row_filter_positions = row_filter_positions(img_width, filter_width, stride);
-    auto num_col_filter_positions = col_filter_positions(img_height, filter_height, stride);
+    auto num_row_filter_positions = row_filter_positions(img_width, filter_width, stride, padding);
+    auto num_col_filter_positions = col_filter_positions(img_height, filter_height, stride, padding);
     auto num_filter_positions = num_col_filter_positions * num_row_filter_positions;
 
     auto im2col_matrix = std::make_unique<Eigen::MatrixXf>(filter_width * filter_height * number_img_channels,
@@ -243,8 +241,8 @@ ConvolutionalLayer::im2col2(const Eigen::MatrixXf &input_matrix, int img_height,
             "{} size input matrix; {} rows input matrix; {} cols input matrix; {} filter height; {} filter width",
             input_matrix.size(), input_matrix.rows(), input_matrix.cols(), filter_height, filter_width);
 
-    auto num_row_filter_positions = row_filter_positions(img_width, filter_width, stride);
-    auto num_col_filter_positions = col_filter_positions(img_height, filter_height, stride);
+    auto num_row_filter_positions = row_filter_positions(img_width, filter_width, stride, padding);
+    auto num_col_filter_positions = col_filter_positions(img_height, filter_height, stride, padding);
     auto num_filter_positions = num_col_filter_positions * num_row_filter_positions;
 
     auto im2col_matrix = std::make_unique<Eigen::MatrixXf>(filter_width * filter_height * input_matrix.cols(),
@@ -277,12 +275,12 @@ ConvolutionalLayer::im2col2(const Eigen::MatrixXf &input_matrix, int img_height,
     return im2col_matrix;
 }
 
-int ConvolutionalLayer::row_filter_positions(int img_width, int filter_width, int stride) const {
-    return (img_width - filter_width) / stride + 1;
+int ConvolutionalLayer::row_filter_positions(int img_width, int filter_width, int stride, int padding) const {
+    return (img_width - filter_width + 2 * padding) / stride + 1;
 }
 
-int ConvolutionalLayer::col_filter_positions(int img_height, int filter_height, int stride) const {
-    return (img_height - filter_height) / stride + 1;
+int ConvolutionalLayer::col_filter_positions(int img_height, int filter_height, int stride, int padding) const {
+    return (img_height - filter_height + 2 * padding) / stride + 1;
 }
 
 //const Eigen::MatrixXf &ConvolutionalLayer::get_m_z() const {
@@ -296,8 +294,8 @@ ConvolutionalLayer::reshape_im2col_result(const Eigen::MatrixXf &input, int inpu
                                           int padding, long num_samples) const {
     m_convlayer_logger->debug("Start reshape forward propagation");
 
-    auto output_img_height = row_filter_positions(input_width, filter_width, stride);
-    auto output_img_width = col_filter_positions(input_height, filter_height, stride);
+    auto output_img_height = row_filter_positions(input_width, filter_width, stride, padding);
+    auto output_img_width = col_filter_positions(input_height, filter_height, stride, padding);
     auto output_img_size = output_img_height * output_img_width;
     auto num_output_values = output_img_size * number_output_channels;
 
