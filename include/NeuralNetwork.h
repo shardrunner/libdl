@@ -10,6 +10,7 @@
 
 
 #include "spdlog/spdlog.h"
+#include <tuple>
 
 /**
  * Represents the neural network and performs the operations on it.
@@ -54,8 +55,8 @@ public:
    * @param label The true labels.
    * @return Conversion of the prediction to binary values.
    */
-  Eigen::MatrixXi calc_accuracy(const Eigen::MatrixXf &input,
-                                const Eigen::MatrixXi &label);
+  Eigen::MatrixXi calculate_accuracy(const Eigen::MatrixXf &input,
+                                     const Eigen::MatrixXi &label);
 
   void check_network(long input_size);
 private:
@@ -89,6 +90,12 @@ private:
    * minimization in the backpropagation step.
    */
   void update();
+
+  [[nodiscard]] std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> get_layer_parameter() const;
+
+  void set_layer_parameter(const std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> &parameter_list);
+
+  double get_loss(const Eigen::MatrixXf &feed_forward_input, const Eigen::VectorXi &label) const;
 private:
     std::shared_ptr<spdlog::logger> m_nn_logger;
 };
