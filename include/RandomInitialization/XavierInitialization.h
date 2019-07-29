@@ -3,7 +3,7 @@
 #include "RandomInitialization/RandomInitialization.h"
 
 /**
- * Gaussian Xavier initialization used for tanh activation functions.
+ * Gaussian Xavier initialization used for tanh, softmax and sigmoid activation functions.
  */
 class XavierInitialization : public RandomInitialization {
 public:
