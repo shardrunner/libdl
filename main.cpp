@@ -136,7 +136,7 @@ int main() {
   mnet.train_network(image, labels, 128, 50, 10);
 
   // test part of the test set
-  auto predictions = mnet.calc_accuracy(test_image, test_labels);
+  auto predictions = mnet.calculate_accuracy(test_image, test_labels);
 
   std::cout << "Some tests \n" << std::endl;
 

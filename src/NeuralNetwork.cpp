@@ -167,8 +167,12 @@ NeuralNetwork::test_network(const Eigen::MatrixXf &input) {
     return m_layer_list[m_layer_list.size() - 1]->get_forward_output();
 }
 
-Eigen::MatrixXi NeuralNetwork::calc_accuracy(const Eigen::MatrixXf &input,
-                                             const Eigen::MatrixXi &label) {
+double NeuralNetwork::get_loss(const Eigen::MatrixXf &feed_forward_input, const Eigen::VectorXi &label) const {
+    return m_loss_function->calculate_loss(feed_forward_input, label);
+}
+
+Eigen::MatrixXi NeuralNetwork::calculate_accuracy(const Eigen::MatrixXf &input,
+                                                  const Eigen::MatrixXi &label) {
     feed_forward(input);
     auto result = m_layer_list[m_layer_list.size() - 1]->get_forward_output();
 
@@ -201,3 +205,20 @@ void NeuralNetwork::check_network(long input_size) {
     }
     m_nn_logger->info("Layer dimensions match");
 }
+
+std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> NeuralNetwork::get_layer_parameter() const {
+    std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> parameter_list;
+    for (const auto &layer: m_layer_list) {
+        parameter_list.emplace_back(std::make_tuple(layer->get_weights(),layer->get_bias()));
+    }
+    return parameter_list;
+}
+
+void NeuralNetwork::set_layer_parameter(const std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> &parameter_list) {
+    for (unsigned long i=0; i < m_layer_list.size(); i++) {
+        auto [weights, bias] =parameter_list[i];
+        m_layer_list[i]->set_weights(weights);
+        m_layer_list[i]->set_bias(bias);
+    }
+}
+
