@@ -91,7 +91,7 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
 void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                                   const Eigen::MatrixXi &label, int batch_size,
                                   int iterations, int divisor) {
-    m_nn_logger->warn("Started training network");
+    m_nn_logger->info("Started training network");
     m_nn_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix;; {} batch size; {} iterations", input.size(), input.rows(), input.cols(), batch_size, iterations);
 
     check_network(input.rows());
@@ -147,20 +147,22 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
             feed_forward(input_batch);
             backpropagation(input_batch, label_batch);
             update();
-            if (i % divisor == 0) {
-                auto temp1 =
-                        m_layer_list[m_layer_list.size() - 1]->get_forward_output();
-                // std::cout << /*"dim: " <<temp1.rows() << " & " << temp1.cols() <<*/
-                // "\nForward_output\n" << temp1 << "\n";
-                //        spdlog::debug("test");
-                auto temp2 =
-                        m_loss_function->calculate_loss(temp1, label_batch); //(temp1, label);
-                m_nn_logger->warn("Loss batch {} of iteration number {}: {} ",j,i,temp2);
-                //m_nn_logger->warn("Forward output {}",HelperFunctions::toString(temp1));
+            if (divisor >= 0) {
+                if (i % divisor == 0) {
+                    auto temp1 =
+                            m_layer_list[m_layer_list.size() - 1]->get_forward_output();
+                    // std::cout << /*"dim: " <<temp1.rows() << " & " << temp1.cols() <<*/
+                    // "\nForward_output\n" << temp1 << "\n";
+                    //        spdlog::debug("test");
+                    auto temp2 =
+                            m_loss_function->calculate_loss(temp1, label_batch); //(temp1, label);
+                            m_nn_logger->warn("Loss batch {} of iteration number {}: {} ",j,i,temp2);
+                            //m_nn_logger->warn("Forward output {}",HelperFunctions::toString(temp1));
+                }
             }
         }
     }
-    m_nn_logger->warn("Ended training network");
+    m_nn_logger->info("Ended training network");
 }
 
 const Eigen::MatrixXf &
