@@ -29,9 +29,9 @@ public:
     void backpropagation(const Eigen::MatrixXf &a_prev,
                          const Eigen::MatrixXf &dC_da) override;
 
-    const Eigen::MatrixXf &get_forward_output() override;
+    [[nodiscard]] const Eigen::MatrixXf &get_forward_output() const override;
 
-    const Eigen::MatrixXf &get_backward_output() override;
+    [[nodiscard]] const Eigen::MatrixXf &get_backward_output() const override;
 
     void initialize_parameter() override;
 
@@ -69,29 +69,27 @@ public:
                           int filter_height, int filter_width, int number_output_channels, int stride,
                           int padding, long num_samples) const;
 
-  //  [[nodiscard]] const Eigen::MatrixXf &get_m_z() const;
+    void set_weights(const Eigen::MatrixXf &new_filter) override;
 
-    [[nodiscard]] const Eigen::MatrixXf &get_dC_dw() const;
+    void set_bias(const Eigen::VectorXf &new_bias) override;
 
-    void set_filter(const Eigen::MatrixXf &new_filter);
+    [[nodiscard]] const Eigen::VectorXf& get_bias() const override;
 
-    void set_bias(const Eigen::VectorXf &new_bias);
-
-    [[nodiscard]] const Eigen::VectorXf& get_bias() const;
+    [[nodiscard]] const Eigen::MatrixXf& get_weights() const override;
 
     [[nodiscard]] const Eigen::VectorXf& get_bias_derivative() const;
-
-    [[nodiscard]] const Eigen::MatrixXf& get_filter() const;
 
     [[nodiscard]] const Eigen::MatrixXf& get_weights_derivative() const;
 
     [[nodiscard]] const Eigen::MatrixXf& get_input_derivative() const;
 
+    [[nodiscard]] int get_number_inputs() const override;
+
+    [[nodiscard]] int get_number_outputs() const override;
+
     void backpropagate_bias(const Eigen::MatrixXf &dC_dz);
 
     void backpropagate_weights(const Eigen::MatrixXf& a_prev, const Eigen::MatrixXf &dC_dz);
-
-    //void backpropagate_activation(const Eigen::MatrixXf& dC_da);
 
     void backpropagate_input(const Eigen::MatrixXf& dC_dz);
 

@@ -25,6 +25,8 @@ void FullyConnectedLayer::feed_forward(const Eigen::MatrixXf &input) {
     int c = input.rows();
     int d = input.cols();
     int e = m_b.size();*/
+  assert(m_w.rows()==input.rows() && "FC feed forward weights and input dimensions do not match");
+  assert(m_w.cols()==m_output_size && "The given output size odes not match the weight size");
 
 
   m_a.noalias() = (m_w.transpose() * input).colwise() + m_b;
@@ -112,10 +114,39 @@ void FullyConnectedLayer::update_parameter() {
   //std::cout << "After update: w\n" << m_w << "\nb\n" << m_b << std::endl;
 }
 
-const Eigen::MatrixXf &FullyConnectedLayer::get_forward_output() {
-  //  spdlog::debug("before a");
+const Eigen::MatrixXf &FullyConnectedLayer::get_forward_output() const {
   return m_a;
 }
-const Eigen::MatrixXf &FullyConnectedLayer::get_backward_output() {
+const Eigen::MatrixXf &FullyConnectedLayer::get_backward_output() const {
   return m_dC_da_prev;
+}
+
+int FullyConnectedLayer::get_number_inputs() const {
+    return m_input_size;
+}
+
+int FullyConnectedLayer::get_number_outputs() const {
+    return m_output_size;
+}
+
+void FullyConnectedLayer::set_weights(const Eigen::MatrixXf &new_weights) {
+    if (new_weights.rows() != m_w.rows() || new_weights.cols() != m_w.cols()) {
+        throw std::invalid_argument("New weights size does not match the old weight size");
+    }
+        m_w=new_weights;
+}
+
+void FullyConnectedLayer::set_bias(const Eigen::VectorXf &new_bias) {
+    if (new_bias.rows() != m_b.rows() || new_bias.cols() != m_b.cols()) {
+        throw std::invalid_argument("New bias size does not match the old bias size");
+    }
+    m_b=new_bias;
+}
+
+const Eigen::MatrixXf &FullyConnectedLayer::get_weights() const {
+    return m_w;
+}
+
+const Eigen::VectorXf &FullyConnectedLayer::get_bias() const {
+    return m_b;
 }

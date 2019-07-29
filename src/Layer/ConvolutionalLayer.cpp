@@ -7,9 +7,11 @@
 
 #include "HelperFunctions.h"
 
-const Eigen::MatrixXf &ConvolutionalLayer::get_forward_output() { return m_a; }
+const Eigen::MatrixXf &ConvolutionalLayer::get_forward_output() const {
+    return m_a;
+}
 
-const Eigen::MatrixXf &ConvolutionalLayer::get_backward_output() {
+const Eigen::MatrixXf &ConvolutionalLayer::get_backward_output() const {
     return m_dC_da_prev;
 }
 
@@ -22,7 +24,7 @@ void ConvolutionalLayer::initialize_parameter() {
 
 void ConvolutionalLayer::update_parameter() {
     //TODO transpose weg
-    m_w = m_w - 0.1 * m_dC_dw.transpose();
+    m_w = m_w - 0.1 * m_dC_dw;
     m_b = m_b - 0.1 * m_dC_db;
 }
 
@@ -132,7 +134,7 @@ void ConvolutionalLayer::backpropagate_weights(const Eigen::MatrixXf& a_prev, co
     //dC/dw=Conv(a_prev,dC/dz) and normalization
 
     //std::cout << "res\n" << res << std::endl;
-    m_dC_dw.noalias()=(a_prev_im2col2->transpose()*(*dC_dz_im2col2))/dC_dz.cols();
+    m_dC_dw.noalias()=((a_prev_im2col2->transpose()*(*dC_dz_im2col2))/dC_dz.cols()).transpose();
     //m_dC_dw.noalias()=*reshape_im2col_result(res,m_input_height,m_input_width,m_output_img_height,m_output_img_width,m_number_output_channels,m_stride,m_padding,m_number_output_channels);
     //std::cout << "m_dC_dw\n" << m_dC_dw << std::endl;
     //TODO Fix weights test
@@ -286,17 +288,7 @@ ConvolutionalLayer::reshape_im2col_result(const Eigen::MatrixXf &input, int inpu
     return im2col_reshaped;
 }
 
-void
-ConvolutionalLayer::set_filter(const Eigen::MatrixXf &new_filter) {
-    if (new_filter.rows() != m_w.rows() || new_filter.cols() != m_w.cols()) {
-        throw std::invalid_argument("New Filter size does not match the old filter size");
-    }
-    m_w = new_filter;
-}
 
-const Eigen::MatrixXf &ConvolutionalLayer::get_dC_dw() const {
-    return m_dC_dw;
-}
 
 std::unique_ptr<Eigen::MatrixXf>
 ConvolutionalLayer::pad_matrix(const Eigen::MatrixXf &input, int padding, int img_height, int img_width,
@@ -335,6 +327,14 @@ std::unique_ptr<Eigen::MatrixXf> ConvolutionalLayer::flip_filter() const {
     return flipped_filter;
 }
 
+void
+ConvolutionalLayer::set_weights(const Eigen::MatrixXf &new_filter) {
+    if (new_filter.rows() != m_w.rows() || new_filter.cols() != m_w.cols()) {
+        throw std::invalid_argument("New Filter size does not match the old filter size");
+    }
+    m_w = new_filter;
+}
+
 void ConvolutionalLayer::set_bias(const Eigen::VectorXf &new_bias) {
     if (new_bias.rows() != m_b.rows() || new_bias.cols() != m_b.cols()) {
         throw std::invalid_argument("New bias size does not match the old bias size");
@@ -350,7 +350,7 @@ const Eigen::VectorXf& ConvolutionalLayer::get_bias_derivative() const {
     return m_dC_db;
 }
 
-const Eigen::MatrixXf &ConvolutionalLayer::get_filter() const {
+const Eigen::MatrixXf &ConvolutionalLayer::get_weights() const {
     return m_w;
 }
 
@@ -360,4 +360,12 @@ const Eigen::MatrixXf &ConvolutionalLayer::get_weights_derivative() const {
 
 const Eigen::MatrixXf &ConvolutionalLayer::get_input_derivative() const {
     return m_dC_da_prev;
+}
+
+int ConvolutionalLayer::get_number_inputs() const {
+    return m_input_height*m_input_width*m_number_input_channels;
+}
+
+int ConvolutionalLayer::get_number_outputs() const {
+    return m_number_output_values;
 }

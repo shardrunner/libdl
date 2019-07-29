@@ -33,13 +33,13 @@ public:
    * Returns a reference to the stored feed forward output.
    * @return The reference to the stored feed forward output.
    */
-  virtual const Eigen::MatrixXf &get_forward_output() = 0;
+  virtual const Eigen::MatrixXf &get_forward_output() const = 0;
 
   /**
    * Returns a reference to the stored backpropagation output.
    * @return The reference to the stored backpropagation output.
    */
-  virtual const Eigen::MatrixXf &get_backward_output() = 0;
+  virtual const Eigen::MatrixXf &get_backward_output() const = 0;
 
   /**
    * Initializes the internal parameters bias and weight according to the
@@ -53,6 +53,27 @@ public:
    */
   virtual void update_parameter() = 0;
 
+  /**
+   * Return the expected number of inputs values per sample.
+   * Used to check if the constructed network is correct.
+   * @return The expected number of input values per sample.
+   */
+  [[nodiscard]] virtual int get_number_inputs() const = 0;
+
+  /**
+   * Returns the expected number of output values per sample.
+   * Used to check if the constructed network is correct.
+   * @return The expected number of output values per sample.
+   */
+  [[nodiscard]] virtual int get_number_outputs() const =0;
+
+  virtual void set_weights(const Eigen::MatrixXf &new_weights) = 0;
+
+  virtual void set_bias(const Eigen::VectorXf &new_bias)=0;
+
+  [[nodiscard]] virtual const Eigen::MatrixXf &get_weights() const =0;
+
+  [[nodiscard]] virtual const Eigen::VectorXf &get_bias() const =0;
 protected:
   /**
    * The size of the input.
