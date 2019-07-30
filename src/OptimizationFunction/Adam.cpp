@@ -5,6 +5,7 @@
 #include "OptimizationFunction/Adam.h"
 
 void Adam::optimize_weights(Eigen::MatrixXf &values, const Eigen::MatrixXf &derivatives) {
+    assert(values.rows()==m_mt.rows() && values.cols()==m_mt.cols() && derivatives.rows() == m_mt.rows() && derivatives.cols()==m_mt.cols() && "Defined input and real input dimensions do not match!");
     //First order momentum
     m_mt*=m_beta_1;
     m_mt+=(1-m_beta_1)*derivatives;
@@ -34,6 +35,7 @@ Adam::Adam(float learning_rate, float epsilon, float beta_1, float beta_2, int f
 }
 
 void Adam::optimize_bias(Eigen::VectorXf &values, const Eigen::VectorXf &derivatives) {
+    assert(values.rows()==m_mt_bias.rows() && values.cols()==m_mt_bias.cols() && derivatives.rows() == m_mt_bias.rows() && derivatives.cols()==m_mt_bias.cols() && "Defined input and real input dimensions do not match!");
     //First order momentum
     m_mt_bias*=m_beta_1;
     m_mt_bias+=(1-m_beta_1)*derivatives;
