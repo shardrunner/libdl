@@ -9,8 +9,8 @@
 
 class ConvolutionalLayer : public BaseLayer {
 public:
-    ConvolutionalLayer(int input_height, int input_width, int number_input_channel,
-                       int filter_height, int filter_width, int number_output_channel, int stride,
+    ConvolutionalLayer(int input_height, int input_width, int input_channels,
+                       int filter_height, int filter_width, int output_channels, int stride,
                        int padding, std::unique_ptr<ActivationFunction> activation_function,
                        std::unique_ptr<RandomInitialization> random_initialization);
 
@@ -89,9 +89,10 @@ public:
 
     void backpropagate_bias(const Eigen::MatrixXf &dC_dz);
 
-    void backpropagate_weights(const Eigen::MatrixXf& a_prev, const Eigen::MatrixXf &dC_dz);
+    void backpropagate_weights(const Eigen::MatrixXf &a_prev, const Eigen::MatrixXf &dC_dz, int dC_dz_height,
+                               int dC_dz_width);
 
-    void backpropagate_input(const Eigen::MatrixXf& dC_dz);
+    void backpropagate_input(const Eigen::MatrixXf &dC_dz, int dC_dz_height, int dC_dz_width);
 
     /**
      * Add zero padding to the input matrix.
@@ -102,10 +103,12 @@ public:
      * @return A pointer to the padded new matrix.
      */
     [[nodiscard]] std::unique_ptr<Eigen::MatrixXf>
-    pad_matrix(const Eigen::MatrixXf &input, int padding, int img_height, int img_width,
-               int number_channels) const;
+    pad_matrix(const Eigen::MatrixXf &input, int img_height, int img_width, int number_channels,
+               int padding) const;
 
     [[nodiscard]] std::unique_ptr<Eigen::MatrixXf> flip_filter() const;
+
+    std::unique_ptr<Eigen::MatrixXf> dilate_matrix(const Eigen::MatrixXf &input, int img_height,int img_width, int img_channels, int dilation) const;
 
 public:
     Eigen::MatrixXf m_w;
@@ -123,13 +126,13 @@ public:
 
     int m_input_height;
     int m_input_width;
-    int m_number_input_channels;
+    int m_input_channels;
     int m_filter_height;
     int m_filter_width;
-    int m_number_output_channels;
-    int m_output_img_width;
-    int m_output_img_height;
-    int m_output_img_size;
+    int m_output_channels;
+    int m_output_width;
+    int m_output_height;
+    //int m_output_size;
 
 
     int m_stride;
