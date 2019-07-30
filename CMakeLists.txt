@@ -15,7 +15,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # Set compiler warning flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic -fPIC")# -fvisibility=hidden")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic -fPIC -fsized-deallocation")# -fvisibility=hidden")
 # Set debugging flags
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 # Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work; mtune and march optimize for used (native) processor, ffast-math sacrifices accuracy for speed
@@ -179,11 +179,16 @@ target_compile_definitions(${EXECUTABLE_TARGET} PRIVATE MNIST_DATA_LOCATION="${M
 
 pybind11_add_module(MlibWrapper pybind/MlibWrapper.cpp)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_compile_options(MlibWrapper INTERFACE -fsized-deallocation)
-endif()
+message(STATUS ${CMAKE_CXX_COMPILER_ID})
+
+
 
 target_link_libraries(MlibWrapper PUBLIC Eigen3::Eigen spdlog::spdlog Mlib)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    message(STATUS "Enabled -fsized-deallocation to fix clang pybind problems")
+    target_compile_options(MlibWrapper INTERFACE -fsized-deallocation)
+endif()
 
 
 if (OpenMP_CXX_FOUND)
