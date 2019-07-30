@@ -16,6 +16,12 @@ make
 
 ./testmain
 
+## General structure
+
+## Design choices
+
+## Current state
+
 The network is also executed and shown on the clang CI runner and the result with the default configuration can be seen there as well (e.g. https://gitlab.lrz.de/brunner/libdl/-/jobs/550453).
 
 Hopefully it builds on MacOS as well, but I couldn't test it.
