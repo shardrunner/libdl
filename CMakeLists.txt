@@ -21,8 +21,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 # Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work; mtune and march optimize for used (native) processor, ffast-math sacrifices accuracy for speed
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -mtune=native")# -ffast-math")# -flto=thin")
 
-set(PYBIND11_CPP_STANDARD -std=c++1z)
-#set(PYBIND11_CPP_STANDARD -std=c++latest)
+#set(PYBIND11_CPP_STANDARD -std=c++1z)
+set(PYBIND11_CPP_STANDARD -std=c++latest)
 
 # Set include directorys
 include_directories(include)
