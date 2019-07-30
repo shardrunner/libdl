@@ -26,9 +26,5 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("set_layer_weights", &NeuralNetwork::set_layer_weights)
             .def("get_layer_weights", &NeuralNetwork::get_layer_weights)
             .def("set_layer_bias", &NeuralNetwork::set_layer_bias)
-            .def("get_layer_bias", &NeuralNetwork::get_layer_bias)
-            .def("__repr__",
-                 []() {
-                     return "A neural Network";
-                 });
+            .def("get_layer_bias", &NeuralNetwork::get_layer_bias);
 }

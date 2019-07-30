@@ -21,8 +21,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 # Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work; mtune and march optimize for used (native) processor, ffast-math sacrifices accuracy for speed
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -mtune=native")# -ffast-math")# -flto=thin")
 
-#set(PYBIND11_CPP_STANDARD -std=c++1z)
-set(PYBIND11_CPP_STANDARD -std=c++latest)
+set(PYBIND11_CPP_STANDARD -std=c++1z)
+#set(PYBIND11_CPP_STANDARD -std=c++14)
+
 
 # Set include directorys
 include_directories(include)
@@ -177,6 +178,10 @@ target_compile_definitions(${EXECUTABLE_TARGET} PRIVATE MNIST_DATA_LOCATION="${M
 #add_library(Mlib_py SHARED ${SRCS} ${HDRS})
 
 pybind11_add_module(MlibWrapper pybind/MlibWrapper.cpp)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_compile_options(MlibWrapper INTERFACE -fsized-deallocation)
+endif()
 
 target_link_libraries(MlibWrapper PUBLIC Eigen3::Eigen spdlog::spdlog Mlib)
 
