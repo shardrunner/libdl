@@ -23,6 +23,10 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("train_network", &NeuralNetwork::train_network)
             .def("test_network", &NeuralNetwork::test_network,py::return_value_policy::reference)
             .def("train_batch", &NeuralNetwork::train_batch)
+            .def("set_layer_weights", &NeuralNetwork::set_layer_weights)
+            .def("get_layer_weights", &NeuralNetwork::get_layer_weights)
+            .def("set_layer_bias", &NeuralNetwork::set_layer_bias)
+            .def("get_layer_bias", &NeuralNetwork::get_layer_bias)
             .def("__repr__",
                  []() {
                      return "A neural Network";
