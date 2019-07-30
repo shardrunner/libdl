@@ -5,6 +5,8 @@
 #include "Layer/ConvolutionalLayer.h"
 #include <iostream>
 
+#include "omp.h"
+
 #include "HelperFunctions.h"
 
 const Eigen::MatrixXf &ConvolutionalLayer::get_forward_output() const {
@@ -244,6 +246,7 @@ ConvolutionalLayer::im2col(const Eigen::MatrixXf &input_matrix, int img_height, 
 
     int filter_size = filter_width * filter_height;
 
+    //#pragma omp parallel for
     for (long s = 0; s < input_matrix.cols(); s++) {
         for (int k = 0; k < number_img_channels; k++) {
             for (int j = 0; j < num_row_filter_positions; j++) {
@@ -289,6 +292,7 @@ ConvolutionalLayer::im2col2(const Eigen::MatrixXf &input_matrix, int img_height,
 
     int filter_size = filter_width * filter_height;
 
+    //#pragma omp parallel for
     for (long s = 0; s < input_matrix.cols(); s++) {
         for (int k = 0; k < number_img_channels; k++) {
             for (int j = 0; j < num_row_filter_positions; j++) {
@@ -341,6 +345,7 @@ ConvolutionalLayer::reshape_im2col_result(const Eigen::MatrixXf &input, int inpu
     auto im2col_reshaped = std::make_unique<Eigen::MatrixXf>(num_output_values, num_samples);
     m_convlayer_logger->debug("Dimensions reshaped im2col: {} {}", num_output_values, num_samples);
 
+   //#pragma omp parallel for
     for (long i = 0; i < num_samples; i++) {
         for (int j = 0; j < number_output_channels; j++) {
             im2col_reshaped->col(i).segment(output_img_size * j, output_img_size) = input.col(j).segment(
@@ -371,6 +376,7 @@ ConvolutionalLayer::pad_matrix(const Eigen::MatrixXf &input, int img_height, int
 
     input_padded->setZero();
 
+    //#pragma omp parallel for
     for (int i=0; i<number_channels; i++) {
         for (int j=0; j<img_width; j++) {
             // Added rows of padding + skip already processed img + skip already processed cols + skip first pads of rows
@@ -394,6 +400,7 @@ ConvolutionalLayer::dilate_matrix(const Eigen::MatrixXf &input, int img_height, 
     auto input_padded=std::make_unique<Eigen::MatrixXf>(img_size_dilated * img_channels, input.cols());
     input_padded->setZero();
 
+    //#pragma omp parallel for
     for (long l=0;l<input.cols(); l++) {
         for (int i = 0; i < img_channels; i++) {
             for (int j = 0; j < img_width; j++) {
