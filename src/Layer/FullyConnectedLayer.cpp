@@ -1,5 +1,5 @@
 #include "Layer/FullyConnectedLayer.h"
-//#include <ctime>
+
 #include <iostream>
 
 FullyConnectedLayer::FullyConnectedLayer(const int input_size, const int output_size,
