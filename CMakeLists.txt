@@ -15,13 +15,14 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # Set compiler warning flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic -fPIC")# -fvisibility=hidden")
 # Set debugging flags
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 # Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work; mtune and march optimize for used (native) processor, ffast-math sacrifices accuracy for speed
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -mtune=native")# -ffast-math")# -flto=thin")
 
-#set(PYBIND11_CPP_STANDARD -std=c++1z)
+set(PYBIND11_CPP_STANDARD -std=c++1z)
+#set(PYBIND11_CPP_STANDARD -std=c++latest)
 
 # Set include directorys
 include_directories(include)
@@ -47,10 +48,9 @@ if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 endif ()
 
 # Add submodule directorys
-#add_subdirectory(extern/pybind11)
+add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
 add_subdirectory(extern/Catch2)
-#include_directories(extern/spdlog)
 
 #if(NOT TARGET spdlog)
 #Stand-alone build
@@ -173,6 +173,13 @@ target_compile_features(${EXECUTABLE_TARGET} PUBLIC cxx_std_17)
 set_target_properties(${EXECUTABLE_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_compile_definitions(${EXECUTABLE_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")
+
+#add_library(Mlib_py SHARED ${SRCS} ${HDRS})
+
+pybind11_add_module(MlibWrapper pybind/MlibWrapper.cpp)
+
+target_link_libraries(MlibWrapper PUBLIC Eigen3::Eigen spdlog::spdlog Mlib)
+
 
 if (OpenMP_CXX_FOUND)
     message(STATUS "Enabled OpenMP")
