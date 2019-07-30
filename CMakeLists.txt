@@ -114,7 +114,9 @@ set(HDRS
         include/RandomInitialization/UniformXavierInitialization.h
         include/RandomInitialization/UniformHeInitialization.h
         include/ManageLoggers.h
-        include/HelperFunctions.h)
+        include/HelperFunctions.h
+        include/OptimizationFunction/SimpleOptimizer.h
+        include/OptimizationFunction/Adam.h)
 # sources
 set(SRCS
         src/ActivationFunction/SigmoidFunction.cpp
@@ -134,7 +136,9 @@ set(SRCS
         src/RandomInitialization/UniformXavierInitialization.cpp
         src/RandomInitialization/UniformHeInitialization.cpp
         src/ManageLoggers.cpp
-        src/HelperFunctions.cpp)
+        src/HelperFunctions.cpp
+        src/OptimizationFunction/SimpleOptimizer.cpp
+        src/OptimizationFunction/Adam.cpp)
 #tests
 set(Tests
         tests/TestConvLayer.cpp
@@ -143,7 +147,7 @@ set(Tests
         tests/TestFCLayer.cpp
         tests/TestLossFunctions.cpp
         tests/TestInitialization.cpp
-        tests/TestNetwork.cpp)
+        tests/TestNetwork.cpp tests/TestOptimizer.cpp)
 
 add_library(Mlib STATIC ${SRCS} ${HDRS})
 
