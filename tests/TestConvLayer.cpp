@@ -192,7 +192,7 @@ SCENARIO("Test Convolutional Layer") {
         input_matrix.transpose()
                 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24;
         WHEN("Pad matrix function is applied with padding 2") {
-            auto input_padded = conv_layer.pad_matrix(input_matrix, 2, 2, 3, 2);
+            auto input_padded = conv_layer.pad_matrix(input_matrix, 2, 3, 2, 2);
             THEN("The matrix is correctly padded with 2") {
                 Eigen::MatrixXf output_matrix(84, 2);
                 output_matrix
@@ -201,7 +201,7 @@ SCENARIO("Test Convolutional Layer") {
                 REQUIRE(input_padded->isApprox(output_matrix));
             }
         }WHEN("Pad matrix function is applied with padding 0") {
-            auto input_padded = conv_layer.pad_matrix(input_matrix, 0, 2, 3, 2);
+            auto input_padded = conv_layer.pad_matrix(input_matrix, 2, 3, 2, 0);
             THEN("The matrix is correctly padded with 0") {
                 REQUIRE(input_padded->isApprox(input_matrix));
             }
@@ -271,7 +271,7 @@ SCENARIO("Test Convolutional Layer") {
                 der_matrix.transpose() << 0, -0.0000294504954, 0, 0, 0, 0.00000639539432, 0, 0;
                 Eigen::MatrixXf de_matrix = der_matrix.cast<float>();
 
-                conv_layer.backpropagate_weights(input_matrix, de_matrix);
+                conv_layer.backpropagate_weights(input_matrix, de_matrix, 2, 2);
 
                 Eigen::MatrixXd output_matrixd(2, 4);
                 output_matrixd << -0.00138417, -0.00200263, -0.000530109, -0.000353406,
@@ -294,7 +294,7 @@ SCENARIO("Test Convolutional Layer") {
                 Eigen::MatrixXf de_matrix = der_matrix.cast<float>();
                 //std::cout << "Derivative\n"<<HelperFunctions::print_tensor(de_matrix,2,2,2);
 
-                conv_layer.backpropagate_weights(input_matrix, de_matrix);
+                conv_layer.backpropagate_weights(input_matrix, de_matrix, 2, 2);
 
                 Eigen::MatrixXd output_matrixd(2, 12);
                 output_matrixd
@@ -316,7 +316,7 @@ SCENARIO("Test Convolutional Layer") {
 
                 conv_layer.set_weights(filter_matrix);
 
-                conv_layer.backpropagate_input(de_matrix);
+                conv_layer.backpropagate_input(de_matrix, 2, 2);
 
                 Eigen::MatrixXd output_matrixd(9, 1);
                 output_matrixd.transpose()
@@ -340,7 +340,7 @@ SCENARIO("Test Convolutional Layer") {
 
                 conv_layer.set_weights(filter_matrix);
 
-                conv_layer.backpropagate_input(de_matrix);
+                conv_layer.backpropagate_input(de_matrix, 2, 2);
 
                 Eigen::MatrixXd output_matrixd(27, 1);
                 output_matrixd.transpose()
@@ -375,16 +375,56 @@ SCENARIO("Test Convolutional Layer") {
 
     }
     GIVEN("A stride greater than 1") {
-        ConvolutionalLayer conv = ConvolutionalLayer(4, 4, 1, 2, 2, 1, 2, 0, std::make_unique<IdentityFunction>(),
+        ConvolutionalLayer conv_layer = ConvolutionalLayer(4, 4, 1, 2, 2, 1, 2, 0, std::make_unique<IdentityFunction>(),
                                                      std::make_unique<DeterministicInitialization>());
         Eigen::MatrixXf input_matrix(16, 1);
         input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9,0,-3,2,0,0,1,1;
         WHEN("Im2col is applied") {
-            auto im2col_matrix = conv.im2col(input_matrix, 4, 4, 1, 2, 2, 2, 0);
-            Eigen::MatrixXf output_matrix(4, 4);
-            output_matrix << 1, 7, 9, -3, 4, 2, 0, 2, 5, 3, 0, 1, 8, 6, 0, 1;
+            auto im2col_matrix = conv_layer.im2col(input_matrix, 4, 4, 1, 2, 2, 2, 0);
             THEN("It should work") {
+                Eigen::MatrixXf output_matrix(4, 4);
+                output_matrix << 1, 7, 9, -3, 4, 2, 0, 2, 5, 3, 0, 1, 8, 6, 0, 1;
                 REQUIRE(im2col_matrix->isApprox(output_matrix));
+            }
+        }
+        WHEN("A matrix is dilated") {
+            Eigen::MatrixXf input(8, 2);
+            input.transpose() << 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16;
+            auto output=conv_layer.dilate_matrix(input,2,2,2,2);
+            THEN("The result is correct") {
+                Eigen::MatrixXf result(32,2);
+                result << 1, 9, 0, 0, 0, 0, 2, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 11, 0, 0, 0, 0, 4, 12, 5, 13, 0, 0, 0, 0, 6, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 15, 0, 0, 0, 0, 8, 16;
+                REQUIRE(output->isApprox(result));
+            }
+        }
+        WHEN("The backpropagation for the input is applied") {
+            Eigen::MatrixXf filter_matrix(1, 4);
+            filter_matrix << 0, 1, -1, 0;
+            Eigen::MatrixXf der_matrix(4, 1);
+            der_matrix.transpose() << 1,0,-2,0;
+            auto der_dil=conv_layer.dilate_matrix(der_matrix,2,2,1,1);
+
+            conv_layer.set_weights(filter_matrix);
+            THEN("It is correct") {
+                conv_layer.backpropagate_input(*der_dil, 3, 3);
+
+                Eigen::MatrixXf output_matrix(16, 1);
+                output_matrix << 0, 1, 0, 0, -1, 0, 0, 0, 0, -2, 0, 0, 2, 0, 0, 0;
+                REQUIRE(conv_layer.get_input_derivative().isApprox(output_matrix));
+            }
+        }
+        WHEN("The backpropagation for the weights are applied") {
+            Eigen::MatrixXf input_matrix(16, 1);
+            input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9,0,-3,2,0,0,1,1;
+            Eigen::MatrixXf der_matrix(4, 1);
+            der_matrix.transpose() << 1,0,-2,0;
+            auto der_dil=conv_layer.dilate_matrix(der_matrix,2,2,1,1);
+
+            THEN("It is correct") {
+                conv_layer.backpropagate_weights(input_matrix,*der_dil, 3, 3);
+                Eigen::MatrixXf output_matrix(1, 4);
+                output_matrix << -17,4,5,8;
+                REQUIRE(conv_layer.get_weights_derivative().isApprox(output_matrix));
             }
         }
     }
