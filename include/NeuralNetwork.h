@@ -11,7 +11,6 @@
 
 #include "spdlog/spdlog.h"
 #include <tuple>
-
 /**
  * Represents the neural network and performs the operations on it.
  * Can be populated depending on the needs.
@@ -23,6 +22,26 @@ public:
      * @param loss_function The desired loss function.
      */
     explicit NeuralNetwork(std::unique_ptr<LossFunction> loss_function);
+
+    NeuralNetwork();
+
+    void use_multiclass_loss();
+
+    void add_conv_layer(int input_height,int input_width, int input_channels, int filter_height, int filter_width, int output_channels, int stride, int padding);
+
+    void add_fc_layer(int input_size, int output_size);
+
+    void add_output_layer(int input_size, int output_size);
+
+    void train_batch(Eigen::Ref<const Eigen::MatrixXf> input_batch, Eigen::Ref<const Eigen::VectorXi> label_batch);
+
+    void set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> param, unsigned long position) const;
+
+    const Eigen::MatrixXf &get_layer_weights(unsigned long position);
+
+    void set_layer_bias(Eigen::Ref<const Eigen::VectorXf> param, unsigned long position) const;
+
+    const Eigen::VectorXf &get_layer_bias(unsigned long position);
 
     /**
      * Adds a layer to the back of the network.
@@ -65,7 +84,7 @@ public:
 
     void set_layer_parameter(const std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> &parameter_list);
 
-    double get_loss(const Eigen::MatrixXf &feed_forward_input, const Eigen::VectorXi &label) const;
+    [[nodiscard]] double get_loss(const Eigen::MatrixXf &feed_forward_input, const Eigen::VectorXi &label) const;
 
 private:
     /**

@@ -8,7 +8,18 @@
 #include <thread>
 #include <chrono>
 
-
+#include "LossFunction/MultiCrossEntropyLoss.h"
+#include "LossFunction/BinaryCrossEntropyLoss.h"
+#include "Layer/ConvolutionalLayer.h"
+#include "OptimizationFunction/Adam.h"
+#include "Layer/FullyConnectedLayer.h"
+#include "ActivationFunction/SoftmaxFunction.h"
+#include "ActivationFunction/TanhFunction.h"
+#include "ActivationFunction/ReluFunction.h"
+#include "RandomInitialization/HetalInitialization.h"
+#include "RandomInitialization/UniformHeInitialization.h"
+#include "RandomInitialization/XavierInitialization.h"
+#include "RandomInitialization/UniformXavierInitialization.h"
 
 #include "ManageLoggers.h"
 #include "HelperFunctions.h"
@@ -67,7 +78,7 @@ void NeuralNetwork::backpropagation(const Eigen::MatrixXf &input,
 }
 
 void NeuralNetwork::update() {
-    for (auto & i : m_layer_list) {
+    for (auto &i : m_layer_list) {
         i->update_parameter();
     }
 }
@@ -77,14 +88,27 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
     //std::cout << "C++ Test: " << std::thread::hardware_concurrency() << std::endl;
     //std::cout << "OpenMP setting:" << omp_get_num_procs() << std::endl;
     //Try to set thread number to the physical core number (without HT), because Eigen is slower otherwise (https://eigen.tuxfamily.org/dox-devel/TopicMultiThreading.html)
-    omp_set_num_threads(omp_get_num_procs()/2);
+    omp_set_num_threads(omp_get_num_procs() / 2);
 
+/*    //omp_set_num_threads(2);
+    std::cout << "C++ Test: " << std::thread::hardware_concurrency() << std::endl;
+    std::cout << "OpenMP setting:" << omp_get_num_procs() << std::endl;
+    std::cout << "EigenSetting" << Eigen::nbThreads( ) << std::endl;
+
+    //int num_threads =4;
+    //omp_set_num_threads ( num_threads );
+    # pragma omp parallel for
+    for (int i = 0; i < 8; i++) {
+        # pragma omp critical
+        std::cout << "My id is: "
+                  << omp_get_thread_num() << std::endl;
+    }*/
 
 
     //init loggers
     ManageLoggers loggers;
     loggers.initLoggers();
-    m_nn_logger=spdlog::get("nn");
+    m_nn_logger = spdlog::get("nn");
     m_nn_logger->info("Initialized neural network");
 }
 
@@ -92,11 +116,13 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                                   const Eigen::MatrixXi &label, int batch_size,
                                   int iterations, int divisor) {
     m_nn_logger->info("Started training network");
-    m_nn_logger->debug("{} size input matrix; {} rows input matrix; {} cols input matrix;; {} batch size; {} iterations", input.size(), input.rows(), input.cols(), batch_size, iterations);
+    m_nn_logger->debug(
+            "{} size input matrix; {} rows input matrix; {} cols input matrix;; {} batch size; {} iterations",
+            input.size(), input.rows(), input.cols(), batch_size, iterations);
 
     check_network(input.rows());
 
-     //auto t1=std::chrono::high_resolution_clock::now();
+    //auto t1=std::chrono::high_resolution_clock::now();
 
     auto perm_input = input;
     auto perm_label = label;
@@ -156,8 +182,8 @@ void NeuralNetwork::train_network(const Eigen::MatrixXf &input,
                     //        spdlog::debug("test");
                     auto temp2 =
                             m_loss_function->calculate_loss(temp1, label_batch); //(temp1, label);
-                            m_nn_logger->warn("Loss batch {} of iteration number {}: {} ",j,i,temp2);
-                            //m_nn_logger->warn("Forward output {}",HelperFunctions::toString(temp1));
+                    m_nn_logger->warn("Loss batch {} of iteration number {}: {} ", j, i, temp2);
+                    //m_nn_logger->warn("Forward output {}",HelperFunctions::toString(temp1));
                 }
             }
         }
@@ -196,16 +222,16 @@ Eigen::MatrixXi NeuralNetwork::calculate_accuracy(const Eigen::MatrixXf &input,
 }
 
 void NeuralNetwork::check_network(long input_size) {
-    auto output=input_size;
-    for (unsigned long i=0; i<m_layer_list.size(); i++) {
-        auto input= m_layer_list[i]->get_number_inputs();
-        if (output!=input) {
+    auto output = input_size;
+    for (unsigned long i = 0; i < m_layer_list.size(); i++) {
+        auto input = m_layer_list[i]->get_number_inputs();
+        if (output != input) {
             m_nn_logger->error("Mismatch of layer dimensions!");
-            m_nn_logger->error("Layer {} has output {} and next layer {} has input {}.", i-1, output,i,input);
+            m_nn_logger->error("Layer {} has output {} and next layer {} has input {}.", i - 1, output, i, input);
             m_nn_logger->flush();
             throw std::invalid_argument("Layer dimensions mismatch. See log for more information");
         }
-        output= m_layer_list[i]->get_number_outputs();
+        output = m_layer_list[i]->get_number_outputs();
     }
     m_nn_logger->info("Layer dimensions match");
 }
@@ -213,16 +239,58 @@ void NeuralNetwork::check_network(long input_size) {
 std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> NeuralNetwork::get_layer_parameter() const {
     std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> parameter_list;
     for (const auto &layer: m_layer_list) {
-        parameter_list.emplace_back(std::make_tuple(layer->get_weights(),layer->get_bias()));
+        parameter_list.emplace_back(std::make_tuple(layer->get_weights(), layer->get_bias()));
     }
     return parameter_list;
 }
 
-void NeuralNetwork::set_layer_parameter(const std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> &parameter_list) {
-    for (unsigned long i=0; i < m_layer_list.size(); i++) {
-        auto [weights, bias] =parameter_list[i];
+void
+NeuralNetwork::set_layer_parameter(const std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> &parameter_list) {
+    for (unsigned long i = 0; i < m_layer_list.size(); i++) {
+        auto[weights, bias] =parameter_list[i];
         m_layer_list[i]->set_weights(weights);
         m_layer_list[i]->set_bias(bias);
     }
+}
+
+NeuralNetwork::NeuralNetwork() = default;
+
+void NeuralNetwork::use_multiclass_loss() {
+    m_loss_function=std::make_unique<MultiCrossEntropyLoss>();
+}
+
+void NeuralNetwork::add_conv_layer(int input_height, int input_width, int input_channels, int filter_height,
+                                   int filter_width, int output_channels, int stride, int padding) {
+    m_layer_list.emplace_back(std::make_unique<ConvolutionalLayer>(input_height, input_width, input_channels, filter_height,filter_width,output_channels,stride,padding,std::make_unique<ReluFunction>(),std::make_unique<UniformHeInitialization>(),std::make_unique<Adam>(output_channels,filter_height*filter_width*input_channels,output_channels)));
+}
+
+void NeuralNetwork::add_fc_layer(int input_size, int output_size) {
+    m_layer_list.emplace_back(std::make_unique<FullyConnectedLayer>(input_size, output_size, std::make_unique<TanhFunction>(), std::make_unique<UniformXavierInitialization>(), std::make_unique<Adam>(input_size, output_size, output_size)));
+}
+
+void NeuralNetwork::add_output_layer(int input_size, int output_size) {
+    m_layer_list.emplace_back(std::make_unique<FullyConnectedLayer>(input_size, output_size, std::make_unique<SoftmaxFunction>(), std::make_unique<UniformXavierInitialization>(), std::make_unique<Adam>(input_size, output_size, output_size)));
+}
+
+void NeuralNetwork::train_batch(Eigen::Ref<const Eigen::MatrixXf> input_batch, Eigen::Ref<const Eigen::VectorXi> label_batch) {
+    feed_forward(input_batch);
+    backpropagation(input_batch, label_batch);
+    update();
+}
+
+void NeuralNetwork::set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> param, unsigned long position) const {
+    m_layer_list[position]->set_weights(param);
+}
+
+const Eigen::MatrixXf &NeuralNetwork::get_layer_weights(unsigned long position) {
+    return m_layer_list[position]->get_weights();
+}
+
+void NeuralNetwork::set_layer_bias(Eigen::Ref<const Eigen::VectorXf> param, unsigned long position) const {
+    m_layer_list[position]->set_bias(param);
+}
+
+const Eigen::VectorXf &NeuralNetwork::get_layer_bias(unsigned long position) {
+    return m_layer_list[position]->get_bias();
 }
 
