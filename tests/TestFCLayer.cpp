@@ -3,8 +3,6 @@
 #include "ActivationFunction/ReluFunction.h"
 #include "ActivationFunction/SigmoidFunction.h"
 
-#include "Layer/ConvolutionalLayer.h"
-
 #include "ActivationFunction/IdentityFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
 #include "RandomInitialization/SimpleRandomInitialization.h"
@@ -14,13 +12,15 @@
 #include "Layer/FullyConnectedLayer.h"
 
 #include "RandomInitialization/XavierInitialization.h"
+#include "OptimizationFunction/SimpleOptimizer.h"
 
 #include "NeuralNetwork.h"
 
 SCENARIO("Test Compute Layer") {
     GIVEN("A simple fully connected layer") {
         auto fc_layer = FullyConnectedLayer(4, 3, std::make_unique<IdentityFunction>(),
-                                            std::make_unique<DeterministicInitialization>());
+                                            std::make_unique<DeterministicInitialization>(),
+                                            std::make_unique<SimpleOptimizer>(0.1));
         Eigen::MatrixXf input(4, 2);
         Eigen::VectorXf bias(3);
         input.col(0) << 1, 3, 2, 0;

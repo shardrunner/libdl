@@ -13,7 +13,7 @@ SCENARIO("Test Convolutional Layer") {
             THEN("It works for a one channel one sample input matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(9, 1);
                 input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9;
                 auto im2col_matrix = conv_layer.im2col(input_matrix, 3, 3, 1, 2, 2, 1, 0);
@@ -26,7 +26,7 @@ SCENARIO("Test Convolutional Layer") {
             }THEN("It works for a multi channel one sample input matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 2, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(18, 1);
                 input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9, 10, 13, 16, 11, 14, 17, 12, 15, 18;
                 auto im2col_matrix = conv_layer.im2col(input_matrix, 3, 3, 2, 2, 2, 1, 0);
@@ -43,7 +43,7 @@ SCENARIO("Test Convolutional Layer") {
             }THEN("It works for a one channel two sample input matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(2, 9);
                 input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9, 10, 13, 16, 11, 14, 17, 12, 15,
                         18;
@@ -57,7 +57,7 @@ SCENARIO("Test Convolutional Layer") {
                   "matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 1, 2, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(9, 1);
                 input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9;
                 auto im2col_matrix = conv_layer.im2col(input_matrix, 3, 3, 1, 2, 2, 2, 0);
@@ -68,7 +68,7 @@ SCENARIO("Test Convolutional Layer") {
                   "matrix") {
                 ConvolutionalLayer conv_layer(
                         4, 3, 1, 2, 2, 1, 2, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(12, 1);
                 input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9, 10, 11, 12;
                 auto im2col_matrix = conv_layer.im2col(input_matrix, 4, 3, 1, 2, 2, 2, 0);
@@ -80,7 +80,7 @@ SCENARIO("Test Convolutional Layer") {
             THEN("The resulting matrix is correct") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(2, 12);
                 input_matrix << 0, 1, -1, 0, 5, 3, 4, 2, 16, 68, 24, -2,
                         60, 32, 22, 18, 35, 7, 46, 23, 78, 20, 81, 42;
@@ -92,7 +92,7 @@ SCENARIO("Test Convolutional Layer") {
             THEN("The reshaping is correct for a simple matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(9, 1);
                 input_matrix << -2, -0.5, 1, -1.5, 0, 1.5, -1.0, 0.5, 2;
                 Eigen::MatrixXf filter(1, 4);
@@ -107,7 +107,7 @@ SCENARIO("Test Convolutional Layer") {
             }THEN("The reshaping is correct for a more complex matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 2, 2, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(9, 2);
                 input_matrix << 1, 10, 2, 11, 3, 12, 4, 13, 5, 14, 6, 15, 7, 16, 8, 17, 9, 18;
                 Eigen::MatrixXf filter(2, 4);
@@ -126,7 +126,7 @@ SCENARIO("Test Convolutional Layer") {
             THEN("The forward propagation is correct for a simple matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(9, 1);
                 input_matrix << -2, -0.5, 1, -1.5, 0, 1.5, -1.0, 0.5, 2;
                 Eigen::MatrixXf filter(1, 4);
@@ -139,7 +139,7 @@ SCENARIO("Test Convolutional Layer") {
             }THEN("The forward propagation is correct for a more complex matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 2, 2, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(9, 2);
                 input_matrix << 1, 10, 2, 11, 3, 12, 4, 13, 5, 14, 6, 15, 7, 16, 8, 17, 9, 18;
                 Eigen::MatrixXf filter(2, 4);
@@ -154,7 +154,7 @@ SCENARIO("Test Convolutional Layer") {
             }THEN("The forward propagation is correct another more complex matrix") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(27, 1);
                 input_matrix
                         << 16, 47, 68, 24, 18, 12, 32, 26, 9, 26, 24, 2, 57, 21, 11, 43, 12, 19, 18, 4, 81, 47, 6, 22, 21, 12, 13;
@@ -170,7 +170,7 @@ SCENARIO("Test Convolutional Layer") {
             }THEN("The forward propagation is correct for another matrix") {
                 ConvolutionalLayer conv = ConvolutionalLayer(3, 3, 1, 2, 2, 1, 1, 0,
                                                              std::make_unique<IdentityFunction>(),
-                                                             std::make_unique<DeterministicInitialization>());
+                                                             std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input(9, 1);
                 input << -2, -1.5, -1.0, -0.5, 0, 0.5, 1, 1.5, 2;
                 Eigen::MatrixXf filter(1, 4);
@@ -187,7 +187,7 @@ SCENARIO("Test Convolutional Layer") {
     }GIVEN("Padding function for the convolution layer") {
         ConvolutionalLayer conv_layer(
                 2, 3, 2, 1, 1, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(), nullptr);
         Eigen::MatrixXf input_matrix(12, 2);
         input_matrix.transpose()
                 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24;
@@ -210,7 +210,7 @@ SCENARIO("Test Convolutional Layer") {
         WHEN("A 2x2 filter is flipped") {
             ConvolutionalLayer conv_layer(
                     2, 3, 2, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                    std::make_unique<DeterministicInitialization>());
+                    std::make_unique<DeterministicInitialization>(), nullptr);
             Eigen::MatrixXf filter_matrix(2, 8);
             filter_matrix << 0, 1, -1, 0, 5, 3, 4, 2,
                     1, 2, 3, 4, 5, 6, 7, 8;
@@ -225,7 +225,7 @@ SCENARIO("Test Convolutional Layer") {
         }WHEN("A 3x3 filter is flipped") {
             ConvolutionalLayer conv_layer(
                     3, 3, 2, 3, 3, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                    std::make_unique<DeterministicInitialization>());
+                    std::make_unique<DeterministicInitialization>(), nullptr);
             Eigen::MatrixXf filter_matrix(1, 18);
             filter_matrix << 0, 1, -1, 0, 5, 3, 4, 2, 5, 1, 2, 3, 4, 5, 6, 7, 8, 9;
             conv_layer.set_weights(filter_matrix);
@@ -242,7 +242,7 @@ SCENARIO("Test Convolutional Layer") {
             THEN("It should be correct for a simple input") {
                 ConvolutionalLayer conv_layer(
                         4, 4, 1, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXd input_matrixd(18, 1);
                 input_matrixd.transpose()
                         << 0.5, 0.2, 0.7, 0.3, 0.65, 0.23, 0.13, 0.18, 0.42, 0.75, 0.08, 0.21, 0.12, 0.04, 0.24, 0.68, 0.15, 0.34;
@@ -254,7 +254,7 @@ SCENARIO("Test Convolutional Layer") {
             }THEN("It should be correct for a multi-sample input") {
                 ConvolutionalLayer conv_layer(
                         4, 4, 1, 3, 3, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(4, 2);
                 input_matrix.transpose() << 1, 2, 3, 4, 5, 6, 7, 8;
                 conv_layer.backpropagate_bias(input_matrix);
@@ -264,7 +264,7 @@ SCENARIO("Test Convolutional Layer") {
             THEN("It should be correct for a simple input") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(9, 1);
                 input_matrix.transpose() << 16, 47, 68, 24, 18, 12, 32, 26, 9;
                 Eigen::MatrixXd der_matrix(8, 1);
@@ -284,7 +284,7 @@ SCENARIO("Test Convolutional Layer") {
                 //std::cout << "\n\n-----------------------------------------------------------------------------------------------------------\n\n"<< std::endl;
                 ConvolutionalLayer conv_layer(
                         3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf input_matrix(27, 1);
                 input_matrix
                         << 16, 47, 68, 24, 18, 12, 32, 26, 9, 26, 24, 2, 57, 21, 11, 43, 12, 19, 18, 4, 81, 47, 6, 22, 21, 12, 13;
@@ -307,7 +307,7 @@ SCENARIO("Test Convolutional Layer") {
             THEN("It should be correct for a simple input") {
                 ConvolutionalLayer conv_layer(
                         3, 3, 1, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf filter_matrix(2, 4);
                 filter_matrix << 0, 1, -1, 0, 5, 3, 4, 2;
                 Eigen::MatrixXd der_matrix(8, 1);
@@ -327,7 +327,7 @@ SCENARIO("Test Convolutional Layer") {
                 //std::cout << "\n\n-----------------------------------------------------------------------------------------------------------\n\n"<< std::endl;
                 ConvolutionalLayer conv_layer(
                         3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<IdentityFunction>(),
-                        std::make_unique<DeterministicInitialization>());
+                        std::make_unique<DeterministicInitialization>(), nullptr);
                 Eigen::MatrixXf filter_matrix(2, 12);
                 filter_matrix << 0, -1, 1, 0, 2, 4, 3, 5, -2, 24, 68, 16, 18, 22, 32, 60, 23, 46, 7, 35, 42, 81, 20, 78;
                 conv_layer.set_weights(filter_matrix);
@@ -350,7 +350,7 @@ SCENARIO("Test Convolutional Layer") {
             }
         }WHEN("A complete backpropagation is used") {
             ConvolutionalLayer conv = ConvolutionalLayer(3, 3, 1, 2, 2, 1, 1, 0, std::make_unique<IdentityFunction>(),
-                                                         std::make_unique<DeterministicInitialization>());
+                                                         std::make_unique<DeterministicInitialization>(), nullptr);
             Eigen::MatrixXf input(9, 1);
             input << -2, -1.5, -1.0, -0.5, 0, 0.5, 1, 1.5, 2;
             Eigen::MatrixXf filter(1, 4);
@@ -376,7 +376,7 @@ SCENARIO("Test Convolutional Layer") {
     }
     GIVEN("A stride greater than 1") {
         ConvolutionalLayer conv_layer = ConvolutionalLayer(4, 4, 1, 2, 2, 1, 2, 0, std::make_unique<IdentityFunction>(),
-                                                     std::make_unique<DeterministicInitialization>());
+                                                           std::make_unique<DeterministicInitialization>(), nullptr);
         Eigen::MatrixXf input_matrix(16, 1);
         input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9,0,-3,2,0,0,1,1;
         WHEN("Im2col is applied") {

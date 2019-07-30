@@ -2,6 +2,7 @@
 
 #include "ActivationFunction/ActivationFunction.h"
 #include "RandomInitialization/RandomInitialization.h"
+#include "OptimizationFunction/OptimizationFunction.h"
 #include <vector>
 
 #include <memory>
@@ -9,10 +10,11 @@
 
 class ConvolutionalLayer : public BaseLayer {
 public:
-    ConvolutionalLayer(int input_height, int input_width, int input_channels,
-                       int filter_height, int filter_width, int output_channels, int stride,
-                       int padding, std::unique_ptr<ActivationFunction> activation_function,
-                       std::unique_ptr<RandomInitialization> random_initialization);
+    ConvolutionalLayer(int input_height, int input_width, int input_channels, int filter_height, int filter_width,
+                       int output_channels, int stride, int padding,
+                       std::unique_ptr<ActivationFunction> activation_function,
+                       std::unique_ptr<RandomInitialization> random_initialization,
+                       std::unique_ptr<OptimizationFunction> optimization_function);
 
     void feed_forward(const Eigen::MatrixXf &input) override;
 
@@ -108,7 +110,7 @@ public:
 
     [[nodiscard]] std::unique_ptr<Eigen::MatrixXf> flip_filter() const;
 
-    std::unique_ptr<Eigen::MatrixXf> dilate_matrix(const Eigen::MatrixXf &input, int img_height,int img_width, int img_channels, int dilation) const;
+    [[nodiscard]] std::unique_ptr<Eigen::MatrixXf> dilate_matrix(const Eigen::MatrixXf &input, int img_height,int img_width, int img_channels, int dilation) const;
 
 public:
     Eigen::MatrixXf m_w;
@@ -140,6 +142,7 @@ public:
 
     std::unique_ptr<ActivationFunction> m_activation_function;
     std::unique_ptr<RandomInitialization> m_random_initialization;
+    std::unique_ptr<OptimizationFunction> m_optimization_function;
 private:
     std::shared_ptr<spdlog::logger> m_convlayer_logger;
 };

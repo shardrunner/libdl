@@ -23,22 +23,26 @@ void ConvolutionalLayer::initialize_parameter() {
 }
 
 void ConvolutionalLayer::update_parameter() {
-    //TODO transpose weg
-    m_w = m_w - 0.1 * m_dC_dw;
-    m_b = m_b - 0.1 * m_dC_db;
+    //m_w = m_w - 0.1 * m_dC_dw;
+    //m_b = m_b - 0.1 * m_dC_db;
+    m_optimization_function->optimize_weights(m_w,m_dC_dw);
+    m_optimization_function->optimize_bias(m_b,m_dC_db);
 }
 
 //filters are stored transposed
-ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int input_channels,
-                                       int filter_height, int filter_width, int output_channels, int stride,
-                                       int padding, std::unique_ptr<ActivationFunction> activation_function,
-                                       std::unique_ptr<RandomInitialization> random_initialization)
+ConvolutionalLayer::ConvolutionalLayer(int input_height, int input_width, int input_channels, int filter_height,
+                                       int filter_width,
+                                       int output_channels, int stride, int padding,
+                                       std::unique_ptr<ActivationFunction> activation_function,
+                                       std::unique_ptr<RandomInitialization> random_initialization,
+                                       std::unique_ptr<OptimizationFunction> optimization_function)
         : m_input_height(input_height), m_input_width(input_width),
           m_input_channels(input_channels),
           m_filter_height(filter_height), m_filter_width(filter_width),
           m_output_channels(output_channels), m_stride(stride), m_padding(padding),
           m_activation_function(std::move(activation_function)),
-          m_random_initialization(std::move(random_initialization)) {
+          m_random_initialization(std::move(random_initialization)),
+          m_optimization_function(std::move(optimization_function)){
 
     m_convlayer_logger = spdlog::get("convlayer");
     m_convlayer_logger->info("Start initialization of convlayer");
@@ -377,7 +381,7 @@ ConvolutionalLayer::pad_matrix(const Eigen::MatrixXf &input, int img_height, int
     return input_padded;
 }
 
-// For padding of a backpropagation matrix with stride (https://mc.ai/backpropagation-for-convolution-with-strides/)
+// For padding of a backpropagation matrix with stride (https://medium.com/@mayank.utexas/backpropagation-for-convolution-with-strides-8137e4fc2710)
 // dilation factor is stride -1
 std::unique_ptr<Eigen::MatrixXf>
 ConvolutionalLayer::dilate_matrix(const Eigen::MatrixXf &input, int img_height, int img_width, int img_channels,

@@ -11,6 +11,7 @@
 #include "ActivationFunction/SoftmaxFunction.h"
 #include "LossFunction/BinaryCrossEntropyLoss.h"
 #include "LossFunction/MultiCrossEntropyLoss.h"
+#include "OptimizationFunction/SimpleOptimizer.h"
 
 SCENARIO("Test complete network") {
     GIVEN("A deterministic network architecture") {
@@ -28,19 +29,19 @@ SCENARIO("Test complete network") {
 
         auto hidden_layer0 = std::make_unique<ConvolutionalLayer>(
                 3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<ReluFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto hidden_layer1 = std::make_unique<ConvolutionalLayer>(
                 2, 2, 2, 2, 2, 4, 1, 0, std::make_unique<TanhFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto hidden_layer2 = std::make_unique<FullyConnectedLayer>(
                 4, 8, std::make_unique<SigmoidFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto hidden_layer3 = std::make_unique<FullyConnectedLayer>(
                 8, 3, std::make_unique<IdentityFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto output_layer = std::make_unique<FullyConnectedLayer>(
                 3, 2, std::make_unique<SoftmaxFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         mnet.add_layer(std::move(hidden_layer0));
         mnet.add_layer(std::move(hidden_layer1));
         mnet.add_layer(std::move(hidden_layer2));
@@ -68,19 +69,19 @@ SCENARIO("Test complete network") {
 
         auto hidden_layer0 = std::make_unique<ConvolutionalLayer>(
                 3, 3, 3, 2, 2, 2, 1, 0, std::make_unique<ReluFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto hidden_layer1 = std::make_unique<ConvolutionalLayer>(
                 2, 2, 2, 2, 2, 4, 1, 0, std::make_unique<TanhFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto hidden_layer2 = std::make_unique<FullyConnectedLayer>(
                 4, 8, std::make_unique<SoftmaxFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto hidden_layer3 = std::make_unique<FullyConnectedLayer>(
                 8, 3, std::make_unique<IdentityFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         auto output_layer = std::make_unique<FullyConnectedLayer>(
                 3, 1, std::make_unique<SigmoidFunction>(),
-                std::make_unique<DeterministicInitialization>());
+                std::make_unique<DeterministicInitialization>(),std::make_unique<SimpleOptimizer>(0.1));
         mnet.add_layer(std::move(hidden_layer0));
         mnet.add_layer(std::move(hidden_layer1));
         mnet.add_layer(std::move(hidden_layer2));

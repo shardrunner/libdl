@@ -2,12 +2,13 @@
 //#include <ctime>
 #include <iostream>
 
-FullyConnectedLayer::FullyConnectedLayer(
-    const int input_size, const int output_size,
-    std::unique_ptr<ActivationFunction> activation_function,
-    std::unique_ptr<RandomInitialization> random_initialization)
+FullyConnectedLayer::FullyConnectedLayer(const int input_size, const int output_size,
+                                         std::unique_ptr<ActivationFunction> activation_function,
+                                         std::unique_ptr<RandomInitialization> random_initialization,
+                                         std::unique_ptr<OptimizationFunction> optimization_function)
     : m_activation_function(std::move(activation_function)),
-      m_random_initialization(std::move(random_initialization)) {
+      m_random_initialization(std::move(random_initialization)),
+      m_optimization_function(std::move(optimization_function)) {
   this->m_input_size = input_size;
   this->m_output_size = output_size;
   m_w.resize(input_size, output_size);
@@ -108,8 +109,10 @@ void FullyConnectedLayer::initialize_parameter() {
 
 // TODO: Use optimizer class
 void FullyConnectedLayer::update_parameter() {
-  m_w = m_w - 0.1 * m_dC_dw;
-  m_b = m_b - 0.1 * m_dC_db;
+  //m_w = m_w - 0.1 * m_dC_dw;
+  //m_b = m_b - 0.1 * m_dC_db;
+  m_optimization_function->optimize_weights(m_w,m_dC_dw);
+  m_optimization_function->optimize_bias(m_b,m_dC_db);
 
   //std::cout << "After update: w\n" << m_w << "\nb\n" << m_b << std::endl;
 }
