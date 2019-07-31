@@ -18,9 +18,12 @@ PYBIND11_MODULE(MlibWrapper, m) {
     py::class_<NeuralNetwork>(m, "NeuralNetwork")
             .def(py::init())
             .def("add_conv_layer", &NeuralNetwork::add_conv_layer)
+            .def("add_conv_layer_simple", &NeuralNetwork::add_conv_layer_simple)
             .def("use_multiclass_loss", &NeuralNetwork::use_multiclass_loss)
             .def("add_fc_layer", &NeuralNetwork::add_fc_layer)
+            .def("add_fc_layer_relu", &NeuralNetwork::add_fc_layer_relu)
             .def("add_output_layer", &NeuralNetwork::add_output_layer)
+            .def("add_output_layer_simple", &NeuralNetwork::add_output_layer_simple)
             .def("train_network", &NeuralNetwork::train_network)
             .def("test_network", &NeuralNetwork::test_network,py::return_value_policy::reference)
             .def("train_batch", &NeuralNetwork::train_batch,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>()) //,py::arg().noconvert()
@@ -32,6 +35,13 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("feed_forward_py", &NeuralNetwork::feed_forward_py)
             .def("get_current_accuracy", &NeuralNetwork::get_current_accuracy)
             .def("get_current_error", &NeuralNetwork::get_current_error)
-            .def("get_current_preditction", &NeuralNetwork::get_current_prediction,py::return_value_policy::reference)
+            .def("get_current_prediction", &NeuralNetwork::get_current_prediction,py::return_value_policy::reference)
             .def("layer_size", &NeuralNetwork::layer_size,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>()); //,py::arg().noconvert();
 }
+
+/*
+const Eigen::MatrixXf &load_image(std::string &path) {
+    py::object plt = py::module::import("matplotlib.pyplot");
+    py::object np = py::module::import("numpy");
+    plt.
+}*/

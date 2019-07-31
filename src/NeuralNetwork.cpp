@@ -20,6 +20,7 @@
 #include "RandomInitialization/UniformHeInitialization.h"
 #include "RandomInitialization/XavierInitialization.h"
 #include "RandomInitialization/UniformXavierInitialization.h"
+#include "OptimizationFunction/SimpleOptimizer.h"
 
 #include "ManageLoggers.h"
 #include "HelperFunctions.h"
@@ -276,7 +277,7 @@ NeuralNetwork::NeuralNetwork() {
     loggers.initLoggers();
     m_nn_logger = spdlog::get("nn");
     m_nn_logger->info("Initialized neural network");
-};
+}
 
 void NeuralNetwork::use_multiclass_loss() {
     m_loss_function=std::make_unique<MultiCrossEntropyLoss>();
@@ -294,6 +295,21 @@ void NeuralNetwork::add_fc_layer(int input_size, int output_size) {
 void NeuralNetwork::add_output_layer(int input_size, int output_size) {
     m_layer_list.emplace_back(std::make_unique<FullyConnectedLayer>(input_size, output_size, std::make_unique<SoftmaxFunction>(), std::make_unique<UniformXavierInitialization>(), std::make_unique<Adam>(input_size, output_size, output_size)));
 }
+
+void NeuralNetwork::add_conv_layer_simple(int input_height, int input_width, int input_channels, int filter_height,
+                                          int filter_width, int output_channels, int stride, int padding) {
+    m_layer_list.emplace_back(std::make_unique<ConvolutionalLayer>(input_height, input_width, input_channels, filter_height,filter_width,output_channels,stride,padding,std::make_unique<ReluFunction>(),std::make_unique<HetalInitialization>(),std::make_unique<SimpleOptimizer>(0.1)));
+
+}
+
+void NeuralNetwork::add_fc_layer_relu(int input_size, int output_size) {
+    m_layer_list.emplace_back(std::make_unique<FullyConnectedLayer>(input_size, output_size, std::make_unique<ReluFunction>(), std::make_unique<XavierInitialization>(), std::make_unique<SimpleOptimizer>(0.1)));
+}
+
+void NeuralNetwork::add_output_layer_simple(int input_size, int output_size) {
+    m_layer_list.emplace_back(std::make_unique<FullyConnectedLayer>(input_size, output_size, std::make_unique<SoftmaxFunction>(), std::make_unique<XavierInitialization>(), std::make_unique<SimpleOptimizer>(0.1)));
+}
+
 
 void NeuralNetwork::train_batch(Eigen::Ref<const Eigen::MatrixXf> &input_batch, Eigen::Ref<const Eigen::VectorXi> &label_batch) {
     m_nn_logger->warn("Started training");
@@ -359,4 +375,5 @@ void NeuralNetwork::feed_forward_py(Eigen::Ref<const Eigen::MatrixXf> &input_bat
         m_layer_list[i]->feed_forward(m_layer_list[i - 1]->get_forward_output());
     }
 }
+
 

@@ -29,9 +29,15 @@ public:
 
     void add_conv_layer(int input_height,int input_width, int input_channels, int filter_height, int filter_width, int output_channels, int stride, int padding);
 
+    void add_conv_layer_simple(int input_height,int input_width, int input_channels, int filter_height, int filter_width, int output_channels, int stride, int padding);
+
     void add_fc_layer(int input_size, int output_size);
 
+    void add_fc_layer_relu(int input_size, int output_size);
+
     void add_output_layer(int input_size, int output_size);
+
+    void add_output_layer_simple(int input_size, int output_size);
 
     void train_batch(Eigen::Ref<const Eigen::MatrixXf> &input_batch, Eigen::Ref<const Eigen::VectorXi> &label_batch);
 
