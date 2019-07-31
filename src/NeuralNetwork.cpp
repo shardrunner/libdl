@@ -272,25 +272,54 @@ void NeuralNetwork::add_output_layer(int input_size, int output_size) {
     m_layer_list.emplace_back(std::make_unique<FullyConnectedLayer>(input_size, output_size, std::make_unique<SoftmaxFunction>(), std::make_unique<UniformXavierInitialization>(), std::make_unique<Adam>(input_size, output_size, output_size)));
 }
 
-void NeuralNetwork::train_batch(Eigen::Ref<const Eigen::MatrixXf> input_batch, Eigen::Ref<const Eigen::VectorXi> label_batch) {
+void NeuralNetwork::train_batch(Eigen::Ref<const Eigen::MatrixXf> &input_batch, Eigen::Ref<const Eigen::VectorXi> &label_batch) {
+    m_nn_logger->warn("Started training");
     feed_forward(input_batch);
+    m_nn_logger->warn("Ended feed forward");
     backpropagation(input_batch, label_batch);
+    m_nn_logger->warn("Ended backpro");
     update();
+    m_nn_logger->warn("Ended training");
 }
 
-void NeuralNetwork::set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> param, unsigned long position) const {
+void NeuralNetwork::set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> &param, unsigned long position) {
     m_layer_list[position]->set_weights(param);
 }
 
-const Eigen::MatrixXf &NeuralNetwork::get_layer_weights(unsigned long position) {
+const Eigen::MatrixXf &NeuralNetwork::get_layer_weights(unsigned long position) const {
     return m_layer_list[position]->get_weights();
 }
 
-void NeuralNetwork::set_layer_bias(Eigen::Ref<const Eigen::VectorXf> param, unsigned long position) const {
+void NeuralNetwork::set_layer_bias(Eigen::Ref<const Eigen::VectorXf> &param, unsigned long position) {
     m_layer_list[position]->set_bias(param);
 }
 
-const Eigen::VectorXf &NeuralNetwork::get_layer_bias(unsigned long position) {
+const Eigen::VectorXf &NeuralNetwork::get_layer_bias(unsigned long position) const {
     return m_layer_list[position]->get_bias();
+}
+
+float NeuralNetwork::get_current_accuracy(const Eigen::VectorXi &labels) const {
+
+    const Eigen::MatrixXf &feed_forward = m_layer_list[m_layer_list.size() - 1]->get_forward_output();
+
+    int correct = 0;
+    Eigen::MatrixXf::Index pos_max;
+    for (long i = 0; i < feed_forward.cols(); i++) {
+        feed_forward.col(i).maxCoeff(&pos_max);
+        if ((int) pos_max == labels(i)) {
+            correct += 1;
+        }
+    }
+    return (float) correct/labels.size();
+}
+
+float NeuralNetwork::get_current_error(const Eigen::VectorXi &labels) const {
+
+    const Eigen::MatrixXf &feed_forward = m_layer_list[m_layer_list.size() - 1]->get_forward_output();
+    return (float) m_loss_function->calculate_loss(feed_forward, labels);
+}
+
+const Eigen::MatrixXf &NeuralNetwork::get_current_prediction() const {
+    return m_layer_list[m_layer_list.size() - 1]->get_forward_output();
 }
 

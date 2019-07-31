@@ -33,15 +33,30 @@ public:
 
     void add_output_layer(int input_size, int output_size);
 
-    void train_batch(Eigen::Ref<const Eigen::MatrixXf> input_batch, Eigen::Ref<const Eigen::VectorXi> label_batch);
+    void train_batch(Eigen::Ref<const Eigen::MatrixXf> &input_batch, Eigen::Ref<const Eigen::VectorXi> &label_batch);
 
-    void set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> param, unsigned long position) const;
+    void set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> &param, unsigned long position);
 
-    const Eigen::MatrixXf &get_layer_weights(unsigned long position);
+    const Eigen::MatrixXf &get_layer_weights(unsigned long position) const;
 
-    void set_layer_bias(Eigen::Ref<const Eigen::VectorXf> param, unsigned long position) const;
+    void set_layer_bias(Eigen::Ref<const Eigen::VectorXf> &param, unsigned long position);
 
-    const Eigen::VectorXf &get_layer_bias(unsigned long position);
+    const Eigen::VectorXf &get_layer_bias(unsigned long position) const;
+
+    float get_current_accuracy(const Eigen::VectorXi &labels) const;
+
+    float get_current_error(const Eigen::VectorXi &labels) const;
+
+    const Eigen::MatrixXf &get_current_prediction() const;
+
+
+
+    /**
+     * Does the feed forward step for all layers contained in the network using
+     * the provided input.
+     * @param input The input to the first layer of the network.
+     */
+    void feed_forward(const Eigen::MatrixXf &input);
 
     /**
      * Adds a layer to the back of the network.
@@ -96,13 +111,6 @@ private:
      * Pointer to the loss function.
      */
     std::unique_ptr<LossFunction> m_loss_function;
-
-    /**
-     * Does the feed forward step for all layers contained in the network using
-     * the provided input.
-     * @param input The input to the first layer of the network.
-     */
-    void feed_forward(const Eigen::MatrixXf &input);
 
     /**
      * Does the backpropagation for all layers contained in the network using the
