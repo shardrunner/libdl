@@ -181,8 +181,6 @@ pybind11_add_module(MlibWrapper pybind/MlibWrapper.cpp)
 
 message(STATUS ${CMAKE_CXX_COMPILER_ID})
 
-
-
 target_link_libraries(MlibWrapper PUBLIC Eigen3::Eigen spdlog::spdlog Mlib)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
