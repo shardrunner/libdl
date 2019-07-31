@@ -33,7 +33,7 @@ find_package(Git QUIET)
 if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     # Update submodules as needed
     option(GIT_SUBMODULE "Check submodules during build" ON)
-    set(GIT_SUBMODULE OFF)
+    #set(GIT_SUBMODULE OFF)
     if (GIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
@@ -174,8 +174,6 @@ target_compile_features(${EXECUTABLE_TARGET} PUBLIC cxx_std_17)
 set_target_properties(${EXECUTABLE_TARGET} PROPERTIES CXX_EXTENSIONS OFF)
 
 target_compile_definitions(${EXECUTABLE_TARGET} PRIVATE MNIST_DATA_LOCATION="${MNIST_DATA_DIR}")
-
-#add_library(Mlib_py SHARED ${SRCS} ${HDRS})
 
 pybind11_add_module(MlibWrapper pybind/MlibWrapper.cpp)
 
