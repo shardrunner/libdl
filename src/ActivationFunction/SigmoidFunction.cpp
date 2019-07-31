@@ -1,14 +1,14 @@
 #include <ActivationFunction/SigmoidFunction.h>
 
 void
-SigmoidFunction::apply_function(Eigen::MatrixXf &input) const {
+SigmoidFunction::forward_propagation(Eigen::MatrixXf &input) const {
   // Apply sigmoid function element wise
   input.array() = (1 / (1 + Eigen::exp((-1) * input.array())));
 }
 
 Eigen::MatrixXf
-SigmoidFunction::apply_derivative(const Eigen::MatrixXf &m_a,
-                                  const Eigen::MatrixXf &dC_da) const {
+SigmoidFunction::backward_propagation(const Eigen::MatrixXf &m_a,
+                                      const Eigen::MatrixXf &dC_da) const {
   // Apply sigmoid derivative element wise and multiply with derivative next
   // layer
   //std::cout << "ma\n" << m_a << "\ndC_da\n" << dC_da << std::endl;

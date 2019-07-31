@@ -8,7 +8,7 @@
 // https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/
 //https://medium.com/@aerinykim/how-to-implement-the-softmax-derivative-independently-from-any-loss-function-ae6d44363a9d
 void
-SoftmaxFunction::apply_function(Eigen::MatrixXf &input) const {
+SoftmaxFunction::forward_propagation(Eigen::MatrixXf &input) const {
     // Subtract maximum of each column to lower numerical errors and apply exp
     auto output = (input.rowwise() - input.colwise().maxCoeff()).array().exp();
 
@@ -17,8 +17,8 @@ SoftmaxFunction::apply_function(Eigen::MatrixXf &input) const {
 }
 
 Eigen::MatrixXf
-SoftmaxFunction::apply_derivative(const Eigen::MatrixXf &m_a,
-                                  const Eigen::MatrixXf &dC_da) const {
+SoftmaxFunction::backward_propagation(const Eigen::MatrixXf &m_a,
+                                      const Eigen::MatrixXf &dC_da) const {
     // Eigen::Array<float, 1, Eigen::Dynamic>
     // temp=softmax_input.cwiseProduct(input).colwise().sum();
     // output=softmax_input.array()*(input.array().rowwise() - temp);

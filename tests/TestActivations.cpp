@@ -20,7 +20,7 @@ SCENARIO("Test activation functions") {
         SigmoidFunction sigmoidFun = SigmoidFunction();
         result << 0.99330715, 0.99987661, 0.52497919,
                 1, 0.04742587, 0.5;
-        sigmoidFun.apply_function(input);
+        sigmoidFun.forward_propagation(input);
         WHEN("The sigmoid activation function is applied") {
             THEN("The result is correctly calculated") {
                 REQUIRE(input.isApprox(result));
@@ -29,7 +29,7 @@ SCENARIO("Test activation functions") {
             THEN("The result should be correct") {
                 result << 6.64805576e-03, 1.23374775e-04, 2.49376040e-01,
                         0.00000000e+00, 4.51766569e-02, 2.50000000e-01;
-                auto res_sigmoid = sigmoidFun.apply_derivative(input, dummy_dC_da);
+                auto res_sigmoid = sigmoidFun.backward_propagation(input, dummy_dC_da);
                 REQUIRE(res_sigmoid.isApprox(result));
             }
         }
@@ -37,7 +37,7 @@ SCENARIO("Test activation functions") {
 
     GIVEN("A relu function") {
         ReluFunction relu_func = ReluFunction();
-        relu_func.apply_function(input);
+        relu_func.forward_propagation(input);
         WHEN("The relu activation function is applied") {
             THEN("The relu is correctly calculated") {
                 result << 5.0, 9.0, 0.1,
@@ -45,7 +45,7 @@ SCENARIO("Test activation functions") {
                 REQUIRE(input.isApprox(result));
             }
         }WHEN("The relu activation derivative is applied") {
-            auto res = relu_func.apply_derivative(input, dummy_dC_da);
+            auto res = relu_func.backward_propagation(input, dummy_dC_da);
             THEN("The result should be correct") {
                 result << 1.0, 1.0, 1.0,
                         1.0, 0.0, 0.0;
@@ -58,7 +58,7 @@ SCENARIO("Test activation functions") {
         SoftmaxFunction softmax = SoftmaxFunction();
         Eigen::MatrixXf soft_in(2, 2);
         soft_in << 1.0, -2.0, 2.0, 3.25;
-        softmax.apply_function(soft_in);
+        softmax.forward_propagation(soft_in);
         WHEN("The softmax function is applied") {
             THEN("The result is correct") {
                 Eigen::MatrixXf soft_res(2, 2);
@@ -72,8 +72,8 @@ SCENARIO("Test activation functions") {
             Eigen::MatrixXf soft_in(2, 1);
             Eigen::MatrixXf dummy_dC_da = Eigen::MatrixXf::Constant(2, 1, 1);
             soft_in << 1.0, 2.0;
-            softmax.apply_function(soft_in);
-            auto res = softmax.apply_derivative(soft_in, dummy_dC_da);
+            softmax.forward_propagation(soft_in);
+            auto res = softmax.backward_propagation(soft_in, dummy_dC_da);
             THEN("The result should be correct") {
                 Eigen::MatrixXf soft_res(2, 1);
                 soft_res << 0,
@@ -85,7 +85,7 @@ SCENARIO("Test activation functions") {
         soft_in << 5, 0,
                 -1, 2,
                 3, 1;
-        softmax.apply_function(soft_in);
+        softmax.forward_propagation(soft_in);
         WHEN("The softmax function is applied") {
             THEN("The result is correct") {
                 Eigen::MatrixXf soft_res(3, 2);
@@ -103,7 +103,7 @@ SCENARIO("Test activation functions") {
             soft_in << 0.6, 0.2,
                     0.1, 0.4,
                     0.3, 0.4;
-            auto res = softmax.apply_derivative(soft_in, dummy_dC_da);
+            auto res = softmax.backward_propagation(soft_in, dummy_dC_da);
             THEN("The result should be correct") {
                 Eigen::MatrixXf soft_res(3, 2);
                 soft_res << 0.132, 0.016,
@@ -116,14 +116,14 @@ SCENARIO("Test activation functions") {
 
     GIVEN("A identity function") {
         IdentityFunction identity = IdentityFunction();
-        identity.apply_function(input);
+        identity.forward_propagation(input);
         WHEN("The identity function is applied") {
             Eigen::MatrixXf result = input;
             THEN("The result is correct") {
                 REQUIRE(input.isApprox(result));
             }
         }WHEN("The derivative of the identity function is applied") {
-            auto result = identity.apply_derivative(input, dummy_dC_da);
+            auto result = identity.backward_propagation(input, dummy_dC_da);
             THEN("The result should be correct") {
                 REQUIRE(result.isApprox(dummy_dC_da));
             }

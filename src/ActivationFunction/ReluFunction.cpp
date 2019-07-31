@@ -7,7 +7,7 @@ ReluFunction::ReluFunction(float leak_factor) {
 }
 
 void
-ReluFunction::apply_function(Eigen::MatrixXf &input) const {
+ReluFunction::forward_propagation(Eigen::MatrixXf &input) const {
     // Apply an unary expression corresponding to a relu lambda to every matrix
     // element if elem <0 -> 0 else -> elem
     input = (input.unaryExpr([this](float x) {
@@ -20,8 +20,8 @@ ReluFunction::apply_function(Eigen::MatrixXf &input) const {
 }
 
 Eigen::MatrixXf
-ReluFunction::apply_derivative(const Eigen::MatrixXf &m_a,
-                               const Eigen::MatrixXf &dC_da) const {
+ReluFunction::backward_propagation(const Eigen::MatrixXf &m_a,
+                                   const Eigen::MatrixXf &dC_da) const {
     // Apply an unary expression corresponding to a derivative relu lambda to
     // every matrix element and multiply with derivative next layer if elem >0 ->
     // 1 else -> -elem*leak_factor (leak_factor 0 by default)
