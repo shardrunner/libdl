@@ -55,6 +55,8 @@ public:
 
     float get_current_error(const Eigen::VectorXi &labels) const;
 
+    Eigen::VectorXi get_predicted_classes(const Eigen::MatrixXf &prediction) const;
+
     const Eigen::MatrixXf &get_current_prediction() const;
 
     int layer_size() const;

@@ -36,7 +36,8 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("get_current_accuracy", &NeuralNetwork::get_current_accuracy)
             .def("get_current_error", &NeuralNetwork::get_current_error)
             .def("get_current_prediction", &NeuralNetwork::get_current_prediction,py::return_value_policy::reference)
-            .def("layer_size", &NeuralNetwork::layer_size,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>()); //,py::arg().noconvert();
+            .def("layer_size", &NeuralNetwork::layer_size,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>())
+            .def("get_predicted_classes", &NeuralNetwork::get_predicted_classes); //,py::arg().noconvert();
 }
 
 /*

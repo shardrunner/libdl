@@ -376,4 +376,15 @@ void NeuralNetwork::feed_forward_py(Eigen::Ref<const Eigen::MatrixXf> &input_bat
     }
 }
 
+Eigen::VectorXi NeuralNetwork::get_predicted_classes(const Eigen::MatrixXf &prediction) const {
+    Eigen::VectorXi predictions(prediction.cols());
+
+    Eigen::MatrixXf::Index pos_max;
+    for (long i = 0; i < prediction.cols(); i++) {
+        prediction.col(i).maxCoeff(&pos_max);
+        predictions(i) = (int) pos_max;
+    }
+    return predictions;
+}
+
 
