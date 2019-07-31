@@ -24,7 +24,12 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("test_network", &NeuralNetwork::test_network,py::return_value_policy::reference)
             .def("train_batch", &NeuralNetwork::train_batch)//,py::arg().noconvert())
             .def("set_layer_weights", &NeuralNetwork::set_layer_weights)
-            .def("get_layer_weights", &NeuralNetwork::get_layer_weights)
+            .def("get_layer_weights", &NeuralNetwork::get_layer_weights,py::return_value_policy::reference)
             .def("set_layer_bias", &NeuralNetwork::set_layer_bias)
-            .def("get_layer_bias", &NeuralNetwork::get_layer_bias);
+            .def("get_layer_bias", &NeuralNetwork::get_layer_bias,py::return_value_policy::reference)
+            .def("check_network", &NeuralNetwork::check_network)
+            .def("feed_forward", &NeuralNetwork::feed_forward)
+            .def("get_current_accuracy", &NeuralNetwork::get_current_accuracy)
+            .def("get_current_error", &NeuralNetwork::get_current_error)
+            .def("get_current_preditction", &NeuralNetwork::get_current_prediction,py::return_value_policy::reference);
 }
