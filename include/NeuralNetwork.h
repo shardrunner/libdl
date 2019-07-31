@@ -35,6 +35,8 @@ public:
 
     void train_batch(Eigen::Ref<const Eigen::MatrixXf> &input_batch, Eigen::Ref<const Eigen::VectorXi> &label_batch);
 
+    void feed_forward_py(Eigen::Ref<const Eigen::MatrixXf> &input_batch);
+
     void set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> &param, unsigned long position);
 
     const Eigen::MatrixXf &get_layer_weights(unsigned long position) const;
@@ -48,6 +50,8 @@ public:
     float get_current_error(const Eigen::VectorXi &labels) const;
 
     const Eigen::MatrixXf &get_current_prediction() const;
+
+    int layer_size() const;
 
 
 

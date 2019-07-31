@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include "NeuralNetwork.h"
 #include "pybind11/stl.h"
+#include "pybind11/iostream.h"
 
 
 #include <pybind11/eigen.h>
@@ -22,14 +23,15 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("add_output_layer", &NeuralNetwork::add_output_layer)
             .def("train_network", &NeuralNetwork::train_network)
             .def("test_network", &NeuralNetwork::test_network,py::return_value_policy::reference)
-            .def("train_batch", &NeuralNetwork::train_batch)//,py::arg().noconvert())
+            .def("train_batch", &NeuralNetwork::train_batch,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>()) //,py::arg().noconvert()
             .def("set_layer_weights", &NeuralNetwork::set_layer_weights)
             .def("get_layer_weights", &NeuralNetwork::get_layer_weights,py::return_value_policy::reference)
             .def("set_layer_bias", &NeuralNetwork::set_layer_bias)
             .def("get_layer_bias", &NeuralNetwork::get_layer_bias,py::return_value_policy::reference)
             .def("check_network", &NeuralNetwork::check_network)
-            .def("feed_forward", &NeuralNetwork::feed_forward)
+            .def("feed_forward_py", &NeuralNetwork::feed_forward_py)
             .def("get_current_accuracy", &NeuralNetwork::get_current_accuracy)
             .def("get_current_error", &NeuralNetwork::get_current_error)
-            .def("get_current_preditction", &NeuralNetwork::get_current_prediction,py::return_value_policy::reference);
+            .def("get_current_preditction", &NeuralNetwork::get_current_prediction,py::return_value_policy::reference)
+            .def("layer_size", &NeuralNetwork::layer_size,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>()); //,py::arg().noconvert();
 }
