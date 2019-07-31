@@ -25,7 +25,7 @@
 #include "ManageLoggers.h"
 #include "HelperFunctions.h"
 
-void NeuralNetwork::add_layer(std::unique_ptr<BaseLayer> layer) {
+void NeuralNetwork::add_layer(std::unique_ptr<Layer> layer) {
     m_layer_list.push_back(std::move(layer));
 }
 

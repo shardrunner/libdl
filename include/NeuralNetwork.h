@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "Layer/BaseLayer.h"
+#include "Layer/Layer.h"
 #include "LossFunction/LossFunction.h"
 
 
@@ -74,7 +74,7 @@ public:
      * Adds a layer to the back of the network.
      * @param layer The desired layer.
      */
-    void add_layer(std::unique_ptr<BaseLayer> layer);
+    void add_layer(std::unique_ptr<Layer> layer);
 
     /**
      * Train the network according to the input parameters.
@@ -117,7 +117,7 @@ private:
     /**
      * Vector of pointers to the layers contained in the neural network.
      */
-    std::vector<std::unique_ptr<BaseLayer>> m_layer_list;
+    std::vector<std::unique_ptr<Layer>> m_layer_list;
 
     /**
      * Pointer to the loss function.
