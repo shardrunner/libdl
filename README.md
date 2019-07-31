@@ -18,6 +18,21 @@ make
 
 ## General structure
 
+The deep learning library coded in an object oriented structure.
+The 'NeuralNetwork' class is the heart of every network.
+It manages the represented network structure and acts as an interface between network and user.
+
+The abstract classes 'ActivationFunction','Layer','LossFunction', 'OptimizationFunction' and 'RandomInitialization' define the interface between the network components.NeuralNetwork
+
+The 'HelperFunction' class provides
+
+
+Aside from the manager class in the form of 'NeuralNetwork.h' and the helper classes 'ManageLogger.h' and 'NeuralNetwork.h', every class either inherits from a abstract class or is one themselves.
+This structure allows for a flexible and modular library.
+New features can be easily integrated, as long as they follow already existing implementations.
+The represented network itself is easily extensible and flexible in its form. The child classes are all interchangeable and there are aside from the typedefs no hardcoded limits in the network size.
+
+
 ## Design choices
 
 ## Current state
