@@ -253,7 +253,30 @@ NeuralNetwork::set_layer_parameter(const std::vector<std::tuple<Eigen::MatrixXf,
     }
 }
 
-NeuralNetwork::NeuralNetwork() = default;
+NeuralNetwork::NeuralNetwork() {
+    omp_set_num_threads(omp_get_num_procs() / 2);
+
+/*    //omp_set_num_threads(2);
+    std::cout << "C++ Test: " << std::thread::hardware_concurrency() << std::endl;
+    std::cout << "OpenMP setting:" << omp_get_num_procs() << std::endl;
+    std::cout << "EigenSetting" << Eigen::nbThreads( ) << std::endl;
+
+    //int num_threads =4;
+    //omp_set_num_threads ( num_threads );
+    # pragma omp parallel for
+    for (int i = 0; i < 8; i++) {
+        # pragma omp critical
+        std::cout << "My id is: "
+                  << omp_get_thread_num() << std::endl;
+    }*/
+
+
+    //init loggers
+    ManageLoggers loggers;
+    loggers.initLoggers();
+    m_nn_logger = spdlog::get("nn");
+    m_nn_logger->info("Initialized neural network");
+};
 
 void NeuralNetwork::use_multiclass_loss() {
     m_loss_function=std::make_unique<MultiCrossEntropyLoss>();
@@ -321,5 +344,19 @@ float NeuralNetwork::get_current_error(const Eigen::VectorXi &labels) const {
 
 const Eigen::MatrixXf &NeuralNetwork::get_current_prediction() const {
     return m_layer_list[m_layer_list.size() - 1]->get_forward_output();
+}
+
+int NeuralNetwork::layer_size() const {
+    std::cout << "Size:" << m_layer_list.size() << std::endl;
+    m_nn_logger->info("Size");
+    return m_layer_list.size();
+}
+
+void NeuralNetwork::feed_forward_py(Eigen::Ref<const Eigen::MatrixXf> &input_batch) {
+    m_layer_list[0]->feed_forward(input_batch);
+
+    for (unsigned long i = 1; i < m_layer_list.size(); i++) {
+        m_layer_list[i]->feed_forward(m_layer_list[i - 1]->get_forward_output());
+    }
 }
 
