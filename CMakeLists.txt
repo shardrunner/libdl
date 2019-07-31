@@ -96,7 +96,7 @@ set(HDRS
         include/ActivationFunction/ActivationFunction.h
         include/ActivationFunction/SigmoidFunction.h
         include/ActivationFunction/ReluFunction.h
-        include/Layer/BaseLayer.h
+        include/Layer/Layer.h
         include/Layer/FullyConnectedLayer.h
         include/NeuralNetwork.h
         include/RandomInitialization/RandomInitialization.h

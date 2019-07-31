@@ -3,9 +3,9 @@
 #include "../RandomInitialization/RandomInitialization.h"
 #include "ActivationFunction/ActivationFunction.h"
 #include "OptimizationFunction/OptimizationFunction.h"
-#include "BaseLayer.h"
+#include "Layer.h"
 
-class FullyConnectedLayer : public BaseLayer {
+class FullyConnectedLayer : public Layer {
 public:
   FullyConnectedLayer(const int input_size, const int output_size,
                       std::unique_ptr<ActivationFunction> activation_function,

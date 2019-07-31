@@ -124,7 +124,7 @@ void ConvolutionalLayer::feed_forward(const Eigen::MatrixXf &input) {
     }
 
     //Apply activation function
-    m_activation_function->apply_function(m_a);
+    m_activation_function->forward_propagation(m_a);
 
     //std::cout << "Conv Feed\n" << "\ninput:\n" << input << "\nOutput\n" << m_a<< std::endl;
 }
@@ -137,7 +137,7 @@ void ConvolutionalLayer::backpropagation(const Eigen::MatrixXf &a_prev,
     //std::cout << "dC_da: " << HelperFunctions::print_tensor(dC_da, m_output_height,m_output_width,m_output_channels) << std::endl;
 
     //Compute intermidiate result dC/dz=(da/dz)*(dC/da)
-    auto dC_dz = m_activation_function->apply_derivative(m_a, dC_da);
+    auto dC_dz = m_activation_function->backward_propagation(m_a, dC_da);
 
     //std::cout << "dC_dz: " << HelperFunctions::print_tensor(dC_dz, m_output_height,m_output_width,m_output_channels) << std::endl;
 

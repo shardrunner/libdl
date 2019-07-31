@@ -5,12 +5,12 @@
 /**
  * Represents a layer in the neural network. An abstract base class.
  */
-class BaseLayer {
+class Layer {
 public:
   /**
    * Default virtual destructor.
    */
-  virtual ~BaseLayer() = default;
+  virtual ~Layer() = default;
 
   /**
    * Feed forwards the input in this layer and stores the output internally for

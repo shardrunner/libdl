@@ -1,4 +1,4 @@
-#include "BaseLayer.h"
+#include "Layer.h"
 
 #include "ActivationFunction/ActivationFunction.h"
 #include "RandomInitialization/RandomInitialization.h"
@@ -8,7 +8,7 @@
 #include <memory>
 #include "spdlog/spdlog.h"
 
-class ConvolutionalLayer : public BaseLayer {
+class ConvolutionalLayer : public Layer {
 public:
     ConvolutionalLayer(int input_height, int input_width, int input_channels, int filter_height, int filter_width,
                        int output_channels, int stride, int padding,
