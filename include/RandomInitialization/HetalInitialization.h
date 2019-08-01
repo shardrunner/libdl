@@ -3,9 +3,12 @@
 #include "RandomInitialization/RandomInitialization.h"
 
 /**
- * Gaussian He initialization used for tanh activation functions.
+ * Gaussian He initialization used best for Relu activation functions.
  */
 class HetalInitialization : public RandomInitialization {
 public:
-  void initialize(Eigen::Ref<Eigen::MatrixXf> input) const override;
+    /**
+* [See abstract base class](@ref RandomInitialization)
+*/
+    void initialize(Eigen::Ref<Eigen::MatrixXf> input) const override;
 };
