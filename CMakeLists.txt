@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(MBLib VERSION 0.1
+project(MBLib VERSION 1.0
         DESCRIPTION "A deep learning library"
         LANGUAGES CXX)
 
@@ -14,16 +14,14 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
-# Set compiler warning flags
+# Set compiler warning flags, fPICc, fsized-deallocation are for pybind
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -pedantic -fPIC -fsized-deallocation")# -fvisibility=hidden")
-# Set debugging flags
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+# Set debugging flags, clang sanitizers
+set(CMAKE_CXX_FLAGS_DEBUG "-O1 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls")# -fsanitize=undefined -fsanitize=thread")
 # Set optimization for release (optional with -flto=thin for my clang++, because the check doesn't work; mtune and march optimize for used (native) processor, ffast-math sacrifices accuracy for speed
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -mtune=native")# -ffast-math")# -flto=thin")
 
 set(PYBIND11_CPP_STANDARD -std=c++1z)
-#set(PYBIND11_CPP_STANDARD -std=c++14)
-
 
 # Set include directorys
 include_directories(include)
@@ -53,11 +51,6 @@ add_subdirectory(extern/pybind11)
 add_subdirectory(extern/spdlog)
 add_subdirectory(extern/Catch2)
 
-#if(NOT TARGET spdlog)
-#Stand-alone build
-# find_package(spdlog REQUIRED)
-#endif()
-
 # Throw error, if submodules not initialized
 if ((NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Catch2/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/Eigen3/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/pybind11/CMakeLists.txt") OR (NOT EXISTS "${PROJECT_SOURCE_DIR}/extern/spdlog/CMakeLists.txt"))
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
@@ -84,7 +77,10 @@ if (EIGEN3_VERSION)
 else ()
     message(STATUS "Used installed Eigen version")
 endif ()
-find_package(Doxygen)
+# Require dot, treat the other components as optional
+find_package(Doxygen
+        OPTIONAL_COMPONENTS dot mscgen dia)
+
 find_package(OpenMP)
 
 
@@ -105,7 +101,7 @@ set(HDRS
         include/RandomInitialization/SimpleRandomInitialization.h
         include/LossFunction/BinaryCrossEntropyLoss.h
         include/ActivationFunction/TanhFunction.h
-        include/Layer/ConvolutionalLayer.h
+        include/Layer/ConvolutionLayer.h
         include/ActivationFunction/SoftmaxFunction.h
         include/ActivationFunction/IdentityFunction.h
         include/LossFunction/MultiCrossEntropyLoss.h
@@ -114,7 +110,6 @@ set(HDRS
         include/RandomInitialization/DeterministicInitialization.h
         include/RandomInitialization/UniformXavierInitialization.h
         include/RandomInitialization/UniformHeInitialization.h
-        include/ManageLoggers.h
         include/HelperFunctions.h
         include/OptimizationFunction/SimpleOptimizer.h
         include/OptimizationFunction/Adam.h)
@@ -127,7 +122,7 @@ set(SRCS
         src/LossFunction/BinaryCrossEntropyLoss.cpp
         src/NeuralNetwork.cpp
         src/ActivationFunction/TanhFunction.cpp
-        src/Layer/ConvolutionalLayer.cpp
+        src/Layer/ConvolutionLayer.cpp
         src/ActivationFunction/SoftmaxFunction.cpp
         src/ActivationFunction/IdentityFunction.cpp
         src/LossFunction/MultiCrossEntropyLoss.cpp
@@ -136,7 +131,6 @@ set(SRCS
         src/RandomInitialization/DeterministicInitialization.cpp
         src/RandomInitialization/UniformXavierInitialization.cpp
         src/RandomInitialization/UniformHeInitialization.cpp
-        src/ManageLoggers.cpp
         src/HelperFunctions.cpp
         src/OptimizationFunction/SimpleOptimizer.cpp
         src/OptimizationFunction/Adam.cpp)
@@ -181,22 +175,11 @@ message(STATUS ${CMAKE_CXX_COMPILER_ID})
 
 target_link_libraries(MlibWrapper PUBLIC Eigen3::Eigen spdlog::spdlog Mlib)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    message(STATUS "Enabled -fsized-deallocation to fix clang pybind problems")
-    target_compile_options(MlibWrapper INTERFACE -fsized-deallocation)
-endif()
-
-
 if (OpenMP_CXX_FOUND)
     message(STATUS "Enabled OpenMP")
     target_link_libraries(Mlib PUBLIC OpenMP::OpenMP_CXX)
     target_link_libraries(${EXECUTABLE_TARGET} PUBLIC OpenMP::OpenMP_CXX)
     target_link_libraries(Mlib_test PUBLIC OpenMP::OpenMP_CXX)
-
-    #include(ProcessorCount)
-    #ProcessorCount(N)
-    #set(${OMP_NUM_THREADS} "2")
-    #message(STATUS Found ${N} cores)
 endif ()
 
 # Create logs directory
@@ -232,7 +215,7 @@ endif ()
 if (DOXYGEN_FOUND)
     doxygen_add_docs(
             doxygen
-            ${HDRS}
+            ${PROJECT_SOURCE_DIR}/include
             COMMENT "Generate html pages"
     )
     message(STATUS "Generated Doxygen docs")
