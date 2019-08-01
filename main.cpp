@@ -119,7 +119,7 @@ int main() {
   auto predictions = mnet.calculate_accuracy(test_image, test_labels);
 
   // print some images from the test set with the resulting label
-  for (int z = 0; z < 100; z += 10) {
+  for (long z = 0; z < labels.cols(); z += 10) {
     std::cout << "Image from testset: \n";
     for (int i = 0; i < 28; i++) {
       for (int j = 0; j < 28; j++) {
