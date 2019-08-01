@@ -56,7 +56,7 @@ The *HelperFunction* file provides useful functions for printing and logging.
 
 The test functions written in Catch2 are in the tests folder.
 
-There is also a graphical interface in the form of a *jupyter notebook* with pybindings. This allows more flexibility with training data sources.
+There is also a graphical interface in the form of a *jupyter notebook* with pybindings. This allows more flexibility with training data sources and it also handles the project.
 
 A rudimentary logging is implemented with *spdlog*.
 The log files are piped to the std::out and written execution directory.
