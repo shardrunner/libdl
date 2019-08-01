@@ -23,12 +23,6 @@ void BinaryCrossEntropyLoss::backpropagate(const Eigen::MatrixXf &a_prev,
     Eigen::RowVectorXf label_row_float = label_row.cast<float>();
     backprop_loss.array() =
             (-1) * label_row_float.array() / a_prev.array() + (1 - label_row_float.array()) / (1 - a_prev.array());
-
-    //another working implementation
-    /*backprop_loss = (label_row.array() == 0)
-                    .select((float(1) - a_prev.array()).cwiseInverse(),
-                            -a_prev.cwiseInverse())
-                    .matrix();*/
 }
 
 const Eigen::MatrixXf &BinaryCrossEntropyLoss::get_backpropagate() const {
