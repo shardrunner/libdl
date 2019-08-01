@@ -230,11 +230,11 @@ foreach(line IN LISTS ${BUILD_OPTIONS})
 endforeach()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_OPTIONS_STRING}")
 
-#target_link_options(Mlib PRIVATE ${BUILD_OPTIONS})
-#target_link_options(MlibWrapper PRIVATE ${BUILD_OPTIONS})
+#target_link_options(Mlib PUBLIC ${BUILD_OPTIONS})
+#target_link_options(MlibWrapper PUBLIC ${BUILD_OPTIONS})
 
-target_compile_options(MlibWrapper PRIVATE ${BUILD_OPTIONS})
-target_compile_options(Mlib PRIVATE ${BUILD_OPTIONS})
+target_compile_options(MlibWrapper PUBLIC ${BUILD_OPTIONS})
+target_compile_options(Mlib PUBLIC ${BUILD_OPTIONS})
 
 # Require dot, treat the other components as optional
 find_package(Doxygen
