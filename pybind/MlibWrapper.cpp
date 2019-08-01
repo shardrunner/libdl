@@ -3,6 +3,8 @@
 #include "NeuralNetwork.h"
 #include "pybind11/iostream.h"
 
+#include <pybind11/eigen.h>
+#include "pybind11/stl.h"
 
 
 namespace py = pybind11;
@@ -25,7 +27,7 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("add_output_layer_simple", &NeuralNetwork::add_output_layer_simple)
             .def("train_network", &NeuralNetwork::train_network)
             .def("test_network", &NeuralNetwork::test_network,py::return_value_policy::reference)
-            .def("train_batch", &NeuralNetwork::train_batch,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>()) //,py::arg().noconvert()
+            .def("train_batch", &NeuralNetwork::train_batch) //,py::arg().noconvert()
             .def("set_layer_weights", &NeuralNetwork::set_layer_weights)
             .def("get_layer_weights", &NeuralNetwork::get_layer_weights)
             .def("set_layer_bias", &NeuralNetwork::set_layer_bias)
