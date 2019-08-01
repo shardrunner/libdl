@@ -2,16 +2,11 @@
 
 void
 SigmoidFunction::forward_propagation(Eigen::MatrixXf &input) const {
-  // Apply sigmoid function element wise
-  input.array() = (1 / (1 + Eigen::exp((-1) * input.array())));
+    input.array() = (1 / (1 + Eigen::exp((-1) * input.array())));
 }
 
 Eigen::MatrixXf
-SigmoidFunction::backward_propagation(const Eigen::MatrixXf &m_a,
-                                      const Eigen::MatrixXf &dC_da) const {
-  // Apply sigmoid derivative element wise and multiply with derivative next
-  // layer
-  //std::cout << "ma\n" << m_a << "\ndC_da\n" << dC_da << std::endl;
-  //auto Eigen::MatrixXf
-  return ((m_a.array() * (1 - m_a.array())) * dC_da.array()).matrix();
+SigmoidFunction::apply_derivative(const Eigen::MatrixXf &m_a,
+                                  const Eigen::MatrixXf &dC_da) const {
+    return ((m_a.array() * (1 - m_a.array())) * dC_da.array()).matrix();
 }
