@@ -19,6 +19,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "CMake: ${CMAKE_VERSION}")
 
 # Set -fPIC otherwise pybind won't work with spdlog
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
