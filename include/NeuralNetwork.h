@@ -8,9 +8,9 @@
 #include "Layer/Layer.h"
 #include "LossFunction/LossFunction.h"
 
-
 #include "spdlog/spdlog.h"
 #include <tuple>
+
 /**
  * Represents the neural network and performs the operations on it.
  * Can be populated depending on the needs.
@@ -23,45 +23,130 @@ public:
      */
     explicit NeuralNetwork(std::unique_ptr<LossFunction> loss_function);
 
+    /**
+     * Empty constructor.
+     *
+     * Initializes logger and sets cores.
+     */
     NeuralNetwork();
 
+    /**
+     * Initialise multiclass loss.
+     */
     void use_multiclass_loss();
 
-    void add_conv_layer(int input_height,int input_width, int input_channels, int filter_height, int filter_width, int output_channels, int stride, int padding);
+    /**
+     * Pypind unique_ptr replacement.
+     */
+    void add_conv_layer(int input_height, int input_width, int input_channels,
+                        int filter_height, int filter_width, int output_channels,
+                        int stride, int padding);
 
-    void add_conv_layer_simple(int input_height,int input_width, int input_channels, int filter_height, int filter_width, int output_channels, int stride, int padding);
+    /**
+   * Pypind unique_ptr replacement.
+   */
+    void add_conv_layer_simple(int input_height, int input_width,
+                               int input_channels, int filter_height,
+                               int filter_width, int output_channels, int stride,
+                               int padding);
 
+    /**
+   * Pypind unique_ptr replacement.
+   */
     void add_fc_layer(int input_size, int output_size);
 
+    /**
+   * Pypind unique_ptr replacement.
+   */
     void add_fc_layer_relu(int input_size, int output_size);
 
+    /**
+   * Pypind unique_ptr replacement.
+   */
     void add_output_layer(int input_size, int output_size);
 
+    /**
+   * Pypind unique_ptr replacement.
+   */
     void add_output_layer_simple(int input_size, int output_size);
 
-    void train_batch(Eigen::Ref<const Eigen::MatrixXf> &input_batch, Eigen::Ref<const Eigen::VectorXi> &label_batch);
+    /**
+     * Trains a batch.
+     * @param input_batch The input batch.
+     * @param label_batch The input label.
+     */
+    void train_batch(Eigen::Ref<const Eigen::MatrixXf> &input_batch,
+                     Eigen::Ref<const Eigen::VectorXi> &label_batch);
 
+    /**
+     * Feed forward for pybind.
+     * @param input_batch The input to feed forward.
+     */
     void feed_forward_py(Eigen::Ref<const Eigen::MatrixXf> &input_batch);
 
-    void set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> &param, unsigned long position);
+    /**
+     * Set weight for layer at indices position.
+     * @param param The new weights.
+     * @param position The layer position.
+     */
+    void set_layer_weights(Eigen::Ref<const Eigen::MatrixXf> &param,
+                           unsigned long position);
 
+    /**
+     * Get the layer weights at the given position.
+     * @param position The layer position.
+     * @return The weigths from that layer.
+     */
     const Eigen::MatrixXf &get_layer_weights(unsigned long position) const;
 
-    void set_layer_bias(Eigen::Ref<const Eigen::VectorXf> &param, unsigned long position);
+    /**
+   * Set bias for layer at indices position.
+   * @param param The new bias.
+   * @param position The layer position.
+   */
+    void set_layer_bias(Eigen::Ref<const Eigen::VectorXf> &param,
+                        unsigned long position);
 
+    /**
+   * Set bias for layer at indices position.
+   * @param param The new bias.
+   * @param position The layer position.
+   */
     const Eigen::VectorXf &get_layer_bias(unsigned long position) const;
 
+    /**
+     * Calculate the accuracy for the last processed feed forward batch.
+     * @param labels The labels for the last batch.
+     * @return The accuracy.
+     */
     float get_current_accuracy(const Eigen::VectorXi &labels) const;
 
+    /**
+   * Calculate the error for the last processed feed forward batch.
+   * @param labels The labels for the last batch.
+   * @return The error.
+   */
     float get_current_error(const Eigen::VectorXi &labels) const;
 
-    Eigen::VectorXi get_predicted_classes(const Eigen::MatrixXf &prediction) const;
+    /**
+   * Calculate the predicted classes a given feed forward prediction.
+   * @param The feed forward prediction.
+   * @return A vector with the predictions as elements.
+   */
+    Eigen::VectorXi
+    get_predicted_classes(const Eigen::MatrixXf &prediction) const;
 
+    /**
+     * Get the feed forward prediction from the last processed feed forward batch.
+     * @return The prediction for the batch.
+     */
     const Eigen::MatrixXf &get_current_prediction() const;
 
-    int layer_size() const;
-
-
+    /**
+     * Get the size of the network.
+     * @return The size of the network.
+     */
+    unsigned long layer_size() const;
 
     /**
      * Does the feed forward step for all layers contained in the network using
@@ -82,11 +167,11 @@ public:
      * @param label The corresponding ground truth labels for the training
      * samples.
      * @param batch_size The desired batch size.
-     * @param iterations The desired batch size/epochs.
+     * @param epochs The desired batch size/epochs.
      * @param divisor Prints the current loss every i-th iteration.
      */
-    void train_network(const Eigen::MatrixXf &input, const Eigen::MatrixXi &label,
-                       int batch_size, int iterations, int divisor);
+    void train_network(const Eigen::MatrixXf &input, const Eigen::VectorXi &label,
+                       int batch_size, int epochs, int divisor);
 
     /**
      * Tests the network by feeding the input in.
@@ -101,17 +186,38 @@ public:
      * @param label The true labels.
      * @return Conversion of the prediction to binary values.
      */
-    Eigen::MatrixXi calculate_accuracy(const Eigen::MatrixXf &input,
-                                       const Eigen::MatrixXi &label);
+    Eigen::VectorXi calculate_accuracy(const Eigen::MatrixXf &input,
+                                       const Eigen::VectorXi &label);
 
+    /**
+     * Checks if the given network dimensions match.
+     * @param input_size The input for the first layer.
+     */
     void check_network(long input_size);
 
+    /**
+     * Gets the layer parameter as vector of tuple.
+     * @return The layer parameter.
+     */
+    [[nodiscard]] std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>>
+    get_layer_parameter() const;
 
-    [[nodiscard]] std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> get_layer_parameter() const;
+    /**
+     * Sets the layer parameter.
+     * @param parameter_list The new layer parameter.
+     */
+    void set_layer_parameter(
+            const std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>>
+            &parameter_list);
 
-    void set_layer_parameter(const std::vector<std::tuple<Eigen::MatrixXf, Eigen::VectorXf>> &parameter_list);
-
-    [[nodiscard]] double get_loss(const Eigen::MatrixXf &feed_forward_input, const Eigen::VectorXi &label) const;
+    /**
+     * Calculates the loss with the given feed forward input and the label vector.
+     * @param feed_forward_input The feed forward input.
+     * @param label The label vector.
+     * @return The loss.
+     */
+    [[nodiscard]] double get_loss(const Eigen::MatrixXf &feed_forward_input,
+                                  const Eigen::VectorXi &label) const;
 
 private:
     /**
@@ -131,7 +237,7 @@ private:
      * @param label The ground truth labels for the input.
      */
     void backpropagation(const Eigen::MatrixXf &input,
-                         const Eigen::MatrixXi &label);
+                         const Eigen::VectorXi &label);
 
     /**
      * Updates the parameters of the layers depending of the calculated
