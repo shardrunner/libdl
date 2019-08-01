@@ -296,7 +296,7 @@ float NeuralNetwork::get_current_accuracy(const Eigen::VectorXi &labels) const {
             correct += 1;
         }
     }
-    return (float) correct / labels.size();
+    return (float) correct /(float) labels.size();
 }
 
 float NeuralNetwork::get_current_error(const Eigen::VectorXi &labels) const {
