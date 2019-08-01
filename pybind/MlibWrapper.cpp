@@ -1,17 +1,16 @@
 #include <pybind11/pybind11.h>
+
 #include "NeuralNetwork.h"
-#include "pybind11/stl.h"
 #include "pybind11/iostream.h"
 
 
-#include <pybind11/eigen.h>
-
-//http://people.duke.edu/~ccc14/sta-663-2018/notebooks/S13C_pybind11.html
 
 namespace py = pybind11;
 
 // https://pybind11.readthedocs.io/en/master/advanced/cast/eigen.html
-//
+/**
+ * The bindings for the pybind module.
+ */
 PYBIND11_MODULE(MlibWrapper, m) {
     m.doc() = "Wrapper for Mlib"; // optional module docstring
 
@@ -39,10 +38,3 @@ PYBIND11_MODULE(MlibWrapper, m) {
             .def("layer_size", &NeuralNetwork::layer_size,py::call_guard<py::scoped_ostream_redirect ,py::scoped_estream_redirect>())
             .def("get_predicted_classes", &NeuralNetwork::get_predicted_classes); //,py::arg().noconvert();
 }
-
-/*
-const Eigen::MatrixXf &load_image(std::string &path) {
-    py::object plt = py::module::import("matplotlib.pyplot");
-    py::object np = py::module::import("numpy");
-    plt.
-}*/
