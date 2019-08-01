@@ -1,20 +1,12 @@
 #include <catch2/catch.hpp>
 
 #include "ActivationFunction/ReluFunction.h"
-#include "ActivationFunction/SigmoidFunction.h"
-
 #include "ActivationFunction/IdentityFunction.h"
-#include "ActivationFunction/SoftmaxFunction.h"
-#include "RandomInitialization/SimpleRandomInitialization.h"
 #include "RandomInitialization/DeterministicInitialization.h"
-#include <iostream>
-#include <vector>
 #include "Layer/FullyConnectedLayer.h"
-
-#include "RandomInitialization/XavierInitialization.h"
 #include "OptimizationFunction/SimpleOptimizer.h"
 
-#include "NeuralNetwork.h"
+#include <vector>
 
 SCENARIO("Test Compute Layer") {
     GIVEN("A simple fully connected layer") {

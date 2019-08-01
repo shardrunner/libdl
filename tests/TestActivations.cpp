@@ -3,11 +3,9 @@
 #include "ActivationFunction/ReluFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
 #include "ActivationFunction/SigmoidFunction.h"
-#include "ActivationFunction/TanhFunction.h"
 #include "ActivationFunction/IdentityFunction.h"
-#include <Eigen/Core>
 
-#include <iostream>
+#include <Eigen/Core>
 
 SCENARIO("Test activation functions") {
     Eigen::MatrixXf input(2, 3);
@@ -29,7 +27,7 @@ SCENARIO("Test activation functions") {
             THEN("The result should be correct") {
                 result << 6.64805576e-03, 1.23374775e-04, 2.49376040e-01,
                         0.00000000e+00, 4.51766569e-02, 2.50000000e-01;
-                auto res_sigmoid = sigmoidFun.backward_propagation(input, dummy_dC_da);
+                auto res_sigmoid = sigmoidFun.apply_derivative(input, dummy_dC_da);
                 REQUIRE(res_sigmoid.isApprox(result));
             }
         }
@@ -45,7 +43,7 @@ SCENARIO("Test activation functions") {
                 REQUIRE(input.isApprox(result));
             }
         }WHEN("The relu activation derivative is applied") {
-            auto res = relu_func.backward_propagation(input, dummy_dC_da);
+            auto res = relu_func.apply_derivative(input, dummy_dC_da);
             THEN("The result should be correct") {
                 result << 1.0, 1.0, 1.0,
                         1.0, 0.0, 0.0;
@@ -73,7 +71,7 @@ SCENARIO("Test activation functions") {
             Eigen::MatrixXf dummy_dC_da = Eigen::MatrixXf::Constant(2, 1, 1);
             soft_in << 1.0, 2.0;
             softmax.forward_propagation(soft_in);
-            auto res = softmax.backward_propagation(soft_in, dummy_dC_da);
+            auto res = softmax.apply_derivative(soft_in, dummy_dC_da);
             THEN("The result should be correct") {
                 Eigen::MatrixXf soft_res(2, 1);
                 soft_res << 0,
@@ -103,7 +101,7 @@ SCENARIO("Test activation functions") {
             soft_in << 0.6, 0.2,
                     0.1, 0.4,
                     0.3, 0.4;
-            auto res = softmax.backward_propagation(soft_in, dummy_dC_da);
+            auto res = softmax.apply_derivative(soft_in, dummy_dC_da);
             THEN("The result should be correct") {
                 Eigen::MatrixXf soft_res(3, 2);
                 soft_res << 0.132, 0.016,
@@ -123,7 +121,7 @@ SCENARIO("Test activation functions") {
                 REQUIRE(input.isApprox(result));
             }
         }WHEN("The derivative of the identity function is applied") {
-            auto result = identity.backward_propagation(input, dummy_dC_da);
+            auto result = identity.apply_derivative(input, dummy_dC_da);
             THEN("The result should be correct") {
                 REQUIRE(result.isApprox(dummy_dC_da));
             }
