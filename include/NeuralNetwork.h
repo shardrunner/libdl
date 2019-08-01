@@ -97,7 +97,7 @@ public:
      * @param position The layer position.
      * @return The weigths from that layer.
      */
-    const Eigen::MatrixXf &get_layer_weights(unsigned long position) const;
+    [[nodiscard]] const Eigen::MatrixXf &get_layer_weights(unsigned long position) const;
 
     /**
    * Set bias for layer at indices position.
@@ -112,41 +112,41 @@ public:
    * @param param The new bias.
    * @param position The layer position.
    */
-    const Eigen::VectorXf &get_layer_bias(unsigned long position) const;
+    [[nodiscard]] const Eigen::VectorXf &get_layer_bias(unsigned long position) const;
 
     /**
      * Calculate the accuracy for the last processed feed forward batch.
      * @param labels The labels for the last batch.
      * @return The accuracy.
      */
-    float get_current_accuracy(const Eigen::VectorXi &labels) const;
+    [[nodiscard]] float get_current_accuracy(const Eigen::VectorXi &labels) const;
 
     /**
    * Calculate the error for the last processed feed forward batch.
    * @param labels The labels for the last batch.
    * @return The error.
    */
-    float get_current_error(const Eigen::VectorXi &labels) const;
+    [[nodiscard]] float get_current_error(const Eigen::VectorXi &labels) const;
 
     /**
    * Calculate the predicted classes a given feed forward prediction.
    * @param The feed forward prediction.
    * @return A vector with the predictions as elements.
    */
-    Eigen::VectorXi
+    [[nodiscard]] Eigen::VectorXi
     get_predicted_classes(const Eigen::MatrixXf &prediction) const;
 
     /**
      * Get the feed forward prediction from the last processed feed forward batch.
      * @return The prediction for the batch.
      */
-    const Eigen::MatrixXf &get_current_prediction() const;
+    [[nodiscard]] const Eigen::MatrixXf &get_current_prediction() const;
 
     /**
      * Get the size of the network.
      * @return The size of the network.
      */
-    unsigned long layer_size() const;
+    [[nodiscard]] unsigned long layer_size() const;
 
     /**
      * Does the feed forward step for all layers contained in the network using
