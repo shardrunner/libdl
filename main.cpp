@@ -113,7 +113,7 @@ int main() {
   mnet.add_layer(std::move(out_layer));
 
   // train the network
-  mnet.train_network(image, labels, 128, 40, 1);
+  mnet.train_network(image, labels, 128, 5, 1);
 
   // test part of the test set
   auto predictions = mnet.calculate_accuracy(test_image, test_labels);
