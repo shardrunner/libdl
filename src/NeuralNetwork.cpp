@@ -1,5 +1,3 @@
-#pragma once
-
 #include "NeuralNetwork.h"
 #include "omp.h"
 #include <algorithm>
@@ -68,6 +66,7 @@ void NeuralNetwork::update() {
 
 NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
     : m_loss_function(std::move(loss_function)) {
+  // HT / SMT cores should not be used
   omp_set_num_threads(omp_get_num_procs() / 2);
 
   // init loggers
@@ -208,13 +207,7 @@ void NeuralNetwork::set_layer_parameter(
   }
 }
 
-NeuralNetwork::NeuralNetwork() {
-  omp_set_num_threads(omp_get_num_procs() / 2);
-  // init loggers
-  HelperFunctions::init_loggers();
-  m_nn_logger = spdlog::get("nn");
-  m_nn_logger->info("Initialized neural network");
-}
+NeuralNetwork::NeuralNetwork() : NeuralNetwork(nullptr) {}
 
 void NeuralNetwork::use_multiclass_loss() {
   m_loss_function = std::make_unique<MultiCrossEntropyLoss>();
