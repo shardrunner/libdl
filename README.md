@@ -26,6 +26,7 @@ or the jupyter notebook
     
     // Dependencies
     python -m venv venv
+    source /venv/bin/activate
     pip install jupyter
     python -mpip install matplotlib
     pip install Pillow
@@ -34,7 +35,6 @@ or the jupyter notebook
     cp MlibWrapper.cpython-37m-x86_64-linux-gnu.so ../pybind
     
     //Execute jupyter notebook
-    source /venv/bin/activate
     jupyter notebook ../pybind/PyNotebook.ipynb
     
 Doxygen documentation
