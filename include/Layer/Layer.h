@@ -38,13 +38,13 @@ public:
    * Returns a reference to the stored feed forward output.
    * @return The reference to the stored feed forward output.
    */
-  virtual const Eigen::MatrixXf &get_forward_output() const = 0;
+  [[nodiscard]] virtual const Eigen::MatrixXf &get_forward_output() const = 0;
 
   /**
    * Returns a reference to the stored backpropagation output.
    * @return The reference to the stored backpropagation output.
    */
-  virtual const Eigen::MatrixXf &get_backward_output() const = 0;
+  [[nodiscard]] virtual const Eigen::MatrixXf &get_backward_output() const = 0;
 
   /**
    * Initializes the internal parameters bias and weight according to the

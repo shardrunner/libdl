@@ -10,5 +10,5 @@ void SimpleOptimizer::optimize_bias(Eigen::VectorXf &values,
   values -= m_learning_rate * derivatives;
 }
 
-SimpleOptimizer::SimpleOptimizer(float learning_rate)
+SimpleOptimizer::SimpleOptimizer(const float learning_rate)
     : m_learning_rate(learning_rate) {}

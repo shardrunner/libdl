@@ -17,15 +17,15 @@ void HetalInitialization::initialize(Eigen::Ref<Eigen::MatrixXf> input) const {
   std::default_random_engine generator(rd());
 
   // stddev = var^-2,
-  // He init normal -> var = 2/num_inputs (for relus)
-  // for uniform -> limit 6 insteal of two
+  // He init normal -> var = 2/num_inputs (for Relus)
+  // for uniform -> limit 6 instead of two
   float sigma = std::sqrt(float(2.0) / float(input.rows()));
 
   // instance of class std::normal_distribution with specific mean and stddev
   std::normal_distribution<float> distribution(0, sigma);
 
-  for (int i = 0; i < input.rows(); i++) {
-    for (int j = 0; j < input.cols(); j++) {
+  for (long i = 0; i < input.rows(); i++) {
+    for (long j = 0; j < input.cols(); j++) {
       input(i, j) = distribution(generator);
     }
   }

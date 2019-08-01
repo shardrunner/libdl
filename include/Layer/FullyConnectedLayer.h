@@ -22,7 +22,7 @@ public:
    * @param optimization_function The optimization function for the layer.
    */
   FullyConnectedLayer(
-      const int input_size, const int output_size,
+      int input_size, int output_size,
       std::unique_ptr<ActivationFunction> activation_function,
       std::unique_ptr<RandomInitialization> random_initialization,
       std::unique_ptr<OptimizationFunction> optimization_function);

@@ -71,7 +71,7 @@ NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
   omp_set_num_threads(omp_get_num_procs() / 2);
 
   // init loggers
-  HelperFunctions::initLoggers();
+  HelperFunctions::init_loggers();
   m_nn_logger = spdlog::get("nn");
   m_nn_logger->info("Initialized neural network");
 }
@@ -211,7 +211,7 @@ void NeuralNetwork::set_layer_parameter(
 NeuralNetwork::NeuralNetwork() {
   omp_set_num_threads(omp_get_num_procs() / 2);
   // init loggers
-  HelperFunctions::initLoggers();
+  HelperFunctions::init_loggers();
   m_nn_logger = spdlog::get("nn");
   m_nn_logger->info("Initialized neural network");
 }

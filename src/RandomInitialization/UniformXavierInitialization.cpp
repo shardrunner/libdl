@@ -21,8 +21,8 @@ void UniformXavierInitialization::initialize(
   // instance of class std::normal_distribution with specific mean and stddev
   std::uniform_real_distribution<float> distribution((-1) * limit, limit);
 
-  for (int i = 0; i < input.rows(); i++) {
-    for (int j = 0; j < input.cols(); j++) {
+  for (long i = 0; i < input.rows(); i++) {
+    for (long j = 0; j < input.cols(); j++) {
       input(i, j) = distribution(generator);
     }
   }

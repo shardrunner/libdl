@@ -1,7 +1,6 @@
 #include <catch2/catch.hpp>
 
 #include "ActivationFunction/IdentityFunction.h"
-#include "ActivationFunction/ReluFunction.h"
 #include "Layer/FullyConnectedLayer.h"
 #include "OptimizationFunction/SimpleOptimizer.h"
 #include "RandomInitialization/DeterministicInitialization.h"

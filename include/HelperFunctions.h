@@ -14,7 +14,7 @@ namespace HelperFunctions {
  * @param mat The matrix to print.
  * @return A string representation of the matrix.
  */
-std::string toString(const Eigen::MatrixXf &mat);
+std::string to_string(const Eigen::MatrixXf &mat);
 
 /**
  * Print the custom tensor format as split matrices.
@@ -50,5 +50,5 @@ std::string get_representation_first(const Eigen::MatrixXf &input,
 /**
  * Initializes and sets up the logger.
  */
-void initLoggers();
+void init_loggers();
 } // namespace HelperFunctions

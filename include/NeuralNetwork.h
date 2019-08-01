@@ -95,7 +95,7 @@ public:
   /**
    * Get the layer weights at the given position.
    * @param position The layer position.
-   * @return The weigths from that layer.
+   * @return The weights from that layer.
    */
   [[nodiscard]] const Eigen::MatrixXf &
   get_layer_weights(unsigned long position) const;

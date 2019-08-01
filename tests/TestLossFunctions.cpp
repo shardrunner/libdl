@@ -22,10 +22,9 @@ SCENARIO("Test loss function") {
     WHEN("The derivative of the loss function is calculated") {
       binary_loss.backpropagate(input, result);
       THEN("The result is correct") {
-        Eigen::MatrixXf derivative_loss = binary_loss.get_backpropagate();
         Eigen::MatrixXf derivative_result(1, 4);
         derivative_result << 3.33333, -3.33333, 1.11111, 1.25;
-        REQUIRE(derivative_loss.isApprox(derivative_result));
+        REQUIRE(binary_loss.get_backpropagate().isApprox(derivative_result));
       }
     }
   }

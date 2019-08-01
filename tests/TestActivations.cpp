@@ -66,8 +66,8 @@ SCENARIO("Test activation functions") {
       }
     }
     WHEN("The derivative of the softmax function is applied") {
-      Eigen::MatrixXf soft_in(2, 1);
-      Eigen::MatrixXf dummy_dC_da = Eigen::MatrixXf::Constant(2, 1, 1);
+      soft_in.resize(2, 1);
+      dummy_dC_da = Eigen::MatrixXf::Constant(2, 1, 1);
       soft_in << 1.0, 2.0;
       softmax.forward_propagation(soft_in);
       auto res = softmax.apply_derivative(soft_in, dummy_dC_da);
@@ -91,7 +91,7 @@ SCENARIO("Test activation functions") {
       }
     }
     WHEN("The derivative of the softmax function is applied") {
-      Eigen::MatrixXf dummy_dC_da(3, 2);
+      dummy_dC_da.resize(3, 2);
       dummy_dC_da << 0.5, 0.8, -0.2, 1, 0, 0.4;
       soft_in << 0.6, 0.2, 0.1, 0.4, 0.3, 0.4;
       auto res = softmax.apply_derivative(soft_in, dummy_dC_da);
@@ -107,11 +107,11 @@ SCENARIO("Test activation functions") {
     IdentityFunction identity = IdentityFunction();
     identity.forward_propagation(input);
     WHEN("The identity function is applied") {
-      Eigen::MatrixXf result = input;
+      result = input;
       THEN("The result is correct") { REQUIRE(input.isApprox(result)); }
     }
     WHEN("The derivative of the identity function is applied") {
-      auto result = identity.apply_derivative(input, dummy_dC_da);
+      result = identity.apply_derivative(input, dummy_dC_da);
       THEN("The result should be correct") {
         REQUIRE(result.isApprox(dummy_dC_da));
       }

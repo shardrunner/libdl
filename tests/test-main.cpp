@@ -8,7 +8,7 @@
 int main(int argc, char *argv[]) {
   // global setup...
   // init loggers
-  HelperFunctions::initLoggers();
+  HelperFunctions::init_loggers();
 
   // Try to set thread number to the physical core number (without HT), because
   // Eigen is slower otherwise

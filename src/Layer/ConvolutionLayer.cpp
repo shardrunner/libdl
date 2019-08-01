@@ -128,7 +128,7 @@ void ConvolutionLayer::backpropagation(const Eigen::MatrixXf &a_prev,
   assert(dC_da.rows() == m_number_output_values &&
          "Backpropagation dC_da input dimension doesn't match defined one");
 
-  // Compute intermidiate result dC/dz=(da/dz)*(dC/da)
+  // Compute intermediates result dC/dz=(da/dz)*(dC/da)
   auto dC_dz = m_activation_function->apply_derivative(m_a, dC_da);
 
   backpropagate_bias(dC_dz);

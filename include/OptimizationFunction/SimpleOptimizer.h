@@ -13,7 +13,7 @@ public:
    * Constructor.
    * @param learning_rate The fixed learning rate of the optimizer.
    */
-  SimpleOptimizer(const float learning_rate);
+  explicit SimpleOptimizer(float learning_rate);
 
   /**
    * [See abstract base class](@ref OptimizationFunction)

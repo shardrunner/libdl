@@ -8,7 +8,7 @@
 #include <iostream>
 #include <memory>
 
-std::string HelperFunctions::toString(const Eigen::MatrixXf &mat) {
+std::string HelperFunctions::to_string(const Eigen::MatrixXf &mat) {
   std::stringstream ss;
   ss << mat;
   return ss.str();
@@ -70,7 +70,7 @@ HelperFunctions::get_representation_first(const Eigen::MatrixXf &input,
 }
 
 // from https://github.com/gabime/spdlog/wiki/1.-QuickStart
-void HelperFunctions::initLoggers() {
+void HelperFunctions::init_loggers() {
   if (!spdlog::get("convlayer")) {
     try {
       spdlog::init_thread_pool(8192, 1);

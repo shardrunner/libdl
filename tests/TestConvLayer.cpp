@@ -444,7 +444,7 @@ SCENARIO("Test Convolutional Layer") {
       }
     }
     WHEN("The backpropagation for the weights are applied") {
-      Eigen::MatrixXf input_matrix(16, 1);
+      input_matrix.resize(16, 1);
       input_matrix << 1, 4, 7, 2, 5, 8, 3, 6, 9, 0, -3, 2, 0, 0, 1, 1;
       Eigen::MatrixXf der_matrix(4, 1);
       der_matrix.transpose() << 1, 0, -2, 0;
