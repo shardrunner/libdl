@@ -27,7 +27,7 @@ void Adam::optimize_weights(Eigen::MatrixXf &values,
 }
 
 Adam::Adam(int filter_height, int filter_width, int bias_size)
-    : Adam(0.001, 1e-8, 0.9, 0.999, filter_height, filter_width, bias_size) {}
+    : Adam((float) 0.001, (float) 1e-8, (float) 0.9, (float) 0.999, filter_height, filter_width, bias_size) {}
 
 Adam::Adam(float learning_rate, float epsilon, float beta_1, float beta_2,
            int filter_height, int filter_width, int bias_size)
