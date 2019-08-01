@@ -194,7 +194,7 @@ message(STATUS "Interprocedural optimization flto activated by cmake: ${IPO_RESU
 
 # Set general compile and linking options
 # Set compiler warning flags; fsized-deallocation are for pybind
-set(BUILD_OPTIONS -O1 -g -Wall -Wextra -Wconversion -pedantic -fsized-deallocation)# -fvisibility=hidden)
+set(BUILD_OPTIONS -Wall -Wextra -Wconversion -pedantic -fsized-deallocation)# -fvisibility=hidden)
 
 # Set debug compile and linking options
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -226,7 +226,7 @@ endif ()
     #Convert list of options to a  single string
 #list(JOIN BUILD_OPTIONS " " BUILD_OPTIONS_STRING)
 foreach(line IN LISTS ${BUILD_OPTIONS})
-    set(${BUILD_OPTIONS_STRING} "${BUILD_OPTIONS_STRING} ${BUILD_OPTIONS_STRING}")
+    set(${BUILD_OPTIONS_STRING} "${BUILD_OPTIONS_STRING} line")
 endforeach()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_OPTIONS_STRING}")
 
