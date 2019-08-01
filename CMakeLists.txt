@@ -223,11 +223,11 @@ endif ()
 # Apply defined build and linking options
 
 # Fall back to CMAKE_CXX_Flags, because CMAKE on server is to old for target_link_options
-    #Convert list of options to a  single string
+#Convert list of options to a  single string
 #list(JOIN BUILD_OPTIONS " " BUILD_OPTIONS_STRING)
-foreach(line IN LISTS ${BUILD_OPTIONS})
+foreach (line IN LISTS ${BUILD_OPTIONS})
     set(${BUILD_OPTIONS_STRING} "${BUILD_OPTIONS_STRING} line")
-endforeach()
+endforeach ()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_OPTIONS_STRING}")
 
 #target_link_options(Mlib PUBLIC ${BUILD_OPTIONS})
