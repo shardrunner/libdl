@@ -12,15 +12,15 @@
  */
 class RandomInitialization {
 public:
-    /**
-     * Virtual default destructor.
-     */
-    virtual ~RandomInitialization() = default;
+  /**
+   * Virtual default destructor.
+   */
+  virtual ~RandomInitialization() = default;
 
-    /**
-     * Initializes the matrix with random values depending on the child
-     * implementations.
-     * @param input The matrix to populate with random values.
-     */
-    virtual void initialize(Eigen::Ref<Eigen::MatrixXf> input) const = 0;
+  /**
+   * Initializes the matrix with random values depending on the child
+   * implementations.
+   * @param input The matrix to populate with random values.
+   */
+  virtual void initialize(Eigen::Ref<Eigen::MatrixXf> input) const = 0;
 };

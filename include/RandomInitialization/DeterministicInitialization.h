@@ -9,8 +9,8 @@
  */
 class DeterministicInitialization : public RandomInitialization {
 public:
-    /**
- * [See abstract base class](@ref RandomInitialization)
- */
-    void initialize(Eigen::Ref<Eigen::MatrixXf> input) const override;
+  /**
+   * [See abstract base class](@ref RandomInitialization)
+   */
+  void initialize(Eigen::Ref<Eigen::MatrixXf> input) const override;
 };

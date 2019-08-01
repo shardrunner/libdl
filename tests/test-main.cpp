@@ -1,21 +1,23 @@
 #define CATCH_CONFIG_RUNNER
 
-#include "catch2/catch.hpp"
 #include "HelperFunctions.h"
+#include "catch2/catch.hpp"
 #include "omp.h"
 
-//from the catch2 wiki
+// from the catch2 wiki
 int main(int argc, char *argv[]) {
-    // global setup...
-    //init loggers
-    HelperFunctions::initLoggers();
+  // global setup...
+  // init loggers
+  HelperFunctions::initLoggers();
 
-    //Try to set thread number to the physical core number (without HT), because Eigen is slower otherwise (https://eigen.tuxfamily.org/dox-devel/TopicMultiThreading.html)
-    omp_set_num_threads(omp_get_num_procs() / 2);
+  // Try to set thread number to the physical core number (without HT), because
+  // Eigen is slower otherwise
+  // (https://eigen.tuxfamily.org/dox-devel/TopicMultiThreading.html)
+  omp_set_num_threads(omp_get_num_procs() / 2);
 
-    int result = Catch::Session().run(argc, argv);
+  int result = Catch::Session().run(argc, argv);
 
-    // global clean-up...
+  // global clean-up...
 
-    return result;
+  return result;
 }

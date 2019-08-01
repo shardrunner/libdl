@@ -9,13 +9,12 @@
  * Currently implements methods to print matrices and to manage loggers.
  */
 namespace HelperFunctions {
-    /**
-     * Allows spdlog to print Eigen matrices.
-     * @param mat The matrix to print.
-     * @return A string representation of the matrix.
-     */
-    std::string toString(const Eigen::MatrixXf &mat);
-
+/**
+ * Allows spdlog to print Eigen matrices.
+ * @param mat The matrix to print.
+ * @return A string representation of the matrix.
+ */
+std::string toString(const Eigen::MatrixXf &mat);
 
 /**
  * Print the custom tensor format as split matrices.
@@ -25,8 +24,8 @@ namespace HelperFunctions {
  * @param num_channels Number of Channels.
  * @return The string representation.
  */
-    std::string get_representation(const Eigen::MatrixXf &input, int img_height,
-                                   int img_width, int num_channels);
+std::string get_representation(const Eigen::MatrixXf &input, int img_height,
+                               int img_width, int num_channels);
 
 /**
  * Print the custom tensor format so that it can used for the Eigen comma
@@ -34,7 +33,7 @@ namespace HelperFunctions {
  * @param input The input matrix to print as comma representation.
  * @return The string representation of the matrix
  */
-    std::string get_comma_representation(const Eigen::MatrixXf &input);
+std::string get_comma_representation(const Eigen::MatrixXf &input);
 
 /**
  * Print the first matrix/sample of the custom tensor format.
@@ -44,12 +43,12 @@ namespace HelperFunctions {
  * @param num_channels Number of Channels.
  * @return The string representation.
  */
-    std::string get_representation_first(const Eigen::MatrixXf &input,
-                                         int img_height, int img_width,
-                                         int num_channels);
+std::string get_representation_first(const Eigen::MatrixXf &input,
+                                     int img_height, int img_width,
+                                     int num_channels);
 
 /**
  * Initializes and sets up the logger.
  */
-    void initLoggers();
+void initLoggers();
 } // namespace HelperFunctions
