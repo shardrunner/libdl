@@ -1,13 +1,9 @@
 #include "NeuralNetwork.h"
-#include "omp.h"
-#include <algorithm>
-#include <cmath>
-#include <memory>
-#include <random>
 
 #include "ActivationFunction/ReluFunction.h"
 #include "ActivationFunction/SoftmaxFunction.h"
 #include "ActivationFunction/TanhFunction.h"
+#include "HelperFunctions.h"
 #include "Layer/ConvolutionLayer.h"
 #include "Layer/FullyConnectedLayer.h"
 #include "LossFunction/MultiCrossEntropyLoss.h"
@@ -18,7 +14,12 @@
 #include "RandomInitialization/UniformXavierInitialization.h"
 #include "RandomInitialization/XavierInitialization.h"
 
-#include "HelperFunctions.h"
+#include "omp.h"
+
+#include <algorithm>
+#include <cmath>
+#include <memory>
+#include <random>
 
 void NeuralNetwork::add_layer(std::unique_ptr<Layer> layer) {
   m_layer_list.push_back(std::move(layer));
