@@ -170,16 +170,16 @@ void ConvolutionLayer::backpropagate_weights(const Eigen::MatrixXf &a_prev,
   assert(dC_dz.rows() == dC_dz_height * dC_dz_width * m_output_channels &&
          "dC_dz dimensions do not match the one specified by the parameters");
 
-  auto dC_dz_im2col2 =
+  auto dC_dz_im2col =
       im2col_switched(dC_dz, dC_dz_height, dC_dz_width, m_output_channels,
                       dC_dz_height, dC_dz_width, 1, m_padding);
-  auto a_prev_im2col2 =
+  auto a_prev_im2col =
       im2col_switched(a_prev, m_input_height, m_input_width, m_input_channels,
                       dC_dz_height, dC_dz_width, 1, m_padding);
 
   // dC/dw=Conv(a_prev,dC/dz) and normalization
   m_dC_dw.noalias() =
-      ((a_prev_im2col2->transpose() * (*dC_dz_im2col2)) / dC_dz.cols())
+      ((a_prev_im2col->transpose() * (*dC_dz_im2col)) / dC_dz.cols())
           .transpose();
 }
 

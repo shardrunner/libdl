@@ -4,6 +4,8 @@
 
 /**
  * Represents a layer in the neural network. An abstract base class.
+ *
+ * For notation details see the Readme.
  */
 class Layer {
 public:
@@ -16,8 +18,8 @@ public:
    * Feed forwards the input to layer.
    *
    * A matrix product of the input with the internal weights is done and the
-   * output is internally for the backpropagation and the feed forward of the
-   * next layer cached.
+   * output is cached internally for the backpropagation and the feed forward of the
+   * next layer.
    * @param input The input matrix.
    */
   virtual void feed_forward(const Eigen::MatrixXf &input) = 0;
@@ -53,7 +55,7 @@ public:
   virtual void initialize_parameter() = 0;
 
   /**
-   * Updates the parameters weight and bias according to the chosen optimization
+   * Updates the weights and biases according to the chosen optimization
    * method.
    */
   virtual void update_parameter() = 0;

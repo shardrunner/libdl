@@ -9,8 +9,9 @@
 class BinaryCrossEntropyLoss : public LossFunction {
 public:
   /**
-   * Calculates the loss for the given input x an label y using binary cross
-   * entropy loss. -Sum(y+log(x)+(1-y)*log(1-x))/num_samples
+   * Calculates the loss for the given input x and label y using binary cross
+   * entropy loss.
+   * -Sum(y+log(x)+(1-y)*log(1-x))/num_samples
    * @param a_prev Feed forward input from the previous layer.
    * @param label Corresponding labels as column Vector with 0/1 per sample/row.
    * @return The calculated loss normalized with the number of samples

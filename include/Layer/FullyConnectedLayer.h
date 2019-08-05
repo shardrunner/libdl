@@ -36,9 +36,7 @@ public:
    * Notation from 3blue1brown NeuralNetwork series:
    *
    * Input -> prev layer -> current layer -> next layer -> Loss
-   * *
-   * C: Loss, w: weights, z: result before activation [z=w*a(prev)+b],
-   * a: activated z [sigma(z)], d: derivative, a_prev: a of previous layer
+   *
    * dC/dw=(dz/dw)*(da/dz)*(dC/da)=(dz/dw)*(dC/dz) (dC/dw is normalized with the
    * number of samples) dz/dw=a_prev da/dz=derivative activation function with z
    * dC/da=derivative from next layer (computation see intermediate results

@@ -47,6 +47,12 @@ Doxygen documentation
 The deep learning library is coded in an object oriented structure.
 It makes extensive usage of the *Eigen* library for linear algebra operations.
 
+The library itself manages its dependencies itself.
+Only the jupyter notebook requires the installation of additional libraries.
+
+There are some asserts active in debug mode, that check for correctness of the configuration and the input. 
+Those are however disabled in release mode.
+
 The *NeuralNetwork* class is the heart of every network.
 It manages the represented network structure and acts as an interface between network and user.
 
@@ -70,19 +76,23 @@ I decided to not use a wrapper or the Eigen::Tensor implementation for the repre
 I liked the structure with one sample/image per column.
 I'm not sure if this was the correct decision in the end, because managing and remembering the embedded image size was really tedious and prone to error.
 It also made implementing functions on those custom tensors a lot harder.
-On the pro side, it's probably pretty fast with the column major storage layout.
+On the other side, it's probably pretty fast with the column major storage layout and I didn't have to use the unsupported Eigen tensors.
 
-Format:
-normal Matrix:
-Channel 1
-1   4
-2   5
-3   6
-                  -> Own Format  -> (1,2,3,4,5,6,7,8,9,10,11,12).transpose()
-Channel 2
-7   10
-8   11
-9   12
+Format of internally stored matrices:
+
+    normal Matrix:
+    Channel 1
+    1   4
+    2   5
+    3   6
+                     
+    Channel 2
+    7   10
+    8   11
+    9   12
+    
+    Own format:
+    (1,2,3,4,5,6,7,8,9,10,11,12).transpose()
 
 ### A lot of work in CMake file
 
@@ -100,7 +110,7 @@ Aside from the manager class in the form of 'NeuralNetwork.h' and the helper cla
 The handling of the classes is done with unique_ptr.
 
 This structure allows for a flexible and modular library.
-New features can be easily integrated, as long as they follow already existing implementations.
+New features can be easily integrated, as long as they follow already existing base classes.
 
 The represented network itself is easily extensible and flexible in its form. The child classes are all interchangeable and there are aside from the typedefs no hardcoded limits in the network size.
 
@@ -120,6 +130,16 @@ Unfortunately, I didn't manage to do this for the convolution layer
 * logging is sporadic
 * tests are lacking for the convolution layer and for "non-math" stuff
 * those really ugly network initialization functions for pybind are in NeuralNetwork, because pybind doesn't work with unique_ptr in function parameter
+
+## Notation    
+
+    From 3blue1brown Neural Network video series:
+    C: Loss
+    w: weights
+    z: result before activation, [z=w*a(prev)+b]
+    a: activated z, [a=sigma(z)]
+    d: derivative
+    a_prev: a of previous layer
 
 ### Extra:
 Use 'git submodule update --remote --merge' to update the submodules.

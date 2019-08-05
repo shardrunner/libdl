@@ -83,11 +83,16 @@ public:
    * he kernel.
    *
    * The two implementations im2col and im2col_switched differ in the position
-   * of the channels and samples. In im2col the image channels are placed
-   * downwards and the samples to the right. In im2col_switched it is the other
-   * way around. The image channels are to the right and the samples are placed
-   * downwards. This determines which dimension (sample or channel) gets summed
-   * up in the convolution operation.
+   * of the channels and samples in the resulting im2col matrix. In im2col the
+   * image channels are placed downwards and the samples to the right. In
+   * im2col_switched it is the other way around. The image channels are to the
+   * right and the samples are placed downwards. This determines which dimension
+   * (sample or channel) gets summed up in the convolution operation matrix
+   * multiplication. For the forward operation it is required to sum over the
+   * channels of a image, as the different samples are independent. In contrast,
+   * in the backpropagation of the weights, one filter is influenced by every
+   * sample, but only one image channel. Therefore, it is necessary to sum over
+   * the samples in this case.
    * @param input_matrix The matrix to transform
    */
   [[nodiscard]] std::unique_ptr<Eigen::MatrixXf>
