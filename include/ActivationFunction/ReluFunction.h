@@ -8,7 +8,7 @@
  * This can also be a leaky Relu.
  * The Relu activation function is mainly used for convolution layers.
  * They allow for deeper networks.
- * For the default of 0, values smaller than 0 are set to 0. This can lead to
+ * For the default, values smaller than 0 are set to 0. This can lead to
  * undesirable behaviour in the form of dying gradients. To circumvent this
  * issue LeakyRelu has a value a bit smaller than 0 for values smaller than 0.
  *

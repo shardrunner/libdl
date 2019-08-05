@@ -33,8 +33,6 @@ public:
   void feed_forward(const Eigen::MatrixXf &input) override;
 
   /**
-   * Notation from 3blue1brown NeuralNetwork series:
-   *
    * Input -> prev layer -> current layer -> next layer -> Loss
    *
    * dC/dw=(dz/dw)*(da/dz)*(dC/da)=(dz/dw)*(dC/dz) (dC/dw is normalized with the
