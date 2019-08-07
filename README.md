@@ -37,6 +37,9 @@ or the jupyter notebook
     //Execute jupyter notebook
     jupyter notebook ../pybind/PyNotebook.ipynb
     
+    //Source for example dataset (extract in data folder and edit jupyter notebook data location accordingly)
+    https://www.kaggle.com/puneet6060/intel-image-classification
+    
 Doxygen documentation
 
     // In build directory
