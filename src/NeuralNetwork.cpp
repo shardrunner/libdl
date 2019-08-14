@@ -67,8 +67,10 @@ void NeuralNetwork::update() {
 
 NeuralNetwork::NeuralNetwork(std::unique_ptr<LossFunction> loss_function)
     : m_loss_function(std::move(loss_function)) {
-  // HT / SMT cores should not be used
+  // HT / SMT cores should not be used if openmp is enabled
+  #if defined _OPENMP
   omp_set_num_threads(omp_get_num_procs() / 2);
+  #endif
 
   // init loggers
   HelperFunctions::init_loggers();

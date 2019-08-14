@@ -13,7 +13,10 @@ int main(int argc, char *argv[]) {
   // Try to set thread number to the physical core number (without HT), because
   // Eigen is slower otherwise
   // (https://eigen.tuxfamily.org/dox-devel/TopicMultiThreading.html)
-  omp_set_num_threads(omp_get_num_procs() / 2);
+  // HT / SMT cores should not be used if openmp is enabled
+  #if defined _OPENMP
+    omp_set_num_threads(omp_get_num_procs() / 2);
+  #endif
 
   int result = Catch::Session().run(argc, argv);
 
