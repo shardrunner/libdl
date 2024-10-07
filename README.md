@@ -1,8 +1,8 @@
-# Deep Learning Library from Brunner Michael
+# Deep Learning Library
 
 Build instructions:
 
-    git clone git@gitlab.lrz.de:brunner/libdl.git
+    git clone git@github.com:shardrunner/libdl.git
 
     cd libdl
 
